@@ -1,0 +1,10 @@
+import { type CallHandler, type ExecutionContext, Injectable, type NestInterceptor } from '@nestjs/common';
+import { map, type Observable } from 'rxjs';
+
+/** Wraps every successful response as { success: true, data }. */
+@Injectable()
+export class ResponseInterceptor implements NestInterceptor {
+  intercept(_context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    return next.handle().pipe(map((data: unknown) => ({ success: true, data })));
+  }
+}

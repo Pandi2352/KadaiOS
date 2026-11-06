@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+@import './theme.css';
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-sm text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  dialog::backdrop {
+    background: var(--color-scrim);
+  }
+}
