@@ -1,27 +1,31 @@
 import type { Shop } from '@kadai/shared';
 import { PlusIcon, StorefrontIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { Button, useToast, useApiQuery, QueryState } from '@kadai/ui';
+import { Button, QueryState, useApiQuery, useToast } from '@kadai/ui';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Pagination } from '@/components/ui/Pagination';
 import { CreateShopModal } from '@/features/shops/CreateShopModal';
 import { shopsApi } from '@/features/shops/shopsApi';
 import { ShopsTable } from '@/features/shops/ShopsTable';
 
-const PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 10;
 
 export function BusinessSetupPage() {
   const { showToast } = useToast();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
   const [isCreating, setCreating] = useState(false);
-  const query = useApiQuery((signal) => shopsApi.list({ page, limit: PAGE_SIZE }, signal), `shops-${page}`);
+  const query = useApiQuery((signal) => shopsApi.list({ page, limit }, signal), `shops-${page}-${limit}`);
 
   const handleCreated = (shop: Shop) => {
-    showToast(`${shop.name} added`);
-    // Newest shops come first, so page 1 shows the new one.
+    showToast(`${shop.name} added`, { title: 'Shop added' });
     if (page === 1) query.refetch();
     else setPage(1);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
   };
 
   const addButton = (
@@ -34,7 +38,7 @@ export function BusinessSetupPage() {
     <div className="space-y-4">
       <PageHeader
         title="Business Setup"
-        description="Register shops and choose each shop's business type."
+        description="Register and manage business outlets, trade categories, and operating units."
         actions={addButton}
       />
       <QueryState
@@ -46,16 +50,21 @@ export function BusinessSetupPage() {
           <EmptyState
             icon={StorefrontIcon}
             title="No shops yet"
-            description="Add your first shop to choose its business type."
+            description="Add your first shop to choose its business type and start operations."
             action={addButton}
           />
         }
       >
         {(data) => (
-          <div className="space-y-3">
-            <ShopsTable shops={data.items} isRefreshing={query.isLoading} />
-            <Pagination page={data.page} limit={data.limit} total={data.total} onPageChange={setPage} />
-          </div>
+          <ShopsTable
+            shops={data.items}
+            isRefreshing={query.isLoading}
+            page={data.page}
+            limit={data.limit}
+            total={data.total}
+            onPageChange={setPage}
+            onLimitChange={handleLimitChange}
+          />
         )}
       </QueryState>
       <CreateShopModal isOpen={isCreating} onClose={() => setCreating(false)} onCreated={handleCreated} />

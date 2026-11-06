@@ -39,4 +39,3 @@ export class RevokeAdminInviteResponseDto {
   @ApiProperty({ example: true })
   revoked: boolean;
 }
-

@@ -4,4 +4,3 @@ export class CreateAdminInviteDto {
   @EmailField()
   email: string;
 }
-

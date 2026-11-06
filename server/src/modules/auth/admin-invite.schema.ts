@@ -26,4 +26,3 @@ export const AdminInviteSchema = SchemaFactory.createForClass(AdminInvite);
 
 // Index to quickly look up pending invites for an email
 AdminInviteSchema.index({ email: 1, acceptedAt: 1, expiresAt: 1 });
-

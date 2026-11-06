@@ -24,4 +24,3 @@ export const invitesApi = {
 
   acceptInvite: (input: AcceptAdminInviteInput) => api.post<AuthSession>('/auth/admin/invites/accept', input),
 };
-

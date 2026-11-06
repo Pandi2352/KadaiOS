@@ -1,9 +1,10 @@
 import { type AdminInvite, formatShopDate } from '@kadai/shared';
 import { Button, useToast } from '@kadai/ui';
-import { ArrowClockwiseIcon, TrashIcon } from '@phosphor-icons/react';
+import { ArrowClockwiseIcon, EnvelopeSimpleIcon, TrashIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Table, type TableColumn } from '@/components/ui/Table';
+import { EntityCell } from '@/components/ui/DataTable/cells';
 import { invitesApi } from './invitesApi';
 
 interface AdminInvitesTableProps {
@@ -50,7 +51,14 @@ export function AdminInvitesTable({ invites, isRefreshing, onChanged }: AdminInv
     {
       key: 'email',
       header: 'Invited Email',
-      render: (invite) => <span className="font-medium">{invite.email}</span>,
+      sortable: true,
+      render: (invite) => (
+        <EntityCell
+          title={invite.email}
+          subtitle={`Invited by ${invite.invitedByName ?? 'Admin'}`}
+          icon={<EnvelopeSimpleIcon size={18} weight="duotone" />}
+        />
+      ),
     },
     {
       key: 'status',
@@ -128,6 +136,8 @@ export function AdminInvitesTable({ invites, isRefreshing, onChanged }: AdminInv
         rows={invites}
         rowKey={(invite) => invite.id}
         isRefreshing={isRefreshing}
+        showRank
+        starable
       />
       <ConfirmDialog
         isOpen={Boolean(revoking)}
