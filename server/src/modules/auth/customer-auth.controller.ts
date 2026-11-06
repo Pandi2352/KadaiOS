@@ -6,10 +6,12 @@ import type { Response } from 'express';
 import { ApiEndpoint } from '../../common/swagger/api-endpoint.decorator.js';
 import { AuthCookieService } from './auth-cookie.service.js';
 import { AuthService, EMAIL_TAKEN_MESSAGE } from './auth.service.js';
+import { Public } from './decorators/public.decorator.js';
 import { AuthSessionDto } from './dto/auth-response.dto.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { SessionAuthController } from './session-auth.controller.js';
 
+@Public()
 @ApiTags('Customer auth')
 @Controller('auth/customer')
 export class CustomerAuthController extends SessionAuthController {

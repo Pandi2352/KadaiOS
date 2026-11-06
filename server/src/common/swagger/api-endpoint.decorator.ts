@@ -29,7 +29,12 @@ interface ApiEndpointOptions {
   unavailable?: string;
 }
 
-const errorResponse = (status: HttpStatus, description: string, message: string | string[], extra: object = {}) =>
+export const errorResponse = (
+  status: HttpStatus,
+  description: string,
+  message: string | string[],
+  extra: object = {},
+) =>
   ApiResponse({
     status,
     description,

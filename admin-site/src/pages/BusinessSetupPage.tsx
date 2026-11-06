@@ -36,7 +36,7 @@ export function BusinessSetupPage() {
     <div className="space-y-4">
       <PageHeader
         title="Business Setup"
-        description="Register shops and choose each shop's business type. Until pages are protected later in Phase 2, everyone using this app sees every shop."
+        description="Register shops and choose each shop's business type."
         actions={addButton}
       />
       <QueryState

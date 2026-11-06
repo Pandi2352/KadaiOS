@@ -1,4 +1,4 @@
-import type { AuthRole } from '@kadai/shared';
+import { AUTH_ROLES, type AuthRole } from '@kadai/shared';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ACCESS_TOKEN_TTL_SECONDS, JWT_ISSUER } from './auth.constants.js';
@@ -9,7 +9,7 @@ export interface AccessTokenClaims {
   role: AuthRole;
 }
 
-/** Short-lived JWTs sent with API calls. Guards use verify in item 9 of Phase 2. */
+/** Short-lived JWTs sent with API calls. */
 @Injectable()
 export class AccessTokenService {
   constructor(private readonly jwt: JwtService) {}
@@ -23,12 +23,12 @@ export class AccessTokenService {
     });
   }
 
-  /** Accepts a token only for the expected role, so a customer token can't be used on admin routes. */
-  async verify(token: string, role: AuthRole): Promise<AccessTokenClaims> {
+  /** Pass a role to accept a token only for that role. Without one, any role's token is valid. */
+  async verify(token: string, role?: AuthRole): Promise<AccessTokenClaims> {
     try {
       const { sub, role: tokenRole } = await this.jwt.verifyAsync<AccessTokenClaims>(token, {
         issuer: JWT_ISSUER,
-        audience: role,
+        audience: role ?? [...AUTH_ROLES],
         algorithms: ['HS256'],
       });
       return { sub, role: tokenRole };

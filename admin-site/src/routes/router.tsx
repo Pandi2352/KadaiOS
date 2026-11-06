@@ -1,3 +1,4 @@
+import { RequireAuth } from '@kadai/ui';
 import type { ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -18,7 +19,12 @@ const BUILT_PAGES: Partial<Record<ModuleId, ReactNode>> = {
 export const router = createBrowserRouter([
   { path: SITE.loginPath, element: <LoginPage />, errorElement: <RouteErrorPage /> },
   {
-    element: <AppLayout />,
+    // Everything in the admin app sits behind this, including the not-found page.
+    element: (
+      <RequireAuth loginPath={SITE.loginPath}>
+        <AppLayout />
+      </RequireAuth>
+    ),
     // The outer error page catches a crash in the layout. The inner one keeps the sidebar when a page crashes.
     errorElement: <RouteErrorPage />,
     children: [

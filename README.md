@@ -4,7 +4,7 @@ Software for small local shops to run billing, stock, customers, suppliers, expe
 
 One core platform adapts to each trade, starting with meat, crackers and dairy shops.
 
-> **Status: Phase 2 (authentication).** Customers can register and log in on the public site, and admins can log in on the admin app. Pages and API routes aren't protected yet, so the admin app is still open without logging in. Billing and stock are not built, so most module pages are placeholders. See [the phase plan](docs/PHASE_PLAN.md) for exact progress.
+> **Status: Phase 2 (authentication).** Customers can register and log in on the public site. The admin app and its API need an admin login. Billing and stock are not built, so most module pages are placeholders. See [the phase plan](docs/PHASE_PLAN.md) for exact progress.
 
 ## Project structure
 
@@ -146,16 +146,38 @@ All routes start with `/api/v1`. Interactive docs are at `/api/docs` and the Ope
 
 | Method | Route | Purpose |
 | --- | --- | --- |
-| `GET` | `/health` | Check the API and database. Returns 503 if the database is disconnected |
-| `POST` | `/shops` | Create a shop |
-| `GET` | `/shops?page=1&limit=20` | List shops, newest first |
-| `GET` | `/shops/:id` | Get one shop |
-| `POST` | `/auth/customer/register` | Create a customer account and log in. Admins have no equivalent |
-| `POST` | `/auth/customer/login`, `/auth/admin/login` | Log in |
-| `POST` | `/auth/customer/refresh`, `/auth/admin/refresh` | Get a new access token using the refresh cookie |
-| `POST` | `/auth/customer/logout`, `/auth/admin/logout` | Log out |
+| `GET` | `/health` | Public. Check the API and database. Returns 503 if the database is disconnected |
+| `POST` | `/shops` | Admin only. Create a shop |
+| `GET` | `/shops?page=1&limit=20` | Admin only. List shops, newest first |
+| `GET` | `/shops/:id` | Admin only. Get one shop |
+| `POST` | `/auth/customer/register` | Public. Create a customer account and log in. Admins have no equivalent |
+| `POST` | `/auth/customer/login`, `/auth/admin/login` | Public. Log in |
+| `POST` | `/auth/customer/refresh`, `/auth/admin/refresh` | Public. Get a new access token using the refresh cookie |
+| `POST` | `/auth/customer/logout`, `/auth/admin/logout` | Public. Log out |
 
-The shop routes have no login protection yet and CORS allows every origin, so run the API locally only.
+CORS still allows every origin, so run the API locally only.
+
+To try admin routes in Swagger, call `/auth/admin/login`, copy `accessToken` from the response, then paste it into **Authorize**.
+
+### Protecting routes
+
+Every API route needs a login unless it's marked `@Public()`, so a new route can't be left open by accident.
+
+```ts
+@Public() // Anyone.
+@Roles() // Any logged-in user. A route with no decorator acts the same, but isn't marked as locked in Swagger.
+@Roles('admin') // Logged in, with this role.
+```
+
+Add these to a controller or a single route, and use `@CurrentUser()` to get the logged-in user. No login or an invalid token returns 401, and the wrong role returns 403. Deactivating a user blocks them on their next request.
+
+In a website, wrap private pages in `RequireAuth` from `@kadai/ui`. The whole admin app already sits behind it:
+
+```tsx
+<RequireAuth loginPath="/login">
+  <AppLayout />
+</RequireAuth>
+```
 
 ### How login works
 

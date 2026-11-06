@@ -3,10 +3,12 @@ import { ApiTags } from '@nestjs/swagger';
 import { UuidParam } from '../../common/decorators/uuid-param.decorator.js';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto.js';
 import { ApiEndpoint } from '../../common/swagger/api-endpoint.decorator.js';
+import { Roles } from '../auth/decorators/roles.decorator.js';
 import { CreateShopDto } from './dto/create-shop.dto.js';
 import { ShopResponseDto } from './dto/shop-response.dto.js';
 import { ShopsService } from './shops.service.js';
 
+@Roles('admin')
 @ApiTags('Shops')
 @Controller('shops')
 export class ShopsController {

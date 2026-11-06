@@ -8,6 +8,9 @@ export const REFRESH_REUSE_GRACE_MS = 10 * 1000;
 
 export const JWT_ISSUER = 'kadai-os';
 
+export const LOGIN_REQUIRED_MESSAGE = 'Log in to continue.';
+export const FORBIDDEN_MESSAGE = "You don't have permission to do this.";
+
 /** One cookie per role with its own path: localhost cookies are shared across ports. */
 export const refreshCookieName = (role: AuthRole) => `kadai_${role}_refresh`;
 export const refreshCookiePath = (role: AuthRole) => `/${API_PREFIX}/v${API_VERSION}/auth/${role}`;

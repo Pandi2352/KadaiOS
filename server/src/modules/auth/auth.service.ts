@@ -1,6 +1,7 @@
-import type { AuthRole, AuthSession, AuthUser } from '@kadai/shared';
+import type { AuthRole, AuthSession } from '@kadai/shared';
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { isDuplicateKeyError } from '../../common/database/duplicate-key.js';
+import { toAuthUser } from '../users/to-auth-user.js';
 import type { User } from '../users/user.schema.js';
 import { UsersRepository } from '../users/users.repository.js';
 import { AccessTokenService } from './access-token.service.js';
@@ -17,14 +18,6 @@ export interface IssuedSession {
   session: AuthSession;
   refreshToken: string;
 }
-
-const toAuthUser = (user: Pick<User, '_id' | 'name' | 'email' | 'phone' | 'role'>): AuthUser => ({
-  id: user._id,
-  name: user.name,
-  email: user.email,
-  ...(user.phone && { phone: user.phone }),
-  role: user.role,
-});
 
 @Injectable()
 export class AuthService {

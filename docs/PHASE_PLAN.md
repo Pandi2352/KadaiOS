@@ -419,8 +419,8 @@ Start here
 - [x] 5. Access Token
 - [x] 6. Refresh Token
 - [x] 7. Logout
-- [ ] 8. Protected Routes
-- [ ] 9. Authentication Guards
+- [x] 8. Protected Routes
+- [x] 9. Authentication Guards
 - [ ] 10. Current User Profile
 - [x] 11. Default Admin User (seeded for login and testing)
 - [ ] 12. Admin Invites (an admin invites other admins, because admins cannot register themselves)

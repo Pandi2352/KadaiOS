@@ -11,11 +11,13 @@ export function setupSwagger(app: INestApplication): void {
       'API for KadaiOS, software for small local shops. Successful responses return `{ success: true, data }`. Errors return `{ success: false, error: { statusCode, message, fields? } }`.',
     )
     .setVersion('0.1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup(SWAGGER_PATH, app, document, {
     customSiteTitle: 'KadaiOS API Docs',
+    swaggerOptions: { persistAuthorization: true },
   });
 }

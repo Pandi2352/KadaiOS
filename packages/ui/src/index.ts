@@ -4,6 +4,8 @@ export * from './auth/AuthPage';
 export * from './auth/AuthProvider';
 export * from './auth/createAuthClient';
 export * from './auth/LoginForm';
+export * from './auth/RequireAuth';
+export * from './auth/returnPath';
 export * from './cn';
 export * from './components/Button';
 export * from './components/buttonStyles';
