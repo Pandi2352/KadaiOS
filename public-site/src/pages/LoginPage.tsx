@@ -1,10 +1,11 @@
-import { AuthPage, LoginForm, useAuth } from '@kadai/ui';
+import { AuthPage, LoginForm, useAuth, useAuthActions } from '@kadai/ui';
 import { Link, Navigate } from 'react-router-dom';
 import { PATHS } from '@/config/paths';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function LoginPage() {
-  const { status, login } = useAuth();
+  const { status } = useAuth();
+  const { loginWithToast } = useAuthActions();
   usePageTitle('Log in');
 
   if (status === 'loading') return null;
@@ -22,7 +23,7 @@ export function LoginPage() {
         </>
       }
     >
-      <LoginForm onSubmit={login} />
+      <LoginForm onSubmit={loginWithToast} />
     </AuthPage>
   );
 }

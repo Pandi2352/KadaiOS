@@ -89,6 +89,94 @@ describe('createAuthClient', () => {
     expect(openGate()).toBeNull();
   });
 
+  describe('when a session ends', () => {
+    const setup = (post: ReturnType<typeof vi.fn>) => {
+      const { client, triggerRefresh } = fakeApi();
+      (client.post as ReturnType<typeof vi.fn>).mockImplementation(post);
+      const auth = createAuthClient({ api: client, role: 'admin' });
+      const ended = vi.fn();
+      auth.onSessionEnded(ended);
+      return { auth, ended, triggerRefresh };
+    };
+    const unauthorized = new ApiError({ statusCode: 401, message: 'Ended' });
+
+    it('tells listeners when the server refuses the session mid-use', async () => {
+      const { auth, ended, triggerRefresh } = setup(
+        vi.fn().mockResolvedValueOnce(SESSION).mockRejectedValueOnce(unauthorized),
+      );
+      await auth.restore();
+      await triggerRefresh();
+
+      expect(ended).toHaveBeenCalledTimes(1);
+      expect(auth.getState().status).toBe('anonymous');
+    });
+
+    it('tells listeners when a reload finds a session the server refuses', async () => {
+      const { auth, ended } = setup(vi.fn().mockRejectedValueOnce(unauthorized));
+      await auth.restore();
+
+      expect(ended).toHaveBeenCalledTimes(1);
+    });
+
+    it('tells listeners when the cookie has gone mid-use', async () => {
+      const { auth, ended, triggerRefresh } = setup(vi.fn().mockResolvedValueOnce(SESSION).mockResolvedValueOnce(null));
+      await auth.restore();
+      await triggerRefresh();
+
+      expect(ended).toHaveBeenCalledTimes(1);
+    });
+
+    it('stays quiet for someone who simply is not logged in', async () => {
+      const { auth, ended } = setup(vi.fn().mockResolvedValueOnce(null));
+      await auth.restore();
+
+      expect(ended).not.toHaveBeenCalled();
+      expect(auth.getState().status).toBe('anonymous');
+    });
+
+    it('stays quiet on a normal logout', async () => {
+      const { auth, ended } = setup(vi.fn().mockResolvedValueOnce(SESSION).mockResolvedValueOnce({ loggedOut: true }));
+      await auth.restore();
+      await auth.logout();
+
+      expect(ended).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['the network drops', new ApiError({ statusCode: 0, message: 'Offline' })],
+      ['the server has an error', new ApiError({ statusCode: 500, message: 'Broken' })],
+    ])('keeps the session when %s', async (_label, failure) => {
+      const { auth, ended, triggerRefresh } = setup(
+        vi.fn().mockResolvedValueOnce(SESSION).mockRejectedValueOnce(failure),
+      );
+      await auth.restore();
+      const refreshed = await triggerRefresh();
+
+      expect(refreshed).toBe(false);
+      expect(ended).not.toHaveBeenCalled();
+      expect(auth.getState().status).toBe('authenticated');
+    });
+
+    it('shows the login page without a message when the server is down on load', async () => {
+      const { auth, ended } = setup(vi.fn().mockRejectedValueOnce(new ApiError({ statusCode: 0, message: 'Offline' })));
+      await auth.restore();
+
+      expect(ended).not.toHaveBeenCalled();
+      expect(auth.getState().status).toBe('anonymous');
+    });
+
+    it('stops telling a listener once it unsubscribes', async () => {
+      const { client, post } = fakeApi();
+      post.mockRejectedValueOnce(unauthorized);
+      const auth = createAuthClient({ api: client, role: 'admin' });
+      const ended = vi.fn();
+      auth.onSessionEnded(ended)();
+      await auth.restore();
+
+      expect(ended).not.toHaveBeenCalled();
+    });
+  });
+
   it('logs in and notifies subscribers', async () => {
     const { client, post } = fakeApi();
     post.mockResolvedValue(SESSION);

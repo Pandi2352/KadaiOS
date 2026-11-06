@@ -1,4 +1,4 @@
-import { getErrorMessage, iconButtonClass, useAuth, useToast } from '@kadai/ui';
+import { iconButtonClass, useAuth, useAuthActions } from '@kadai/ui';
 import { SignOutIcon, UserCircleIcon } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import { Dropdown } from '@/components/ui/Dropdown';
@@ -8,18 +8,13 @@ import { SITE } from '@/config/site';
 
 /** Only shown inside the protected layout, so there is always a logged-in user. */
 export function UserMenu() {
-  const { user, logout } = useAuth();
-  const { showToast } = useToast();
+  const { user } = useAuth();
+  const { logoutWithToast } = useAuthActions();
   const navigate = useNavigate();
   const { setup, staff } = MODULES;
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      navigate(SITE.loginPath, { replace: true });
-    } catch (error) {
-      showToast(`Couldn't log out. ${getErrorMessage(error)}`, 'error');
-    }
+    if (await logoutWithToast()) navigate(SITE.loginPath, { replace: true });
   };
 
   return (

@@ -1,19 +1,14 @@
-import { Button, buttonClass, getErrorMessage, Tooltip, useAuth, useToast } from '@kadai/ui';
+import { Button, buttonClass, Tooltip, useAuth, useAuthActions } from '@kadai/ui';
 import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config/paths';
 
 export function SiteHeader() {
-  const { status, user, logout } = useAuth();
-  const { showToast } = useToast();
+  const { status, user } = useAuth();
+  const { logoutWithToast } = useAuthActions();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      navigate(PATHS.home);
-    } catch (error) {
-      showToast(`Couldn't log out. ${getErrorMessage(error)}`, 'error');
-    }
+    if (await logoutWithToast()) navigate(PATHS.home);
   };
 
   return (

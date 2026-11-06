@@ -11,7 +11,7 @@ export function RegisterForm() {
     // The API validates everything and the form shows its messages.
     onSubmit: async (values) => {
       await register(values);
-      showToast(`Welcome, ${values.name.trim()}. Your account is ready.`);
+      showToast(`Welcome, ${values.name.trim()}.`, { title: 'Account created' });
     },
   });
 
