@@ -1,16 +1,36 @@
-import { createContext, useContext } from 'react';
+import { type Context, createContext, useContext } from 'react';
 
-/** Creates a context whose hook throws when used outside its provider. */
+interface ContextRegistryHost {
+  __kadaiContexts?: Map<string, Context<unknown>>;
+}
+
+/**
+ * Keeps one context per name for the life of the page. A hot reload runs a context's file again,
+ * and a new context would disconnect its hook from the provider that's already mounted.
+ */
+function getContext<T>(name: string): Context<T | null> {
+  const host = globalThis as ContextRegistryHost;
+  host.__kadaiContexts ??= new Map();
+
+  const existing = host.__kadaiContexts.get(name);
+  if (existing) return existing as Context<T | null>;
+
+  const created = createContext<T | null>(null);
+  host.__kadaiContexts.set(name, created as Context<unknown>);
+  return created;
+}
+
+/** Creates a context whose hook throws when used outside its provider. Each name must be unique in the app. */
 export function createStrictContext<T>(name: string) {
-  const Context = createContext<T | null>(null);
+  const StrictContext = getContext<T>(name);
 
   const useStrictContext = (): T => {
-    const value = useContext(Context);
+    const value = useContext(StrictContext);
     if (value === null) {
       throw new Error(`${name} hook must be used inside ${name}Provider`);
     }
     return value;
   };
 
-  return [Context.Provider, useStrictContext] as const;
+  return [StrictContext.Provider, useStrictContext] as const;
 }
