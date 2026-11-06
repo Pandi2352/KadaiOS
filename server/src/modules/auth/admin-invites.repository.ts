@@ -1,8 +1,11 @@
+import type { AdminInviteStatus } from '@kadai/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import type { Model } from 'mongoose';
+import type { Model, QueryFilter } from 'mongoose';
 import { BaseRepository } from '../../common/database/base.repository.js';
+import { escapeRegExp } from '../../common/database/escape-regexp.js';
 import { AdminInvite } from './admin-invite.schema.js';
+import type { AdminInviteListQueryDto } from './dto/admin-invite-list-query.dto.js';
 
 @Injectable()
 export class AdminInvitesRepository extends BaseRepository<AdminInvite> {
@@ -24,8 +27,18 @@ export class AdminInvitesRepository extends BaseRepository<AdminInvite> {
       .exec();
   }
 
-  async listAll(limit = 50) {
-    return this.model.find().sort({ _id: -1 }).limit(limit).exec();
+  findInvitePage({ search, status, ...pagination }: AdminInviteListQueryDto) {
+    const now = new Date();
+    const filters: Record<AdminInviteStatus, QueryFilter<AdminInvite>> = {
+      pending: { acceptedAt: null, expiresAt: { $gte: now } },
+      accepted: { acceptedAt: { $ne: null } },
+      expired: { acceptedAt: null, expiresAt: { $lt: now } },
+    };
+
+    return this.findPage(pagination, {
+      ...(status && filters[status]),
+      ...(search && { email: new RegExp(escapeRegExp(search), 'i') }),
+    });
   }
 
   async markAccepted(id: string) {

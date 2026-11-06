@@ -1,20 +1,39 @@
 import crypto from 'node:crypto';
-import type { AdminInvite as IAdminInvite, AdminInviteStatus, AuthUser, StaffRole, UserProfile } from '@kadai/shared';
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  type AdminInvite as IAdminInvite,
+  type AdminInviteStatus,
+  type AuthUser,
+  canAssignRole,
+  type Paginated,
+  type StaffRole,
+  type UserProfile,
+} from '@kadai/shared';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { AppConfig } from '../../config/app.config.js';
 import { toUserProfile } from '../users/to-auth-user.js';
 import { MailService } from '../mail/mail.service.js';
+import type { User } from '../users/user.schema.js';
 import { UsersRepository } from '../users/users.repository.js';
 import { AdminInvite } from './admin-invite.schema.js';
 import { AdminInvitesRepository } from './admin-invites.repository.js';
 import { AuthService, type IssuedSession } from './auth.service.js';
 import type { AcceptAdminInviteDto } from './dto/accept-admin-invite.dto.js';
+import type { AdminInviteListQueryDto } from './dto/admin-invite-list-query.dto.js';
 import type { CreateAdminInviteDto } from './dto/create-admin-invite.dto.js';
+import type { StaffListQueryDto } from './dto/staff-list-query.dto.js';
 import { PasswordService } from './password.service.js';
 
 const INVITE_EXPIRATION_HOURS = 48;
 const ONE_HOUR_MS = 60 * 60 * 1000;
+const HIGHER_ROLE_MESSAGE = "You can't give someone a higher role than your own.";
+const LAST_SUPER_ADMIN_MESSAGE = 'Keep at least one active Super Admin, so someone always has full access.';
 
 function hashToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex');
@@ -43,6 +62,11 @@ export class AdminInvitesService {
 
   async createInvite(admin: AuthUser, dto: CreateAdminInviteDto): Promise<IAdminInvite> {
     const email = dto.email.trim().toLowerCase();
+    const staffRole = dto.staffRole ?? 'admin';
+
+    if (!canAssignRole(admin.staffRole, staffRole)) {
+      throw new ForbiddenException(HIGHER_ROLE_MESSAGE);
+    }
 
     if (await this.users.exists(email, 'admin')) {
       throw new ConflictException({
@@ -65,7 +89,7 @@ export class AdminInvitesService {
       email,
       tokenHash,
       invitedBy: admin.id,
-      staffRole: dto.staffRole ?? 'admin',
+      staffRole,
       expiresAt,
       acceptedAt: null,
     });
@@ -82,8 +106,13 @@ export class AdminInvitesService {
     return this.toResponse(invite, admin.name);
   }
 
-  async listInvites(): Promise<IAdminInvite[]> {
-    const items = await this.invites.listAll(100);
+  async listAdmins(query: StaffListQueryDto): Promise<Paginated<UserProfile>> {
+    const page = await this.users.findStaffPage(query);
+    return { ...page, items: page.items.map(toUserProfile) };
+  }
+
+  async listInvites(query: AdminInviteListQueryDto): Promise<Paginated<IAdminInvite>> {
+    const { items, ...page } = await this.invites.findInvitePage(query);
     // Enrich with inviter names
     const inviterIds = [...new Set(items.map((i) => i.invitedBy))];
     const inviterMap = new Map<string, string>();
@@ -95,7 +124,7 @@ export class AdminInvitesService {
       }),
     );
 
-    return items.map((invite) => this.toResponse(invite, inviterMap.get(invite.invitedBy)));
+    return { ...page, items: items.map((invite) => this.toResponse(invite, inviterMap.get(invite.invitedBy))) };
   }
 
   async resendInvite(id: string, admin: AuthUser): Promise<IAdminInvite> {
@@ -103,6 +132,10 @@ export class AdminInvitesService {
 
     if (invite.acceptedAt) {
       throw new BadRequestException('This invitation has already been accepted');
+    }
+
+    if (invite.staffRole && !canAssignRole(admin.staffRole, invite.staffRole)) {
+      throw new ForbiddenException(HIGHER_ROLE_MESSAGE);
     }
 
     const token = generateSecureToken();
@@ -178,6 +211,8 @@ export class AdminInvitesService {
       throw new NotFoundException('Administrator account not found');
     }
 
+    if (staffRole !== 'super_admin') await this.assertNotLastSuperAdmin(user);
+
     const updated = await this.users.updateStaffRole(id, staffRole);
     if (!updated) {
       throw new NotFoundException('Administrator account not found');
@@ -195,6 +230,8 @@ export class AdminInvitesService {
     if (!user || user.role !== 'admin') {
       throw new NotFoundException('Administrator account not found');
     }
+
+    if (!isActive) await this.assertNotLastSuperAdmin(user);
 
     const updated = await this.users.updateStatus(id, isActive);
     if (!updated) {
@@ -214,8 +251,19 @@ export class AdminInvitesService {
       throw new NotFoundException('Administrator account not found');
     }
 
+    await this.assertNotLastSuperAdmin(user);
+
     await this.users.deleteById(id);
     return { deleted: true };
+  }
+
+  /** Without a Super Admin, nobody could change roles or remove accounts any more. */
+  private async assertNotLastSuperAdmin(user: User): Promise<void> {
+    if (user.staffRole !== 'super_admin' || user.isActive === false) return;
+
+    if ((await this.users.countActiveSuperAdmins()) <= 1) {
+      throw new BadRequestException(LAST_SUPER_ADMIN_MESSAGE);
+    }
   }
 
   private toResponse(invite: AdminInvite, invitedByName?: string): IAdminInvite {

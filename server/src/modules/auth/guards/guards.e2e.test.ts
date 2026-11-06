@@ -264,7 +264,7 @@ describe('authentication guards', () => {
       const { data } = (await response.json()) as ApiSuccess<AuthUser>;
 
       expect(data).toMatchObject({ email: ADMIN.email, role: 'admin', name: 'Default Admin' });
-      expect(Object.keys(data).sort()).toEqual(['email', 'id', 'name', 'role']);
+      expect(Object.keys(data).sort()).toEqual(['email', 'id', 'isActive', 'name', 'role', 'staffRole']);
     });
   });
 

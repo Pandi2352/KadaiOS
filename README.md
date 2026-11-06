@@ -158,11 +158,14 @@ All routes start with `/api/v1`. Interactive docs are at `/api/docs` and the Ope
 | `POST` | `/auth/customer/login`, `/auth/admin/login` | Public. Log in |
 | `POST` | `/auth/customer/refresh`, `/auth/admin/refresh` | Public. Get a new access token using the refresh cookie |
 | `POST` | `/auth/customer/logout`, `/auth/admin/logout` | Public. Log out |
-| `POST` | `/auth/admin/invites` | Admin only. Send an email invitation to a new administrator |
-| `GET` | `/auth/admin/invites` | Admin only. List administrator invitations and their statuses |
-| `GET` | `/auth/admin/invites/admins` | Admin only. List current administrator accounts |
-| `POST` | `/auth/admin/invites/:id/resend` | Admin only. Resend an invitation email |
-| `DELETE` | `/auth/admin/invites/:id` | Admin only. Revoke a pending invitation |
+| `POST` | `/auth/admin/invites` | Needs `users:invite`. Send an email invitation, with a role no higher than your own |
+| `GET` | `/auth/admin/invites` | Needs `users:view`. List invitations one page at a time, optionally by `status` |
+| `GET` | `/auth/admin/invites/admins` | Needs `users:view`. List admin accounts one page at a time, with `search`, `staffRole` and `status` |
+| `PATCH` | `/auth/admin/invites/users/:id/role` | Needs `users:manage_roles`. Change an admin's staff role |
+| `PATCH` | `/auth/admin/invites/users/:id/status` | Needs `users:delete`. Deactivate or activate an admin |
+| `DELETE` | `/auth/admin/invites/users/:id` | Needs `users:delete`. Delete an admin account |
+| `POST` | `/auth/admin/invites/:id/resend` | Needs `users:invite`. Resend an invitation email |
+| `DELETE` | `/auth/admin/invites/:id` | Needs `users:invite`. Revoke a pending invitation |
 | `GET` | `/auth/admin/invites/validate` | Public. Validate an invite token from an email link |
 | `POST` | `/auth/admin/invites/accept` | Public. Accept an invitation, set password and create admin account |
 
@@ -178,6 +181,7 @@ Every API route needs a login unless it's marked `@Public()`, so a new route can
 @Public() // Anyone.
 @Roles() // Any logged-in user. A route with no decorator acts the same, but isn't marked as locked in Swagger.
 @Roles('admin') // Logged in, with this role.
+@RequirePermission('shops:create') // An admin whose staff role includes this permission.
 ```
 
 Add these to a controller or a single route, and use `@CurrentUser()` to get the logged-in user. No login or an invalid token returns 401, and the wrong role returns 403. Deactivating a user blocks them on their next request.
@@ -192,7 +196,9 @@ In a website, wrap private pages in `RequireAuth` from `@kadai/ui`. The whole ad
 
 ### How login works
 
-- **Accounts:** customers register on the public site. Admins can't register. The first admin comes from `.env`, and admin invites are planned (Phase 2, item 12). The same email can have a separate customer and admin account.
+- **Accounts:** customers register on the public site. Admins can't register. The first admin comes from `.env` and becomes a Super Admin, and admins invite the others. The same email can have a separate customer and admin account.
+- **Staff roles:** each role's permissions are listed in `packages/shared/src/auth.ts`. The server checks them on every request with `@RequirePermission`, and the admin app uses `useCan` and each module's `permission` to hide what a role can't use. Nobody can give out a role above their own, and the last active Super Admin can't be demoted, deactivated or deleted.
+- **Test admins:** `npm run db:seed-test-admins` adds 12 admins with a mix of roles, all with the password `Test@12345`, for local testing only. Add `-- --remove` to take them out.
 - **Passwords:** hashed with Argon2id. Login gives the same answer for a wrong password and an unknown email, and login and register are rate limited.
 - **Access token:** a JWT that lasts 15 minutes, kept in memory only and sent as `Authorization: Bearer <token>`. It works only for its own role.
 - **Refresh token:** a random value that lasts 30 days, in an `httpOnly` cookie that page scripts can't read. Only its hash is stored. Each one is replaced when used.
@@ -222,7 +228,7 @@ Successful responses and errors use a shared format. `fields` only appears when 
 
 - **Theme:** the brand colour is `rgb(30, 81, 133)` with white text, and the font is `IBMSans` (IBM Plex Sans). Both are set once in `packages/shared/src/theme.css`. The font files are bundled in the project, so the POS works offline.
 - **Icons:** [Phosphor Icons](https://phosphoricons.com) is the only icon package, and a lint rule blocks `lucide-react`. Icons are duotone by default, icons inside `Button` and `IconButton` and small controls such as carets are bold, and the current page's sidebar icon turns solid. Pick a module's icon in `admin-site/src/config/modules.ts`.
-- **Popups:** give every menu, dropdown, dialog and toast the `popup-surface` class, a shaded gradient from the theme, and use `IconChip` from `@kadai/ui` for icons in its rows. Popups stand out through colour, not shadows.
+- **Popups:** give every menu, dropdown, dialog and toast the `popup-surface` class, plain white with a border, and use `IconChip` from `@kadai/ui` for icons in its rows. Popups stand out through the border, not shadows or shading.
 - **Scrollbars:** every scrolling area gets the custom scrollbar from `packages/shared/src/scrollbars.css` automatically. Add `scrollbar-stable` to stop content shifting between short and long pages, or `scrollbar-reveal` for a slim bar that appears on hover.
 - **Error and missing pages:** use `StatusPage` from `@kadai/ui`.
 - **Toasts:** call `showToast` from `useToast()` after an action. The tone defaults to success, and errors stay until closed. Use `useAuthActions()` for login and logout, which show their own messages.

@@ -3,7 +3,9 @@ import { PlusIcon, StorefrontIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Button, QueryState, useApiQuery, useToast } from '@kadai/ui';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { FILL_PAGE } from '@/components/ui/fillStyles';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { useCan } from '@/hooks/useCan';
 import { CreateShopModal } from '@/features/shops/CreateShopModal';
 import { shopsApi } from '@/features/shops/shopsApi';
 import { ShopsTable } from '@/features/shops/ShopsTable';
@@ -12,6 +14,7 @@ const DEFAULT_PAGE_SIZE = 10;
 
 export function BusinessSetupPage() {
   const { showToast } = useToast();
+  const can = useCan();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
   const [isCreating, setCreating] = useState(false);
@@ -28,46 +31,48 @@ export function BusinessSetupPage() {
     setPage(1);
   };
 
-  const addButton = (
+  const addButton = can('shops:create') && (
     <Button variant="primary" icon={PlusIcon} onClick={() => setCreating(true)}>
       Add shop
     </Button>
   );
 
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title="Business Setup"
-        description="Register and manage business outlets, trade categories, and operating units."
-        actions={addButton}
-      />
-      <QueryState
-        query={query}
-        loadingLabel="Loading shops"
-        errorTitle="Couldn't load shops"
-        isEmpty={(data) => data.total === 0}
-        empty={
-          <EmptyState
-            icon={StorefrontIcon}
-            title="No shops yet"
-            description="Add your first shop to choose its business type and start operations."
-            action={addButton}
-          />
-        }
-      >
-        {(data) => (
-          <ShopsTable
-            shops={data.items}
-            isRefreshing={query.isLoading}
-            page={data.page}
-            limit={data.limit}
-            total={data.total}
-            onPageChange={setPage}
-            onLimitChange={handleLimitChange}
-          />
-        )}
-      </QueryState>
+    <>
+      <div className={`space-y-4 ${FILL_PAGE}`}>
+        <PageHeader
+          title="Business Setup"
+          description="Register and manage business outlets, trade categories, and operating units."
+          actions={addButton}
+        />
+        <QueryState
+          query={query}
+          loadingLabel="Loading shops"
+          errorTitle="Couldn't load shops"
+          isEmpty={(data) => data.total === 0}
+          empty={
+            <EmptyState
+              icon={StorefrontIcon}
+              title="No shops yet"
+              description="Add your first shop to choose its business type and start operations."
+              action={addButton}
+            />
+          }
+        >
+          {(data) => (
+            <ShopsTable
+              shops={data.items}
+              isRefreshing={query.isLoading}
+              page={data.page}
+              limit={data.limit}
+              total={data.total}
+              onPageChange={setPage}
+              onLimitChange={handleLimitChange}
+            />
+          )}
+        </QueryState>
+      </div>
       <CreateShopModal isOpen={isCreating} onClose={() => setCreating(false)} onCreated={handleCreated} />
-    </div>
+    </>
   );
 }

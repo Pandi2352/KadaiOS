@@ -5,12 +5,15 @@ import type { ReactNode } from 'react';
 import { Avatar } from '@/components/ui/Avatar';
 import { Drawer } from '@/components/ui/Drawer';
 import { RoleBadge } from './RoleBadge';
+import { ROLE_TONES } from './roleOptions';
 import { RolePermissionSummary } from './RolePermissionSummary';
+import type { UserActions } from './useStaffPermissions';
 import { UserStatusBadge } from './UserStatusBadge';
 
 interface UserDetailDrawerProps {
   /** The person to show. The drawer is open while this is set. */
   user: UserProfile | null;
+  allowed?: UserActions;
   onClose: () => void;
   onChangeRole: (user: UserProfile) => void;
   onToggleStatus: (user: UserProfile) => void;
@@ -25,7 +28,7 @@ function Detail({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-export function UserDetailDrawer({ user, onClose, onChangeRole, onToggleStatus }: UserDetailDrawerProps) {
+export function UserDetailDrawer({ user, allowed, onClose, onChangeRole, onToggleStatus }: UserDetailDrawerProps) {
   const staffRole: StaffRole = user?.staffRole ?? 'admin';
   const isActive = user?.isActive !== false;
 
@@ -34,7 +37,7 @@ export function UserDetailDrawer({ user, onClose, onChangeRole, onToggleStatus }
       {user && (
         <div className="space-y-6">
           <div className="flex items-center gap-3">
-            <Avatar name={user.name} size="lg" />
+            <Avatar name={user.name} size="lg" tone={ROLE_TONES[staffRole]} />
             <div className="min-w-0">
               <p className="truncate text-base font-semibold">{user.name}</p>
               <p className="truncate text-muted">{user.email}</p>
@@ -42,16 +45,20 @@ export function UserDetailDrawer({ user, onClose, onChangeRole, onToggleStatus }
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button icon={ShieldCheckIcon} onClick={() => onChangeRole(user)}>
-              Change role
-            </Button>
+            {allowed?.changeRole && (
+              <Button icon={ShieldCheckIcon} onClick={() => onChangeRole(user)}>
+                Change role
+              </Button>
+            )}
             <a href={`mailto:${user.email}`} className={buttonClass('outline')}>
               <EnvelopeSimpleIcon size={16} aria-hidden weight="bold" />
               Email
             </a>
-            <Button icon={PowerIcon} onClick={() => onToggleStatus(user)}>
-              {isActive ? 'Deactivate' : 'Activate'}
-            </Button>
+            {allowed?.manageAccount && (
+              <Button icon={PowerIcon} onClick={() => onToggleStatus(user)}>
+                {isActive ? 'Deactivate' : 'Activate'}
+              </Button>
+            )}
           </div>
 
           <dl className="space-y-2.5">

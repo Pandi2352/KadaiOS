@@ -99,7 +99,16 @@ describe('profile API', () => {
 
       expect(text).not.toContain('passwordHash');
       expect(text).not.toContain('argon2');
-      expect(Object.keys(data).sort()).toEqual(['createdAt', 'email', 'id', 'name', 'role']);
+      expect(Object.keys(data).sort()).toEqual([
+        'createdAt',
+        'email',
+        'id',
+        'isActive',
+        'lastLoginAt',
+        'name',
+        'role',
+        'staffRole',
+      ]);
     });
   });
 

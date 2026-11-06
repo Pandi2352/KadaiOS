@@ -11,7 +11,7 @@
 - [x] Refresh Token Rotation
 - [ ] Session Management
 - [ ] Two-Factor Authentication
-- [ ] Role-Based Access Control
+- [x] Role-Based Access Control
 - [ ] Permission Management
 
 ## 2. Business & Shop Management

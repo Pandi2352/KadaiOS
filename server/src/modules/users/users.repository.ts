@@ -1,8 +1,10 @@
-import type { AuthRole, StaffRole } from '@kadai/shared';
+import { type AuthRole, STAFF_ROLE_DEFINITIONS, STAFF_ROLES, type StaffRole } from '@kadai/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import type { Model } from 'mongoose';
+import type { Model, QueryFilter } from 'mongoose';
 import { BaseRepository } from '../../common/database/base.repository.js';
+import { escapeRegExp } from '../../common/database/escape-regexp.js';
+import type { StaffListQueryDto } from '../auth/dto/staff-list-query.dto.js';
 import { User } from './user.schema.js';
 
 @Injectable()
@@ -32,8 +34,33 @@ export class UsersRepository extends BaseRepository<User> {
     return this.model.findById(id).exec();
   }
 
-  findAdmins() {
-    return this.model.find({ role: 'admin' }).sort({ _id: -1 }).exec();
+  findStaffPage({ search, staffRole, status, ...pagination }: StaffListQueryDto) {
+    const filter: QueryFilter<User> = {
+      role: 'admin',
+      ...(staffRole && { staffRole }),
+      ...(status && { isActive: status === 'active' ? { $ne: false } : false }),
+    };
+
+    if (search) {
+      const pattern = new RegExp(escapeRegExp(search), 'i');
+      const text = search.toLowerCase();
+      const roles = STAFF_ROLES.filter((role) => STAFF_ROLE_DEFINITIONS[role].name.toLowerCase().includes(text));
+      filter.$or = [{ name: pattern }, { email: pattern }, { staffRole: { $in: roles } }];
+    }
+
+    return this.findPage(pagination, filter);
+  }
+
+  countActiveSuperAdmins() {
+    return this.model.countDocuments({ role: 'admin', staffRole: 'super_admin', isActive: { $ne: false } }).exec();
+  }
+
+  /** Admins from before staff roles existed had full access, so they keep it. */
+  async promoteAdminsWithoutRole(): Promise<number> {
+    const { modifiedCount } = await this.model
+      .updateMany({ role: 'admin', staffRole: { $exists: false } }, { $set: { staffRole: 'super_admin' } })
+      .exec();
+    return modifiedCount;
   }
 
   findActiveById(id: string) {

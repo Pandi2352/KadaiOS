@@ -1,4 +1,4 @@
-import type { BusinessType } from '@kadai/shared';
+import type { BusinessType, Permission } from '@kadai/shared';
 import type { Icon } from '@phosphor-icons/react';
 
 export type { BusinessType };
@@ -32,6 +32,8 @@ export interface ModuleDefinition {
   description: string;
   /** Where this module sits in docs/PHASE_PLAN.md, such as "Phase 5" or "Step 25". */
   planned: string;
+  /** Needed to see and open this module. Leave unset when every role gets it. */
+  permission?: Permission;
   /** Leave unset when every business type gets this module. */
   businessTypes?: BusinessType[];
   /** How the module behaves for a specific business type. */
@@ -63,5 +65,6 @@ export interface QuickAction {
   label: string;
   module: ModuleId;
   icon: Icon;
+  permission: Permission;
   businessTypes?: BusinessType[];
 }

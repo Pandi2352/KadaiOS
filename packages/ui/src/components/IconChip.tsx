@@ -7,7 +7,7 @@ interface IconChipProps {
   inverted?: boolean;
 }
 
-/** A framed icon for rows in popups, so icons read clearly against the shaded surface. */
+/** A framed icon for rows in popups, so a list of icons lines up neatly. */
 export function IconChip({ icon: Icon, inverted = false }: IconChipProps) {
   return (
     <span

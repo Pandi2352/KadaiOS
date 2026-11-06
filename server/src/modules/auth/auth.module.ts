@@ -19,6 +19,7 @@ import { AuthCookieService } from './auth-cookie.service.js';
 import { AuthService } from './auth.service.js';
 import { CustomerAuthController } from './customer-auth.controller.js';
 import { AccessTokenGuard } from './guards/access-token.guard.js';
+import { PermissionsGuard } from './guards/permissions.guard.js';
 import { RolesGuard } from './guards/roles.guard.js';
 import { RefreshToken, RefreshTokenSchema } from './refresh-token.schema.js';
 import { RefreshTokenService } from './refresh-token.service.js';
@@ -61,6 +62,7 @@ const ONE_MINUTE_MS = 60 * 1000;
     // Global, and in this order: first work out who is calling, then check what they may do.
     { provide: APP_GUARD, useClass: AccessTokenGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
+    { provide: APP_GUARD, useClass: PermissionsGuard },
   ],
   exports: [AccessTokenService, AdminInvitesService],
 })

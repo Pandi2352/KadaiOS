@@ -24,7 +24,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "npm run test --workspaces --if-present",
-    "db:init-replica": "node scripts/init-replica-set.mjs"
+    "db:init-replica": "node scripts/init-replica-set.mjs",
+    "db:seed-test-admins": "node scripts/seed-test-admins.mjs"
   },
   "devDependencies": {
     "@kadai/eslint-config": "*",

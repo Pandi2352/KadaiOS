@@ -29,12 +29,11 @@
 }
 
 /*
-  The shaded surface for every popup: menus, dropdowns, dialogs, flyouts and toasts.
-  It separates them from the page with colour, because the project doesn't use shadows.
+  The plain white surface for every popup: menus, dropdowns, dialogs, flyouts and toasts.
+  The border separates them from the page, because the project doesn't use shadows.
 */
 @utility popup-surface {
-  background-color: var(--color-popup-end);
-  background-image: linear-gradient(180deg, var(--color-popup-start), var(--color-popup-end));
+  background-color: var(--color-surface);
   border-color: var(--color-popup-line);
 }
 
@@ -73,8 +72,6 @@
   --color-canvas: #f4f6f9;
   --color-surface: #ffffff;
   --color-hover: #dde6f0;
-  --color-popup-start: #e6eef7;
-  --color-popup-end: #f8fafc;
   --color-popup-line: #c5d2e0;
   --color-line: #d9e0e8;
   --color-field: #7d8894;
@@ -87,10 +84,20 @@
   --color-success: #17724c;
   --color-success-soft: #e2f3ea;
   --color-warning: #8a5a00;
-  --color-warning-soft: #fbf1dc;
   --color-danger: #a8261c;
   --color-danger-strong: #8a1e16;
   --color-danger-soft: #fbeae8;
+  /* One colour per staff role, on chips and avatars, so roles can be told apart at a glance. */
+  --color-role-super: #5b2fa8;
+  --color-role-super-soft: #efe9fb;
+  --color-role-admin: rgb(30, 81, 133);
+  --color-role-admin-soft: #e4edf6;
+  --color-role-manager: #0f6570;
+  --color-role-manager-soft: #dcf2f4;
+  --color-role-staff: #2c6b22;
+  --color-role-staff-soft: #e5f4e3;
+  --color-role-viewer: #4a5563;
+  --color-role-viewer-soft: #eceef1;
   --color-scrim: rgb(27 38 51 / 0.45);
   --color-scrollbar: #b4bec9;
   --color-scrollbar-hover: #7d8894;

@@ -9,7 +9,7 @@ interface ChangeRoleModalProps {
   /** The person whose role is changing. The modal is open while this is set. */
   user: UserProfile | null;
   onClose: () => void;
-  onRoleChanged: () => void;
+  onRoleChanged: (updated: UserProfile) => void;
 }
 
 export function ChangeRoleModal({ user, onClose, onRoleChanged }: ChangeRoleModalProps) {
@@ -30,9 +30,9 @@ export function ChangeRoleModal({ user, onClose, onRoleChanged }: ChangeRoleModa
 
     setIsSaving(true);
     try {
-      await invitesApi.updateStaffRole(user.id, role);
+      const updated = await invitesApi.updateStaffRole(user.id, role);
       showToast(`${user.name} is now ${STAFF_ROLE_DEFINITIONS[role].name}`, { title: 'Role changed' });
-      onRoleChanged();
+      onRoleChanged(updated);
       handleClose();
     } catch (error) {
       showToast(getErrorMessage(error), { tone: 'error' });

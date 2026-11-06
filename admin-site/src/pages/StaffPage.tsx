@@ -1,96 +1,105 @@
-import type { AdminInvite } from '@kadai/shared';
-import { Button, QueryState, useApiQuery, useToast } from '@kadai/ui';
+import { Button, useApiQuery, useToast } from '@kadai/ui';
 import { EnvelopeSimpleIcon, ShieldCheckIcon, UserPlusIcon, UsersThreeIcon } from '@phosphor-icons/react';
+import type { AdminInvite } from '@kadai/shared';
 import { useState } from 'react';
-import { EmptyState } from '@/components/ui/EmptyState';
+import { FILL_PAGE } from '@/components/ui/fillStyles';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { type TabItem, Tabs } from '@/components/ui/Tabs';
-import { AdminInvitesTable } from '@/features/staff/AdminInvitesTable';
 import { InviteAdminModal } from '@/features/staff/InviteAdminModal';
+import { NO_INVITE_FILTERS } from '@/features/staff/inviteFilters';
+import { InvitesTab } from '@/features/staff/InvitesTab';
 import { invitesApi } from '@/features/staff/invitesApi';
+import { InvitesToolbar } from '@/features/staff/InvitesToolbar';
 import { RolesPermissionsTab } from '@/features/staff/RolesPermissionsTab';
+import { NO_FILTERS } from '@/features/staff/staffFilters';
 import { UsersTab } from '@/features/staff/UsersTab';
+import { UsersToolbar } from '@/features/staff/UsersToolbar';
+import { useStaffPermissions } from '@/features/staff/useStaffPermissions';
+import { useListControls } from '@/hooks/useListControls';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 type StaffTab = 'users' | 'invites' | 'roles';
+
+/** Only the totals are needed for the tab labels, so one row is enough. */
+const COUNT_ONLY = { page: 1, limit: 1 };
 
 export function StaffPage() {
   usePageTitle('Staff');
 
   const { showToast } = useToast();
+  const { canInvite } = useStaffPermissions();
   const [activeTab, setActiveTab] = useState<StaffTab>('users');
   const [isInviteOpen, setInviteOpen] = useState(false);
+  const users = useListControls(NO_FILTERS);
+  const invites = useListControls(NO_INVITE_FILTERS);
+  // Changing this reloads the Invitations list from its first page, so a new invitation is in view.
+  const [invitesVersion, setInvitesVersion] = useState(0);
 
-  const adminsQuery = useApiQuery((signal) => invitesApi.listAdmins(signal), 'staff-admins');
-  const invitesQuery = useApiQuery((signal) => invitesApi.listInvites(signal), 'staff-invites');
+  const adminCount = useApiQuery((signal) => invitesApi.listAdmins(COUNT_ONLY, signal), 'staff-count');
+  const pendingCount = useApiQuery(
+    (signal) => invitesApi.listInvites({ ...COUNT_ONLY, status: 'pending' }, signal),
+    'staff-pending-count',
+  );
 
   const openInvite = () => setInviteOpen(true);
 
   const handleInvited = (invite: AdminInvite) => {
     showToast(`Invitation sent to ${invite.email}`, { title: 'Invitation sent' });
-    invitesQuery.refetch();
+    pendingCount.refetch();
+    invites.setFilters(NO_INVITE_FILTERS);
+    setInvitesVersion((version) => version + 1);
     setActiveTab('invites');
   };
 
   const tabs: TabItem<StaffTab>[] = [
-    { id: 'users', label: 'Users', icon: UsersThreeIcon, count: adminsQuery.data?.length },
-    {
-      id: 'invites',
-      label: 'Invitations',
-      icon: EnvelopeSimpleIcon,
-      count: invitesQuery.data?.filter((invite) => invite.status === 'pending').length,
-    },
+    { id: 'users', label: 'Users', icon: UsersThreeIcon, count: adminCount.data?.total },
+    { id: 'invites', label: 'Invitations', icon: EnvelopeSimpleIcon, count: pendingCount.data?.total },
     { id: 'roles', label: 'Roles & permissions', icon: ShieldCheckIcon },
   ];
 
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title="Staff"
-        description="See who has access, invite your team, and control what each role can do."
-        actions={
-          <Button variant="primary" icon={UserPlusIcon} onClick={openInvite}>
-            Invite user
-          </Button>
-        }
-      />
+    <>
+      <div className={`space-y-4 ${FILL_PAGE}`}>
+        <PageHeader
+          title="Staff"
+          description="See who has access, invite your team, and control what each role can do."
+          actions={
+            canInvite && (
+              <Button variant="primary" icon={UserPlusIcon} onClick={openInvite}>
+                Invite user
+              </Button>
+            )
+          }
+        />
 
-      <Tabs label="Staff sections" tabs={tabs} active={activeTab} onChange={setActiveTab}>
-        {activeTab === 'users' && <UsersTab query={adminsQuery} onInvite={openInvite} />}
+        <Tabs
+          label="Staff sections"
+          tabs={tabs}
+          active={activeTab}
+          onChange={setActiveTab}
+          actions={
+            <>
+              {activeTab === 'users' && <UsersToolbar filters={users.filters} onChange={users.setFilters} />}
+              {activeTab === 'invites' && <InvitesToolbar filters={invites.filters} onChange={invites.setFilters} />}
+            </>
+          }
+        >
+          {activeTab === 'users' && <UsersTab controls={users} onInvite={openInvite} onChanged={adminCount.refetch} />}
+          {activeTab === 'invites' && (
+            <InvitesTab
+              key={invitesVersion}
+              controls={invites}
+              onInvite={openInvite}
+              onChanged={pendingCount.refetch}
+            />
+          )}
+          {activeTab === 'roles' && <RolesPermissionsTab />}
+        </Tabs>
+      </div>
 
-        {activeTab === 'invites' && (
-          <QueryState
-            query={invitesQuery}
-            loadingLabel="Loading invitations"
-            errorTitle="Couldn't load invitations"
-            isEmpty={(invites) => invites.length === 0}
-            empty={
-              <EmptyState
-                icon={EnvelopeSimpleIcon}
-                title="No invitations yet"
-                description="Invite someone and you can track their invitation here until they accept it."
-                action={
-                  <Button variant="primary" icon={UserPlusIcon} onClick={openInvite}>
-                    Invite user
-                  </Button>
-                }
-              />
-            }
-          >
-            {(invites) => (
-              <AdminInvitesTable
-                invites={invites}
-                isRefreshing={invitesQuery.isLoading}
-                onChanged={invitesQuery.refetch}
-              />
-            )}
-          </QueryState>
-        )}
-
-        {activeTab === 'roles' && <RolesPermissionsTab />}
-      </Tabs>
-
-      <InviteAdminModal isOpen={isInviteOpen} onClose={() => setInviteOpen(false)} onInvited={handleInvited} />
-    </div>
+      {canInvite && (
+        <InviteAdminModal isOpen={isInviteOpen} onClose={() => setInviteOpen(false)} onInvited={handleInvited} />
+      )}
+    </>
   );
 }

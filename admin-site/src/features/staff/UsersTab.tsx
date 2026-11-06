@@ -1,38 +1,56 @@
 import type { UserProfile } from '@kadai/shared';
-import { type ApiQuery, Button, getErrorMessage, QueryState, useToast } from '@kadai/ui';
+import { Button, getErrorMessage, QueryState, useApiQuery, useToast } from '@kadai/ui';
 import { UserPlusIcon, UsersThreeIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { FILL_REMAINING } from '@/components/ui/fillStyles';
+import { Pagination } from '@/components/ui/Pagination';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import type { ListControls } from '@/hooks/useListControls';
+import { useKeepPageInRange } from '@/hooks/usePagination';
 import { AdminsTable } from './AdminsTable';
 import { ChangeRoleModal } from './ChangeRoleModal';
-import { type AdminFilters, filterAdmins, NO_FILTERS } from './filterAdmins';
 import { invitesApi } from './invitesApi';
+import { hasFilters, NO_FILTERS, type StaffFilters, toStaffQuery } from './staffFilters';
+import { useStaffPermissions } from './useStaffPermissions';
 import { UserDetailDrawer } from './UserDetailDrawer';
-import { UsersToolbar } from './UsersToolbar';
 
 interface UsersTabProps {
-  query: ApiQuery<UserProfile[]>;
+  /** Held by the page, because the filters sit on the same line as the tabs. */
+  controls: ListControls<StaffFilters>;
   onInvite: () => void;
+  /** Runs after anything that changes how many users there are. */
+  onChanged: () => void;
 }
 
-export function UsersTab({ query, onInvite }: UsersTabProps) {
+export function UsersTab({ controls, onInvite, onChanged }: UsersTabProps) {
   const { showToast } = useToast();
-  const [filters, setFilters] = useState<AdminFilters>(NO_FILTERS);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const { canInvite, actionsFor } = useStaffPermissions();
+  const { filters, setFilters, page, limit, setPage, setLimit } = controls;
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [changingRoleUser, setChangingRoleUser] = useState<UserProfile | null>(null);
   const [deletingUser, setDeletingUser] = useState<UserProfile | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Found by id each time, so the drawer shows fresh details after a change and closes after a delete.
-  const selectedUser = query.data?.find((user) => user.id === selectedUserId) ?? null;
+  const appliedFilters = useDebouncedValue(filters);
+  const staffQuery = toStaffQuery(appliedFilters);
+  const query = useApiQuery(
+    (signal) => invitesApi.listAdmins({ ...staffQuery, page, limit }, signal),
+    `staff-${JSON.stringify(staffQuery)}-${page}-${limit}`,
+  );
+  useKeepPageInRange(query.data, setPage);
+
+  const handleUpdated = (updated: UserProfile) => {
+    setSelectedUser((current) => (current?.id === updated.id ? updated : current));
+    query.refetch();
+  };
 
   const handleToggleStatus = async (user: UserProfile) => {
     const isActive = user.isActive === false;
     try {
-      await invitesApi.updateStaffStatus(user.id, isActive);
+      handleUpdated(await invitesApi.updateStaffStatus(user.id, isActive));
       showToast(`${user.name} is now ${isActive ? 'active' : 'deactivated'}`);
-      query.refetch();
     } catch (error) {
       showToast(getErrorMessage(error), { tone: 'error' });
     }
@@ -45,8 +63,10 @@ export function UsersTab({ query, onInvite }: UsersTabProps) {
     try {
       await invitesApi.deleteStaffUser(deletingUser.id);
       showToast(`${deletingUser.name}'s account was deleted`);
+      setSelectedUser((current) => (current?.id === deletingUser.id ? null : current));
       setDeletingUser(null);
       query.refetch();
+      onChanged();
     } catch (error) {
       showToast(getErrorMessage(error), { tone: 'error' });
     } finally {
@@ -60,33 +80,44 @@ export function UsersTab({ query, onInvite }: UsersTabProps) {
         query={query}
         loadingLabel="Loading users"
         errorTitle="Couldn't load users"
-        isEmpty={(admins) => admins.length === 0}
+        isEmpty={(data) => data.total === 0 && !hasFilters(appliedFilters)}
         empty={
           <EmptyState
             icon={UsersThreeIcon}
             title="No users yet"
             description="Invite your team to give them access to KadaiOS."
             action={
-              <Button variant="primary" icon={UserPlusIcon} onClick={onInvite}>
-                Invite user
-              </Button>
+              canInvite && (
+                <Button variant="primary" icon={UserPlusIcon} onClick={onInvite}>
+                  Invite user
+                </Button>
+              )
             }
           />
         }
       >
-        {(admins) => (
-          <div className="space-y-3">
-            <UsersToolbar filters={filters} onChange={setFilters} />
+        {(data) => (
+          <div className={FILL_REMAINING}>
             <AdminsTable
-              admins={filterAdmins(admins, filters)}
+              admins={data.items}
               isRefreshing={query.isLoading}
+              actionsFor={actionsFor}
               emptyState={
                 <div className="space-y-3">
                   <p>No users match these filters.</p>
                   <Button onClick={() => setFilters(NO_FILTERS)}>Clear filters</Button>
                 </div>
               }
-              onSelectUser={(user) => setSelectedUserId(user.id)}
+              footer={
+                <Pagination
+                  page={data.page}
+                  limit={data.limit}
+                  total={data.total}
+                  onPageChange={setPage}
+                  onLimitChange={setLimit}
+                />
+              }
+              onSelectUser={setSelectedUser}
               onChangeRole={setChangingRoleUser}
               onToggleStatus={handleToggleStatus}
               onDeleteUser={setDeletingUser}
@@ -97,7 +128,8 @@ export function UsersTab({ query, onInvite }: UsersTabProps) {
 
       <UserDetailDrawer
         user={selectedUser}
-        onClose={() => setSelectedUserId(null)}
+        allowed={selectedUser ? actionsFor(selectedUser) : undefined}
+        onClose={() => setSelectedUser(null)}
         onChangeRole={setChangingRoleUser}
         onToggleStatus={handleToggleStatus}
       />
@@ -105,7 +137,7 @@ export function UsersTab({ query, onInvite }: UsersTabProps) {
       <ChangeRoleModal
         user={changingRoleUser}
         onClose={() => setChangingRoleUser(null)}
-        onRoleChanged={query.refetch}
+        onRoleChanged={handleUpdated}
       />
 
       <ConfirmDialog

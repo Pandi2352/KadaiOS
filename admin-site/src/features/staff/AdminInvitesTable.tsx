@@ -1,13 +1,15 @@
 import { type AdminInvite, type AdminInviteStatus, formatShopDate } from '@kadai/shared';
 import { getErrorMessage, IconButton, useToast } from '@kadai/ui';
 import { ArrowClockwiseIcon, EnvelopeSimpleIcon, TrashIcon } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EntityCell } from '@/components/ui/DataTable/cells';
+import { RowActions } from '@/components/ui/RowActions';
 import { StatusBadge, type StatusTone } from '@/components/ui/StatusBadge';
 import { Table, type TableColumn } from '@/components/ui/Table';
 import { invitesApi } from './invitesApi';
 import { RoleBadge } from './RoleBadge';
+import { useStaffPermissions } from './useStaffPermissions';
 
 const STATUS: Record<AdminInviteStatus, { label: string; tone: StatusTone }> = {
   pending: { label: 'Pending', tone: 'warning' },
@@ -23,10 +25,13 @@ interface AdminInvitesTableProps {
   invites: AdminInvite[];
   isRefreshing: boolean;
   onChanged: () => void;
+  emptyState: ReactNode;
+  footer: ReactNode;
 }
 
-export function AdminInvitesTable({ invites, isRefreshing, onChanged }: AdminInvitesTableProps) {
+export function AdminInvitesTable({ invites, isRefreshing, onChanged, emptyState, footer }: AdminInvitesTableProps) {
   const { showToast } = useToast();
+  const { canInvite, assignableRoles } = useStaffPermissions();
   const [revoking, setRevoking] = useState<AdminInvite | null>(null);
   const [resendingId, setResendingId] = useState<string | null>(null);
   const [isRevoking, setIsRevoking] = useState(false);
@@ -64,8 +69,9 @@ export function AdminInvitesTable({ invites, isRefreshing, onChanged }: AdminInv
     {
       key: 'email',
       header: 'Email',
-      // Takes the spare width and lets a long email shorten, instead of pushing the table off a phone screen.
-      className: 'w-full max-w-0',
+      // max-w-0 lets a long email shorten instead of widening the table. Small screens give this column
+      // all the spare width. Larger ones cap it, so the other columns spread out instead of bunching up.
+      className: 'w-full max-w-0 lg:w-[36%]',
       render: (invite) => (
         <>
           <EntityCell
@@ -95,7 +101,7 @@ export function AdminInvitesTable({ invites, isRefreshing, onChanged }: AdminInv
     {
       key: 'createdAt',
       header: 'Sent',
-      className: 'hidden whitespace-nowrap lg:table-cell',
+      className: 'hidden whitespace-nowrap xl:table-cell',
       render: (invite) => <span className="text-muted">{formatShopDate(new Date(invite.createdAt))}</span>,
     },
     {
@@ -108,22 +114,26 @@ export function AdminInvitesTable({ invites, isRefreshing, onChanged }: AdminInv
       key: 'actions',
       header: <span className="sr-only">Actions</span>,
       align: 'right',
+      className: 'w-28',
       render: (invite) =>
+        canInvite &&
         invite.status !== 'accepted' && (
-          <div className="flex justify-end gap-1">
-            <IconButton
-              icon={ArrowClockwiseIcon}
-              label={`Resend invitation to ${invite.email}`}
-              disabled={resendingId === invite.id}
-              aria-busy={resendingId === invite.id}
-              onClick={() => handleResend(invite)}
-            />
+          <RowActions>
+            {(!invite.staffRole || assignableRoles.includes(invite.staffRole)) && (
+              <IconButton
+                icon={ArrowClockwiseIcon}
+                label={`Resend invitation to ${invite.email}`}
+                disabled={resendingId === invite.id}
+                aria-busy={resendingId === invite.id}
+                onClick={() => handleResend(invite)}
+              />
+            )}
             <IconButton
               icon={TrashIcon}
               label={`Revoke invitation for ${invite.email}`}
               onClick={() => setRevoking(invite)}
             />
-          </div>
+          </RowActions>
         ),
     },
   ];
@@ -136,6 +146,9 @@ export function AdminInvitesTable({ invites, isRefreshing, onChanged }: AdminInv
         rows={invites}
         rowKey={(invite) => invite.id}
         isRefreshing={isRefreshing}
+        emptyState={emptyState}
+        footer={footer}
+        fill
       />
       <ConfirmDialog
         isOpen={Boolean(revoking)}

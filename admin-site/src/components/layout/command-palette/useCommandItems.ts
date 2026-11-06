@@ -2,6 +2,7 @@ import type { IconComponent } from '@kadai/ui';
 import { useMemo } from 'react';
 import { MODULES } from '@/config/modules';
 import { useWorkspace } from '@/context/WorkspaceContext';
+import { useCan } from '@/hooks/useCan';
 import { getVisibleModules, getVisibleQuickActions } from '@/lib/navigation';
 
 export interface CommandItem {
@@ -15,17 +16,18 @@ export interface CommandItem {
 /** Everything the palette can jump to for this business type, filtered by the query. */
 export function useCommandItems(query: string): CommandItem[] {
   const { businessType } = useWorkspace();
+  const can = useCan();
 
   return useMemo(() => {
     const items: CommandItem[] = [
-      ...getVisibleModules(businessType).map((module) => ({
+      ...getVisibleModules(businessType, can).map((module) => ({
         id: `module-${module.id}`,
         label: module.label,
         hint: 'Open' as const,
         path: module.path,
         icon: module.icon,
       })),
-      ...getVisibleQuickActions(businessType).map((action) => ({
+      ...getVisibleQuickActions(businessType, can).map((action) => ({
         id: `action-${action.id}`,
         label: action.label,
         hint: 'Create' as const,
@@ -35,5 +37,5 @@ export function useCommandItems(query: string): CommandItem[] {
     ];
     const needle = query.trim().toLowerCase();
     return needle ? items.filter((item) => item.label.toLowerCase().includes(needle)) : items;
-  }, [businessType, query]);
+  }, [businessType, can, query]);
 }

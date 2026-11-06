@@ -1,4 +1,4 @@
-import type { AdminInvite, AuthSession, AuthUser, UserProfile } from '@kadai/shared';
+import type { AdminInvite, AuthSession, AuthUser, Paginated, UserProfile } from '@kadai/shared';
 import {
   Body,
   Controller,
@@ -17,15 +17,14 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { UuidParam } from '../../common/decorators/uuid-param.decorator.js';
 import { ApiEndpoint } from '../../common/swagger/api-endpoint.decorator.js';
-import { toUserProfile } from '../users/to-auth-user.js';
-import { UsersRepository } from '../users/users.repository.js';
 import { ProfileResponseDto } from '../users/dto/profile-response.dto.js';
 import { AdminInvitesService } from './admin-invites.service.js';
 import { AuthCookieService } from './auth-cookie.service.js';
 import { CurrentUser } from './decorators/current-user.decorator.js';
 import { Public } from './decorators/public.decorator.js';
-import { Roles } from './decorators/roles.decorator.js';
+import { RequirePermission } from './decorators/require-permission.decorator.js';
 import { AcceptAdminInviteDto } from './dto/accept-admin-invite.dto.js';
+import { AdminInviteListQueryDto } from './dto/admin-invite-list-query.dto.js';
 import {
   AdminInviteResponseDto,
   RevokeAdminInviteResponseDto,
@@ -33,6 +32,7 @@ import {
 } from './dto/admin-invite-response.dto.js';
 import { AuthSessionDto } from './dto/auth-response.dto.js';
 import { CreateAdminInviteDto } from './dto/create-admin-invite.dto.js';
+import { StaffListQueryDto } from './dto/staff-list-query.dto.js';
 import { UpdateStaffRoleDto } from './dto/update-staff-role.dto.js';
 import { UpdateStaffStatusDto } from './dto/update-staff-status.dto.js';
 
@@ -41,12 +41,11 @@ import { UpdateStaffStatusDto } from './dto/update-staff-status.dto.js';
 export class AdminInvitesController {
   constructor(
     private readonly invites: AdminInvitesService,
-    private readonly users: UsersRepository,
     private readonly cookies: AuthCookieService,
   ) {}
 
   @Post()
-  @Roles('admin')
+  @RequirePermission('users:invite')
   @UseGuards(ThrottlerGuard)
   @ApiEndpoint({
     summary: 'Invite a new administrator via email',
@@ -59,30 +58,31 @@ export class AdminInvitesController {
   }
 
   @Get()
-  @Roles('admin')
+  @RequirePermission('users:view')
   @ApiEndpoint({
-    summary: 'List all administrator invites',
+    summary: 'List administrator invites, newest first',
     response: AdminInviteResponseDto,
-    isArray: true,
+    paginated: true,
+    validates: true,
   })
-  async list(): Promise<AdminInvite[]> {
-    return this.invites.listInvites();
+  async list(@Query() query: AdminInviteListQueryDto): Promise<Paginated<AdminInvite>> {
+    return this.invites.listInvites(query);
   }
 
   @Get('admins')
-  @Roles('admin')
+  @RequirePermission('users:view')
   @ApiEndpoint({
-    summary: 'List all current administrator accounts',
+    summary: 'List administrator accounts, newest first',
     response: ProfileResponseDto,
-    isArray: true,
+    paginated: true,
+    validates: true,
   })
-  async listAdmins(): Promise<UserProfile[]> {
-    const admins = await this.users.findAdmins();
-    return admins.map(toUserProfile);
+  async listAdmins(@Query() query: StaffListQueryDto): Promise<Paginated<UserProfile>> {
+    return this.invites.listAdmins(query);
   }
 
   @Patch('users/:id/role')
-  @Roles('admin')
+  @RequirePermission('users:manage_roles')
   @ApiEndpoint({
     summary: 'Update an administrator account staff role',
     response: ProfileResponseDto,
@@ -98,7 +98,7 @@ export class AdminInvitesController {
   }
 
   @Patch('users/:id/status')
-  @Roles('admin')
+  @RequirePermission('users:delete')
   @ApiEndpoint({
     summary: 'Toggle active or deactivated status for an administrator',
     response: ProfileResponseDto,
@@ -114,7 +114,7 @@ export class AdminInvitesController {
   }
 
   @Delete('users/:id')
-  @Roles('admin')
+  @RequirePermission('users:delete')
   @ApiEndpoint({
     summary: 'Delete an administrator account',
     response: RevokeAdminInviteResponseDto,
@@ -126,7 +126,7 @@ export class AdminInvitesController {
 
   @Post(':id/resend')
   @HttpCode(HttpStatus.OK)
-  @Roles('admin')
+  @RequirePermission('users:invite')
   @UseGuards(ThrottlerGuard)
   @ApiEndpoint({
     summary: 'Resend an administrator invite email',
@@ -138,7 +138,7 @@ export class AdminInvitesController {
   }
 
   @Delete(':id')
-  @Roles('admin')
+  @RequirePermission('users:invite')
   @ApiEndpoint({
     summary: 'Revoke a pending administrator invite',
     response: RevokeAdminInviteResponseDto,

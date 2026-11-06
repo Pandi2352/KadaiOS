@@ -1,8 +1,11 @@
 import type {
   AcceptAdminInviteInput,
   AdminInvite,
+  AdminInviteListQuery,
   AuthSession,
   CreateAdminInviteInput,
+  Paginated,
+  StaffListQuery,
   StaffRole,
   UserProfile,
   ValidateAdminInviteResponse,
@@ -10,9 +13,11 @@ import type {
 import { api } from '@/lib/api/client';
 
 export const invitesApi = {
-  listInvites: (signal?: AbortSignal) => api.get<AdminInvite[]>('/auth/admin/invites', { signal }),
+  listInvites: (query: AdminInviteListQuery, signal?: AbortSignal) =>
+    api.get<Paginated<AdminInvite>>('/auth/admin/invites', { query, signal }),
 
-  listAdmins: (signal?: AbortSignal) => api.get<UserProfile[]>('/auth/admin/invites/admins', { signal }),
+  listAdmins: (query: StaffListQuery, signal?: AbortSignal) =>
+    api.get<Paginated<UserProfile>>('/auth/admin/invites/admins', { query, signal }),
 
   createInvite: (input: CreateAdminInviteInput) => api.post<AdminInvite>('/auth/admin/invites', input),
 

@@ -22,6 +22,10 @@ export class DefaultUsersService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<void> {
     await this.users.ensureIndexes();
+
+    const promoted = await this.users.promoteAdminsWithoutRole();
+    if (promoted > 0) this.logger.log(`Gave ${promoted} admin(s) with no staff role the Super Admin role`);
+
     // Only when there are no admins. Otherwise changing the admin's email would bring back
     // an account with the default password on the next restart.
     if (!(await this.users.hasAnyWithRole('admin'))) {
@@ -34,13 +38,7 @@ export class DefaultUsersService implements OnApplicationBootstrap {
     if (!user) return;
 
     const email = user.email.toLowerCase();
-    const existing = await this.users.findWithPassword(email, role);
-    if (existing) {
-      if (role === 'admin' && !existing.staffRole) {
-        await this.users.updateStaffRole(existing._id, 'super_admin');
-      }
-      return;
-    }
+    if (await this.users.exists(email, role)) return;
 
     try {
       const passwordHash = await this.passwords.hash(user.password);

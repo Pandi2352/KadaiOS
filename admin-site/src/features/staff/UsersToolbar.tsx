@@ -1,7 +1,7 @@
-import { FieldAction, Input, Select, type SelectOption } from '@kadai/ui';
-import { MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
-import type { AdminFilters, RoleFilter, StatusFilter } from './filterAdmins';
+import { Select, type SelectOption } from '@kadai/ui';
+import { SearchBox } from '@/components/ui/SearchBox';
 import { ROLE_OPTIONS } from './roleOptions';
+import type { RoleFilter, StaffFilters, StatusFilter } from './staffFilters';
 
 const ROLE_FILTERS: SelectOption<RoleFilter>[] = [{ value: 'all', label: 'All roles' }, ...ROLE_OPTIONS];
 
@@ -12,29 +12,25 @@ const STATUS_FILTERS: SelectOption<StatusFilter>[] = [
 ];
 
 interface UsersToolbarProps {
-  filters: AdminFilters;
-  onChange: (filters: AdminFilters) => void;
+  filters: StaffFilters;
+  onChange: (filters: StaffFilters) => void;
 }
 
 export function UsersToolbar({ filters, onChange }: UsersToolbarProps) {
-  const update = (changes: Partial<AdminFilters>) => onChange({ ...filters, ...changes });
+  const update = (changes: Partial<StaffFilters>) => onChange({ ...filters, ...changes });
 
   return (
     <div className="flex flex-col gap-2 sm:flex-row">
-      <div className="min-w-0 flex-1 sm:max-w-sm">
-        <Input
-          aria-label="Search users"
+      <div className="min-w-0 flex-1">
+        <SearchBox
+          label="Search users"
           placeholder="Search by name, email or role"
-          startIcon={MagnifyingGlassIcon}
           value={filters.search}
-          onChange={(event) => update({ search: event.target.value })}
-          endSlot={
-            filters.search && <FieldAction icon={XIcon} label="Clear search" onClick={() => update({ search: '' })} />
-          }
+          onChange={(search) => update({ search })}
         />
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:flex">
-        <div className="sm:w-48">
+      <div className="grid shrink-0 grid-cols-2 gap-2 sm:flex">
+        <div className="sm:w-44">
           <Select
             aria-label="Filter by role"
             options={ROLE_FILTERS}
@@ -42,7 +38,7 @@ export function UsersToolbar({ filters, onChange }: UsersToolbarProps) {
             onChange={(role) => update({ role: role || 'all' })}
           />
         </div>
-        <div className="sm:w-40">
+        <div className="sm:w-36">
           <Select
             aria-label="Filter by status"
             options={STATUS_FILTERS}

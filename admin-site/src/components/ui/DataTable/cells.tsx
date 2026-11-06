@@ -52,7 +52,7 @@ export function EntityCell({ title, subtitle, avatar, icon, verified = false, ba
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
-          <span className="font-semibold text-ink truncate text-sm">{title}</span>
+          <span className="font-medium text-ink truncate text-sm">{title}</span>
           {verified && (
             <CheckCircleIcon size={15} weight="fill" className="text-brand shrink-0" aria-label="Verified" />
           )}

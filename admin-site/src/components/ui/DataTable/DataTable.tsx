@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { cn } from '@kadai/ui';
+import { FILL_REMAINING } from '../fillStyles';
 import { Table, type TableColumn, type SortDirection } from '../Table';
 import { Pagination, type PaginationProps } from '../Pagination';
 import { DataTableToolbar, type DataTableToolbarProps } from './DataTableToolbar';
@@ -235,8 +236,18 @@ export function DataTable<T>({
     document.body.removeChild(link);
   };
 
+  const paginationBar = showPagination && totalItems > 0 && (
+    <Pagination
+      page={page}
+      limit={limit}
+      total={totalItems}
+      onPageChange={pagination?.onPageChange ?? setCurrentPage}
+      onLimitChange={pagination?.onLimitChange ?? setCurrentLimit}
+    />
+  );
+
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('space-y-4', FILL_REMAINING, className)}>
       {/* Title Header matching reference image */}
       {(title || subtitle || headerActions) && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
@@ -303,25 +314,19 @@ export function DataTable<T>({
           onSelectRow={handleSelectRow}
           onSelectAll={handleSelectAll}
           density={density}
+          footer={paginationBar}
+          fill
         />
       ) : (
         /* Grid / Cards View matching the grid icon */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {displayData.map((item, idx) => (
-            <div key={rowKey(item)}>{renderGridCard(item, (page - 1) * limit + idx)}</div>
-          ))}
-        </div>
-      )}
-
-      {/* Advanced Pagination */}
-      {showPagination && totalItems > 0 && (
-        <Pagination
-          page={page}
-          limit={limit}
-          total={totalItems}
-          onPageChange={pagination?.onPageChange ?? setCurrentPage}
-          onLimitChange={pagination?.onLimitChange ?? setCurrentLimit}
-        />
+        <>
+          <div className="grid grid-cols-1 content-start gap-4 sm:grid-cols-2 lg:min-h-0 lg:flex-1 lg:grid-cols-3 lg:overflow-y-auto">
+            {displayData.map((item, idx) => (
+              <div key={rowKey(item)}>{renderGridCard(item, (page - 1) * limit + idx)}</div>
+            ))}
+          </div>
+          {paginationBar}
+        </>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import { type ApiFailure, type ApiSuccess, type AuthSession, generateUuid } from '@kadai/shared';
+import { type ApiFailure, type ApiSuccess, type AuthSession, generateUuid, type Paginated } from '@kadai/shared';
 import { ConfigModule } from '@nestjs/config';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import type { Connection } from 'mongoose';
@@ -100,15 +100,15 @@ describe('Admin Invites (E2E)', () => {
       headers: { authorization: `Bearer ${adminToken}` },
     });
     expect(listRes.status).toBe(200);
-    const listBody = (await listRes.json()) as ApiSuccess<unknown[]>;
-    expect(listBody.data.length).toBeGreaterThan(0);
+    const listBody = (await listRes.json()) as ApiSuccess<Paginated<unknown>>;
+    expect(listBody.data.items.length).toBeGreaterThan(0);
 
     const adminsRes = await fetch(testApp.url('/auth/admin/invites/admins'), {
       headers: { authorization: `Bearer ${adminToken}` },
     });
     expect(adminsRes.status).toBe(200);
-    const adminsBody = (await adminsRes.json()) as ApiSuccess<Array<{ email: string; role: string }>>;
-    expect(adminsBody.data.some((a) => a.email === ADMIN.email)).toBe(true);
+    const adminsBody = (await adminsRes.json()) as ApiSuccess<Paginated<{ email: string; role: string }>>;
+    expect(adminsBody.data.items.some((a) => a.email === ADMIN.email)).toBe(true);
   });
 
   it('validates a valid invite token from URL', async () => {

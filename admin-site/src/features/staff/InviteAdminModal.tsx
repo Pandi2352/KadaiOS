@@ -5,8 +5,9 @@ import { useId, useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { invitesApi } from './invitesApi';
 import { RoleSelectField } from './RoleSelectField';
+import { useStaffPermissions } from './useStaffPermissions';
 
-const DEFAULT_ROLE: StaffRole = 'admin';
+const PREFERRED_ROLE: StaffRole = 'admin';
 const INITIAL_VALUES = { email: '' };
 const RULES = { email: fieldRules.email('Email') };
 
@@ -18,7 +19,9 @@ interface InviteAdminModalProps {
 
 export function InviteAdminModal({ isOpen, onClose, onInvited }: InviteAdminModalProps) {
   const formId = useId();
-  const [staffRole, setStaffRole] = useState<StaffRole>(DEFAULT_ROLE);
+  const { assignableRoles } = useStaffPermissions();
+  const [pickedRole, setPickedRole] = useState<StaffRole | null>(null);
+  const staffRole = pickedRole ?? (assignableRoles.includes(PREFERRED_ROLE) ? PREFERRED_ROLE : assignableRoles[0]);
 
   const { field, handleSubmit, formError, isSubmitting, reset } = useForm({
     initialValues: INITIAL_VALUES,
@@ -32,7 +35,7 @@ export function InviteAdminModal({ isOpen, onClose, onInvited }: InviteAdminModa
 
   function handleClose() {
     reset();
-    setStaffRole(DEFAULT_ROLE);
+    setPickedRole(null);
     onClose();
   }
 
@@ -56,7 +59,9 @@ export function InviteAdminModal({ isOpen, onClose, onInvited }: InviteAdminModa
       <form id={formId} noValidate onSubmit={handleSubmit} className="space-y-4">
         <FormAlert message={formError} />
         <EmailField {...field('email')} label="Email" placeholder="colleague@example.com" data-autofocus />
-        <RoleSelectField label="Role" value={staffRole} onChange={setStaffRole} />
+        {staffRole && (
+          <RoleSelectField label="Role" value={staffRole} onChange={setPickedRole} roles={assignableRoles} />
+        )}
       </form>
     </Modal>
   );

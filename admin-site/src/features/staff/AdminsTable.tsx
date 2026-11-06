@@ -4,6 +4,8 @@ import { Avatar } from '@/components/ui/Avatar';
 import { EntityCell } from '@/components/ui/DataTable/cells';
 import { Table, type TableColumn } from '@/components/ui/Table';
 import { RoleBadge } from './RoleBadge';
+import { ROLE_TONES } from './roleOptions';
+import type { UserActions } from './useStaffPermissions';
 import { UserRowActions } from './UserRowActions';
 import { UserStatusBadge } from './UserStatusBadge';
 
@@ -11,6 +13,8 @@ interface AdminsTableProps {
   admins: UserProfile[];
   isRefreshing: boolean;
   emptyState: ReactNode;
+  footer: ReactNode;
+  actionsFor: (user: UserProfile) => UserActions;
   onSelectUser: (user: UserProfile) => void;
   onChangeRole: (user: UserProfile) => void;
   onToggleStatus: (user: UserProfile) => void;
@@ -21,6 +25,8 @@ export function AdminsTable({
   admins,
   isRefreshing,
   emptyState,
+  footer,
+  actionsFor,
   onSelectUser,
   onChangeRole,
   onToggleStatus,
@@ -31,11 +37,16 @@ export function AdminsTable({
     {
       key: 'name',
       header: 'Name',
-      // Takes the spare width and lets a long email shorten, instead of pushing the table off a phone screen.
-      className: 'w-full max-w-0',
+      // max-w-0 lets a long email shorten instead of widening the table. Small screens give this column
+      // all the spare width. Larger ones cap it, so the other columns spread out instead of bunching up.
+      className: 'w-full max-w-0 lg:w-[36%]',
       render: (user) => (
         <>
-          <EntityCell title={user.name} subtitle={user.email} avatar={<Avatar name={user.name} />} />
+          <EntityCell
+            title={user.name}
+            subtitle={user.email}
+            avatar={<Avatar name={user.name} tone={ROLE_TONES[user.staffRole ?? 'admin']} />}
+          />
           {/* On phones the status moves here, so the name gets the width it needs. */}
           <div className="mt-1.5 pl-12 sm:hidden">
             <UserStatusBadge user={user} />
@@ -77,6 +88,7 @@ export function AdminsTable({
       render: (user) => (
         <UserRowActions
           user={user}
+          allowed={actionsFor(user)}
           onViewDetails={onSelectUser}
           onChangeRole={onChangeRole}
           onToggleStatus={onToggleStatus}
@@ -95,6 +107,8 @@ export function AdminsTable({
       isRefreshing={isRefreshing}
       onRowClick={onSelectUser}
       emptyState={emptyState}
+      footer={footer}
+      fill
     />
   );
 }

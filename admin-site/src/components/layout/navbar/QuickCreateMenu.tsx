@@ -4,10 +4,15 @@ import { Dropdown } from '@/components/ui/Dropdown';
 import { MenuLink } from '@/components/ui/MenuItem';
 import { MODULES } from '@/config/modules';
 import { useWorkspace } from '@/context/WorkspaceContext';
+import { useCan } from '@/hooks/useCan';
 import { getVisibleQuickActions } from '@/lib/navigation';
 
 export function QuickCreateMenu() {
   const { businessType } = useWorkspace();
+  const actions = getVisibleQuickActions(businessType, useCan());
+
+  // A read-only role has nothing to create.
+  if (actions.length === 0) return null;
 
   return (
     <Dropdown
@@ -20,7 +25,7 @@ export function QuickCreateMenu() {
         </>
       }
     >
-      {getVisibleQuickActions(businessType).map((action) => (
+      {actions.map((action) => (
         <MenuLink key={action.id} to={MODULES[action.module].path} icon={action.icon}>
           {action.label}
         </MenuLink>

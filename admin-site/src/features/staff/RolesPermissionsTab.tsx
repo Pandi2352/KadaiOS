@@ -10,7 +10,7 @@ export function RolesPermissionsTab() {
   const role = STAFF_ROLE_DEFINITIONS[selectedRole];
 
   return (
-    <div className="grid items-start gap-4 lg:grid-cols-[15rem_1fr]">
+    <div className="grid items-start gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[15rem_1fr] lg:grid-rows-[minmax(0,1fr)]">
       <div role="group" aria-label="Roles" className="space-y-1">
         {STAFF_ROLES.map((roleKey) => (
           <MenuButton
@@ -25,7 +25,7 @@ export function RolesPermissionsTab() {
         ))}
       </div>
 
-      <section className="rounded-md border border-line bg-surface p-4">
+      <section className="rounded-md bg-surface p-4 lg:h-full lg:overflow-y-auto">
         <h2 className="text-base font-semibold">{role.name}</h2>
         <p className="mt-0.5 text-muted">
           {role.description} {role.permissions.length} of {PERMISSIONS.length} permissions.

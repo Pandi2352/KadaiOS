@@ -6,4 +6,5 @@ export * from './field-limits.js';
 export * from './money.js';
 export * from './quantity.js';
 export * from './shop.js';
+export * from './staff-access.js';
 export * from './uuid.js';

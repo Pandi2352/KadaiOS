@@ -13,6 +13,7 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { RouteErrorPage } from '@/pages/RouteErrorPage';
 import { StaffPage } from '@/pages/StaffPage';
 import type { ModuleId } from '@/types/navigation';
+import { RequireModuleAccess } from './RequireModuleAccess';
 
 /** Modules with a real screen. Every other module shows the shared "not built yet" page. */
 const BUILT_PAGES: Partial<Record<ModuleId, ReactNode>> = {
@@ -39,7 +40,11 @@ export const router = createBrowserRouter([
         children: [
           ...Object.values(MODULES).map((module) => ({
             path: module.path,
-            element: BUILT_PAGES[module.id] ?? <ModulePage module={module} />,
+            element: (
+              <RequireModuleAccess module={module}>
+                {BUILT_PAGES[module.id] ?? <ModulePage module={module} />}
+              </RequireModuleAccess>
+            ),
           })),
           { path: '*', element: <NotFoundPage /> },
         ],

@@ -15,8 +15,26 @@ export const PERMISSION_GROUPS = [
 ] as const;
 export type PermissionGroup = (typeof PERMISSION_GROUPS)[number];
 
+export type Permission =
+  | 'users:view'
+  | 'users:invite'
+  | 'users:manage_roles'
+  | 'users:delete'
+  | 'shops:view'
+  | 'shops:create'
+  | 'shops:edit'
+  | 'shops:delete'
+  | 'inventory:view'
+  | 'inventory:manage'
+  | 'orders:view'
+  | 'orders:create'
+  | 'orders:manage'
+  | 'reports:view'
+  | 'reports:export'
+  | 'settings:manage';
+
 export interface PermissionDefinition {
-  id: string;
+  id: Permission;
   label: string;
   group: PermissionGroup;
   description: string;
@@ -132,7 +150,7 @@ export interface StaffRoleDefinition {
   title: string;
   description: string;
   color: string;
-  permissions: string[];
+  permissions: Permission[];
 }
 
 export const STAFF_ROLE_DEFINITIONS: Record<StaffRole, StaffRoleDefinition> = {
@@ -270,6 +288,27 @@ export interface AdminInvite {
   expiresAt: string;
   acceptedAt?: string;
   createdAt: string;
+}
+
+export const STAFF_STATUSES = ['active', 'deactivated'] as const;
+
+export type StaffStatus = (typeof STAFF_STATUSES)[number];
+
+export interface StaffListQuery {
+  page?: number;
+  limit?: number;
+  /** Matches the name, the email or the role's name. */
+  search?: string;
+  staffRole?: StaffRole;
+  status?: StaffStatus;
+}
+
+export interface AdminInviteListQuery {
+  page?: number;
+  limit?: number;
+  /** Matches the invited email. */
+  search?: string;
+  status?: AdminInviteStatus;
 }
 
 export interface CreateAdminInviteInput {
