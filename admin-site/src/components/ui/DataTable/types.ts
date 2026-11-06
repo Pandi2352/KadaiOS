@@ -13,4 +13,3 @@ export const DEFAULT_TIMEFRAMES: TimeframeOption[] = [
   { key: '6h', label: '6hr' },
   { key: '1h', label: '1hr' },
 ];
-

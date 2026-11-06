@@ -1,8 +1,9 @@
 import crypto from 'node:crypto';
-import type { AdminInvite as IAdminInvite, AdminInviteStatus, AuthUser } from '@kadai/shared';
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import type { AdminInvite as IAdminInvite, AdminInviteStatus, AuthUser, StaffRole, UserProfile } from '@kadai/shared';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { AppConfig } from '../../config/app.config.js';
+import { toUserProfile } from '../users/to-auth-user.js';
 import { MailService } from '../mail/mail.service.js';
 import { UsersRepository } from '../users/users.repository.js';
 import { AdminInvite } from './admin-invite.schema.js';
@@ -64,6 +65,7 @@ export class AdminInvitesService {
       email,
       tokenHash,
       invitedBy: admin.id,
+      staffRole: dto.staffRole ?? 'admin',
       expiresAt,
       acceptedAt: null,
     });
@@ -131,7 +133,7 @@ export class AdminInvitesService {
     return { revoked: true };
   }
 
-  async validateToken(token: string): Promise<{ email: string; valid: boolean }> {
+  async validateToken(token: string): Promise<{ email: string; valid: boolean; staffRole?: StaffRole }> {
     const tokenHash = hashToken(token);
     const invite = await this.invites.findByTokenHash(tokenHash);
 
@@ -139,7 +141,7 @@ export class AdminInvitesService {
       throw new BadRequestException('Invalid or expired invitation link');
     }
 
-    return { email: invite.email, valid: true };
+    return { email: invite.email, valid: true, staffRole: invite.staffRole };
   }
 
   async acceptInvite(dto: AcceptAdminInviteDto): Promise<IssuedSession> {
@@ -162,11 +164,58 @@ export class AdminInvitesService {
       phone: dto.phone,
       passwordHash,
       role: 'admin',
+      staffRole: invite.staffRole ?? 'admin',
     });
 
     await this.invites.markAccepted(invite._id);
 
     return this.auth.startSession(user);
+  }
+
+  async updateUserRole(id: string, staffRole: StaffRole, _requestedBy: AuthUser): Promise<UserProfile> {
+    const user = await this.users.findById(id);
+    if (!user || user.role !== 'admin') {
+      throw new NotFoundException('Administrator account not found');
+    }
+
+    const updated = await this.users.updateStaffRole(id, staffRole);
+    if (!updated) {
+      throw new NotFoundException('Administrator account not found');
+    }
+
+    return toUserProfile(updated);
+  }
+
+  async updateUserStatus(id: string, isActive: boolean, requestedBy: AuthUser): Promise<UserProfile> {
+    if (requestedBy.id === id && !isActive) {
+      throw new BadRequestException('You cannot deactivate your own administrator account');
+    }
+
+    const user = await this.users.findById(id);
+    if (!user || user.role !== 'admin') {
+      throw new NotFoundException('Administrator account not found');
+    }
+
+    const updated = await this.users.updateStatus(id, isActive);
+    if (!updated) {
+      throw new NotFoundException('Administrator account not found');
+    }
+
+    return toUserProfile(updated);
+  }
+
+  async deleteUser(id: string, requestedBy: AuthUser): Promise<{ deleted: boolean }> {
+    if (requestedBy.id === id) {
+      throw new BadRequestException('You cannot delete your own administrator account');
+    }
+
+    const user = await this.users.findById(id);
+    if (!user || user.role !== 'admin') {
+      throw new NotFoundException('Administrator account not found');
+    }
+
+    await this.users.deleteById(id);
+    return { deleted: true };
   }
 
   private toResponse(invite: AdminInvite, invitedByName?: string): IAdminInvite {
@@ -175,6 +224,7 @@ export class AdminInvitesService {
       email: invite.email,
       invitedBy: invite.invitedBy,
       invitedByName,
+      staffRole: invite.staffRole,
       status: computeStatus(invite),
       expiresAt: invite.expiresAt.toISOString(),
       acceptedAt: invite.acceptedAt ? invite.acceptedAt.toISOString() : undefined,

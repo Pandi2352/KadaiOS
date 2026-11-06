@@ -1,4 +1,4 @@
-import { AUTH_ROLES, type AuthRole } from '@kadai/shared';
+import { AUTH_ROLES, type AuthRole, STAFF_ROLES, type StaffRole } from '@kadai/shared';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ACCESS_TOKEN_TTL_SECONDS } from '../auth.constants.js';
 
@@ -17,6 +17,12 @@ export class AuthUserDto {
 
   @ApiProperty({ enum: AUTH_ROLES, example: 'customer' })
   role: AuthRole;
+
+  @ApiPropertyOptional({ enum: STAFF_ROLES, example: 'admin' })
+  staffRole?: StaffRole;
+
+  @ApiPropertyOptional({ example: true })
+  isActive?: boolean;
 }
 
 export class AuthSessionDto {

@@ -1,4 +1,4 @@
-import { AUTH_ROLES, type AuthRole, EMAIL_MAX_LENGTH, FIELD_LIMITS } from '@kadai/shared';
+import { AUTH_ROLES, type AuthRole, EMAIL_MAX_LENGTH, FIELD_LIMITS, STAFF_ROLES, type StaffRole } from '@kadai/shared';
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { BaseSchema } from '../../common/database/base.schema.js';
 import { EntitySchema } from '../../common/database/entity-schema.decorator.js';
@@ -20,6 +20,9 @@ export class User extends BaseSchema {
 
   @Prop({ type: String, required: true, enum: AUTH_ROLES })
   role: AuthRole;
+
+  @Prop({ type: String, enum: STAFF_ROLES })
+  staffRole?: StaffRole;
 
   @Prop({ type: Boolean, default: true })
   isActive: boolean;

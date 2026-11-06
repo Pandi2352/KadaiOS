@@ -34,11 +34,23 @@ export class DefaultUsersService implements OnApplicationBootstrap {
     if (!user) return;
 
     const email = user.email.toLowerCase();
-    if (await this.users.exists(email, role)) return;
+    const existing = await this.users.findWithPassword(email, role);
+    if (existing) {
+      if (role === 'admin' && !existing.staffRole) {
+        await this.users.updateStaffRole(existing._id, 'super_admin');
+      }
+      return;
+    }
 
     try {
       const passwordHash = await this.passwords.hash(user.password);
-      await this.users.create({ name: user.name, email, passwordHash, role });
+      await this.users.create({
+        name: user.name,
+        email,
+        passwordHash,
+        role,
+        ...(role === 'admin' ? { staffRole: 'super_admin' } : {}),
+      });
       this.logger.log(`Created default ${role}: ${email}`);
     } catch (error) {
       // Another API process created it at the same moment, which is the outcome we wanted.

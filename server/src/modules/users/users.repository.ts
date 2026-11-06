@@ -1,4 +1,4 @@
-import type { AuthRole } from '@kadai/shared';
+import type { AuthRole, StaffRole } from '@kadai/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import type { Model } from 'mongoose';
@@ -62,6 +62,22 @@ export class UsersRepository extends BaseRepository<User> {
         { returnDocument: 'after', runValidators: true },
       )
       .exec();
+  }
+
+  updateStaffRole(id: string, staffRole: StaffRole) {
+    return this.model
+      .findOneAndUpdate({ _id: id }, { $set: { staffRole } }, { returnDocument: 'after', runValidators: true })
+      .exec();
+  }
+
+  updateStatus(id: string, isActive: boolean) {
+    return this.model
+      .findOneAndUpdate({ _id: id }, { $set: { isActive } }, { returnDocument: 'after', runValidators: true })
+      .exec();
+  }
+
+  deleteById(id: string) {
+    return this.model.findByIdAndDelete(id).exec();
   }
 
   async recordLogin(id: string): Promise<void> {

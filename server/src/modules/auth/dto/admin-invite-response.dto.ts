@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ADMIN_INVITE_STATUSES, type AdminInvite, type AdminInviteStatus } from '@kadai/shared';
+import {
+  ADMIN_INVITE_STATUSES,
+  type AdminInvite,
+  type AdminInviteStatus,
+  STAFF_ROLES,
+  type StaffRole,
+} from '@kadai/shared';
 
 export class AdminInviteResponseDto implements AdminInvite {
   @ApiProperty({ example: '019318b8-6e54-7000-8000-111111111111' })
@@ -13,6 +19,9 @@ export class AdminInviteResponseDto implements AdminInvite {
 
   @ApiPropertyOptional({ example: 'Default Admin' })
   invitedByName?: string;
+
+  @ApiPropertyOptional({ enum: STAFF_ROLES, example: 'admin' })
+  staffRole?: StaffRole;
 
   @ApiProperty({ enum: ADMIN_INVITE_STATUSES, example: 'pending' })
   status: AdminInviteStatus;
@@ -33,6 +42,9 @@ export class ValidateAdminInviteResponseDto {
 
   @ApiProperty({ example: true })
   valid: boolean;
+
+  @ApiPropertyOptional({ enum: STAFF_ROLES, example: 'admin' })
+  staffRole?: StaffRole;
 }
 
 export class RevokeAdminInviteResponseDto {

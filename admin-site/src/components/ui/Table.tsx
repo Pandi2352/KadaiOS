@@ -80,7 +80,7 @@ export function Table<T>({
 
   return (
     <div
-      className={cn('overflow-x-auto rounded-md border border-line bg-surface', className)}
+      className={cn('relative overflow-x-auto rounded-md border border-line bg-surface', className)}
       tabIndex={0}
       aria-label={caption}
     >
@@ -245,7 +245,7 @@ export function Table<T>({
                             }}
                             className={cn(
                               'cursor-pointer transition-colors p-0.5 rounded-md hover:bg-hover',
-                              isStarred ? 'text-amber-500' : 'text-muted/40 hover:text-amber-500',
+                              isStarred ? 'text-warning' : 'text-muted/40 hover:text-warning',
                             )}
                             aria-label={isStarred ? 'Remove from favorites' : 'Add to favorites'}
                           >
@@ -266,7 +266,7 @@ export function Table<T>({
                       className={cn(
                         paddingClass,
                         'text-ink',
-                        column.align === 'right' && 'text-right font-mono text-sm',
+                        column.align === 'right' && 'text-right tabular-nums',
                         column.align === 'center' && 'text-center',
                         column.className,
                       )}

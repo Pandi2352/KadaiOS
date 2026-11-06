@@ -1,5 +1,17 @@
 import type { AdminInvite, AuthSession, AuthUser, UserProfile } from '@kadai/shared';
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import type { Response } from 'express';
@@ -21,6 +33,8 @@ import {
 } from './dto/admin-invite-response.dto.js';
 import { AuthSessionDto } from './dto/auth-response.dto.js';
 import { CreateAdminInviteDto } from './dto/create-admin-invite.dto.js';
+import { UpdateStaffRoleDto } from './dto/update-staff-role.dto.js';
+import { UpdateStaffStatusDto } from './dto/update-staff-status.dto.js';
 
 @ApiTags('Admin invites')
 @Controller('auth/admin/invites')
@@ -65,6 +79,49 @@ export class AdminInvitesController {
   async listAdmins(): Promise<UserProfile[]> {
     const admins = await this.users.findAdmins();
     return admins.map(toUserProfile);
+  }
+
+  @Patch('users/:id/role')
+  @Roles('admin')
+  @ApiEndpoint({
+    summary: 'Update an administrator account staff role',
+    response: ProfileResponseDto,
+    uuidParam: 'id',
+    validates: true,
+  })
+  async updateRole(
+    @CurrentUser() admin: AuthUser,
+    @UuidParam() id: string,
+    @Body() dto: UpdateStaffRoleDto,
+  ): Promise<UserProfile> {
+    return this.invites.updateUserRole(id, dto.staffRole, admin);
+  }
+
+  @Patch('users/:id/status')
+  @Roles('admin')
+  @ApiEndpoint({
+    summary: 'Toggle active or deactivated status for an administrator',
+    response: ProfileResponseDto,
+    uuidParam: 'id',
+    validates: true,
+  })
+  async updateStatus(
+    @CurrentUser() admin: AuthUser,
+    @UuidParam() id: string,
+    @Body() dto: UpdateStaffStatusDto,
+  ): Promise<UserProfile> {
+    return this.invites.updateUserStatus(id, dto.isActive, admin);
+  }
+
+  @Delete('users/:id')
+  @Roles('admin')
+  @ApiEndpoint({
+    summary: 'Delete an administrator account',
+    response: RevokeAdminInviteResponseDto,
+    uuidParam: 'id',
+  })
+  async deleteUser(@CurrentUser() admin: AuthUser, @UuidParam() id: string): Promise<{ deleted: boolean }> {
+    return this.invites.deleteUser(id, admin);
   }
 
   @Post(':id/resend')

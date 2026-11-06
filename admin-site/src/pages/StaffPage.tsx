@@ -1,88 +1,96 @@
 import type { AdminInvite } from '@kadai/shared';
 import { Button, QueryState, useApiQuery, useToast } from '@kadai/ui';
-import { EnvelopeSimpleIcon, UserPlusIcon, UsersThreeIcon } from '@phosphor-icons/react';
+import { EnvelopeSimpleIcon, ShieldCheckIcon, UserPlusIcon, UsersThreeIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { type TabItem, Tabs } from '@/components/ui/Tabs';
 import { AdminInvitesTable } from '@/features/staff/AdminInvitesTable';
-import { AdminsTable } from '@/features/staff/AdminsTable';
 import { InviteAdminModal } from '@/features/staff/InviteAdminModal';
 import { invitesApi } from '@/features/staff/invitesApi';
+import { RolesPermissionsTab } from '@/features/staff/RolesPermissionsTab';
+import { UsersTab } from '@/features/staff/UsersTab';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
+type StaffTab = 'users' | 'invites' | 'roles';
+
 export function StaffPage() {
+  usePageTitle('Staff');
+
   const { showToast } = useToast();
-  usePageTitle('Staff & Administrators');
-  const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<StaffTab>('users');
+  const [isInviteOpen, setInviteOpen] = useState(false);
 
   const adminsQuery = useApiQuery((signal) => invitesApi.listAdmins(signal), 'staff-admins');
   const invitesQuery = useApiQuery((signal) => invitesApi.listInvites(signal), 'staff-invites');
 
+  const openInvite = () => setInviteOpen(true);
+
   const handleInvited = (invite: AdminInvite) => {
     showToast(`Invitation sent to ${invite.email}`, { title: 'Invitation sent' });
     invitesQuery.refetch();
+    setActiveTab('invites');
   };
 
-  const inviteButton = (
-    <Button variant="primary" icon={UserPlusIcon} onClick={() => setIsInviteOpen(true)}>
-      Invite admin
-    </Button>
-  );
+  const tabs: TabItem<StaffTab>[] = [
+    { id: 'users', label: 'Users', icon: UsersThreeIcon, count: adminsQuery.data?.length },
+    {
+      id: 'invites',
+      label: 'Invitations',
+      icon: EnvelopeSimpleIcon,
+      count: invitesQuery.data?.filter((invite) => invite.status === 'pending').length,
+    },
+    { id: 'roles', label: 'Roles & permissions', icon: ShieldCheckIcon },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
-        title="Staff & Administrators"
-        description="View administrator accounts and invite colleagues via email."
-        actions={inviteButton}
+        title="Staff"
+        description="See who has access, invite your team, and control what each role can do."
+        actions={
+          <Button variant="primary" icon={UserPlusIcon} onClick={openInvite}>
+            Invite user
+          </Button>
+        }
       />
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold tracking-wide uppercase text-muted">Active Administrators</h3>
-        <QueryState
-          query={adminsQuery}
-          loadingLabel="Loading administrators"
-          errorTitle="Couldn't load administrators"
-          isEmpty={(admins) => admins.length === 0}
-          empty={
-            <EmptyState
-              icon={UsersThreeIcon}
-              title="No administrators found"
-              description="No administrator accounts found."
-            />
-          }
-        >
-          {(admins) => <AdminsTable admins={admins} isRefreshing={adminsQuery.isLoading} />}
-        </QueryState>
-      </div>
+      <Tabs label="Staff sections" tabs={tabs} active={activeTab} onChange={setActiveTab}>
+        {activeTab === 'users' && <UsersTab query={adminsQuery} onInvite={openInvite} />}
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold tracking-wide uppercase text-muted">Invitations Sent</h3>
-        <QueryState
-          query={invitesQuery}
-          loadingLabel="Loading invitations"
-          errorTitle="Couldn't load invitations"
-          isEmpty={(invites) => invites.length === 0}
-          empty={
-            <EmptyState
-              icon={EnvelopeSimpleIcon}
-              title="No invitations sent yet"
-              description="Invite other administrators to help manage shops, inventory, and operations."
-              action={inviteButton}
-            />
-          }
-        >
-          {(invites) => (
-            <AdminInvitesTable
-              invites={invites}
-              isRefreshing={invitesQuery.isLoading}
-              onChanged={() => invitesQuery.refetch()}
-            />
-          )}
-        </QueryState>
-      </div>
+        {activeTab === 'invites' && (
+          <QueryState
+            query={invitesQuery}
+            loadingLabel="Loading invitations"
+            errorTitle="Couldn't load invitations"
+            isEmpty={(invites) => invites.length === 0}
+            empty={
+              <EmptyState
+                icon={EnvelopeSimpleIcon}
+                title="No invitations yet"
+                description="Invite someone and you can track their invitation here until they accept it."
+                action={
+                  <Button variant="primary" icon={UserPlusIcon} onClick={openInvite}>
+                    Invite user
+                  </Button>
+                }
+              />
+            }
+          >
+            {(invites) => (
+              <AdminInvitesTable
+                invites={invites}
+                isRefreshing={invitesQuery.isLoading}
+                onChanged={invitesQuery.refetch}
+              />
+            )}
+          </QueryState>
+        )}
 
-      <InviteAdminModal isOpen={isInviteOpen} onClose={() => setIsInviteOpen(false)} onInvited={handleInvited} />
+        {activeTab === 'roles' && <RolesPermissionsTab />}
+      </Tabs>
+
+      <InviteAdminModal isOpen={isInviteOpen} onClose={() => setInviteOpen(false)} onInvited={handleInvited} />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import type {
   AdminInvite,
   AuthSession,
   CreateAdminInviteInput,
+  StaffRole,
   UserProfile,
   ValidateAdminInviteResponse,
 } from '@kadai/shared';
@@ -18,6 +19,14 @@ export const invitesApi = {
   resendInvite: (id: string) => api.post<AdminInvite>(`/auth/admin/invites/${id}/resend`),
 
   revokeInvite: (id: string) => api.delete<{ revoked: boolean }>(`/auth/admin/invites/${id}`),
+
+  updateStaffRole: (id: string, staffRole: StaffRole) =>
+    api.patch<UserProfile>(`/auth/admin/invites/users/${id}/role`, { staffRole }),
+
+  updateStaffStatus: (id: string, isActive: boolean) =>
+    api.patch<UserProfile>(`/auth/admin/invites/users/${id}/status`, { isActive }),
+
+  deleteStaffUser: (id: string) => api.delete<{ deleted: boolean }>(`/auth/admin/invites/users/${id}`),
 
   validateToken: (token: string, signal?: AbortSignal) =>
     api.get<ValidateAdminInviteResponse>(`/auth/admin/invites/validate?token=${encodeURIComponent(token)}`, { signal }),

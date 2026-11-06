@@ -1,4 +1,4 @@
-import { EMAIL_MAX_LENGTH } from '@kadai/shared';
+import { EMAIL_MAX_LENGTH, STAFF_ROLES, type StaffRole } from '@kadai/shared';
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { BaseSchema } from '../../common/database/base.schema.js';
 import { EntitySchema } from '../../common/database/entity-schema.decorator.js';
@@ -14,6 +14,9 @@ export class AdminInvite extends BaseSchema {
 
   @Prop({ type: String, required: true, index: true })
   invitedBy: string;
+
+  @Prop({ type: String, enum: STAFF_ROLES, default: 'admin' })
+  staffRole?: StaffRole;
 
   @Prop({ type: Date, required: true })
   expiresAt: Date;
