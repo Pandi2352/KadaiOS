@@ -15,7 +15,7 @@ export function QuickCreateMenu() {
       triggerClassName={buttonClass('primary', 'responsive')}
       trigger={
         <>
-          <PlusIcon weight="bold" size={16} aria-hidden />
+          <PlusIcon weight="bold" size={18} aria-hidden />
           <span className="hidden sm:inline">New</span>
         </>
       }

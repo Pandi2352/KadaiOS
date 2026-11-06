@@ -211,6 +211,7 @@ Successful responses and errors use a shared format. `fields` only appears when 
 
 - **Theme:** the brand colour is `rgb(30, 81, 133)` with white text, and the font is `IBMSans` (IBM Plex Sans). Both are set once in `packages/shared/src/theme.css`. The font files are bundled in the project, so the POS works offline.
 - **Icons:** [Phosphor Icons](https://phosphoricons.com) is the only icon package, and a lint rule blocks `lucide-react`. Icons are duotone by default, icons inside `Button` and `IconButton` and small controls such as carets are bold, and the current page's sidebar icon turns solid. Pick a module's icon in `admin-site/src/config/modules.ts`.
+- **Popups:** give every menu, dropdown, dialog and toast the `popup-surface` class, a shaded gradient from the theme, and use `IconChip` from `@kadai/ui` for icons in its rows. Popups stand out through colour, not shadows.
 - **Scrollbars:** every scrolling area gets the custom scrollbar from `packages/shared/src/scrollbars.css` automatically. Add `scrollbar-stable` to stop content shifting between short and long pages, or `scrollbar-reveal` for a slim bar that appears on hover.
 - **Error and missing pages:** use `StatusPage` from `@kadai/ui`.
 - **Toasts:** call `showToast` from `useToast()` after an action. The tone defaults to success, and errors stay until closed. Use `useAuthActions()` for login and logout, which show their own messages.

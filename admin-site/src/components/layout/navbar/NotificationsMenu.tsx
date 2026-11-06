@@ -5,7 +5,7 @@ import { MenuNote } from '@/components/ui/MenuItem';
 
 export function NotificationsMenu() {
   return (
-    <Dropdown label="Notifications" triggerClassName={iconButtonClass()} trigger={<BellIcon size={18} aria-hidden />}>
+    <Dropdown label="Notifications" triggerClassName={iconButtonClass()} trigger={<BellIcon size={22} aria-hidden />}>
       <MenuNote title="No notifications">Low stock and expiry alerts will appear here.</MenuNote>
     </Dropdown>
   );

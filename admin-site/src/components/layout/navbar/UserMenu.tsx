@@ -18,7 +18,7 @@ export function UserMenu() {
   };
 
   return (
-    <Dropdown label="Account" triggerClassName={iconButtonClass()} trigger={<UserCircleIcon size={18} aria-hidden />}>
+    <Dropdown label="Account" triggerClassName={iconButtonClass()} trigger={<UserCircleIcon size={24} aria-hidden />}>
       {user && <MenuNote title={user.name}>{user.email}</MenuNote>}
       <MenuLink to={setup.path} icon={setup.icon}>
         {setup.label}

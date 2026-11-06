@@ -81,7 +81,7 @@ export function Select<T extends string>({
         )}
         {...aria}
       >
-        {SelectedIcon && <SelectedIcon size={16} aria-hidden className="shrink-0" />}
+        {SelectedIcon && <SelectedIcon size={20} aria-hidden className="shrink-0 text-brand" />}
         <span className={cn('min-w-0 flex-1 truncate', !selected && 'text-muted')}>
           {selected?.label ?? placeholder}
         </span>
@@ -98,11 +98,11 @@ export function Select<T extends string>({
           style={panelStyle}
           // Keeps focus on the trigger or search box while pressing an option or the list's scrollbar.
           onMouseDown={(event) => event.target !== searchRef.current && event.preventDefault()}
-          className="fixed z-50 flex min-w-40 flex-col rounded-md border border-line bg-surface"
+          className="fixed z-50 flex min-w-40 flex-col rounded-md border popup-surface"
         >
           {searchable && (
-            <div className="flex shrink-0 items-center gap-2 border-b border-line px-2">
-              <MagnifyingGlassIcon size={16} aria-hidden className="shrink-0 text-muted" />
+            <div className="flex shrink-0 items-center gap-2 border-b border-popup-line px-2">
+              <MagnifyingGlassIcon size={18} aria-hidden className="shrink-0 text-muted" />
               <input
                 ref={searchRef}
                 role="combobox"
@@ -140,7 +140,7 @@ export function Select<T extends string>({
               type="button"
               tabIndex={-1}
               onClick={clear}
-              className="flex h-9 shrink-0 cursor-pointer items-center gap-2 border-t border-line px-3 text-muted hover:bg-hover hover:text-ink"
+              className="flex h-9 shrink-0 cursor-pointer items-center gap-2 border-t border-popup-line px-3 text-muted hover:bg-hover hover:text-ink"
             >
               <XIcon size={16} aria-hidden />
               Clear selection

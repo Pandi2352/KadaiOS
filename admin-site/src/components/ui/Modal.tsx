@@ -34,7 +34,7 @@ export function Modal({ isOpen, onClose, title, description, footer, size = 'md'
     >
       {isOpen && (
         <div className="flex max-h-[calc(100dvh-4rem)] flex-col">
-          <header className="flex items-start justify-between gap-3 border-b border-line p-4 pb-3">
+          <header className="flex items-start justify-between gap-3 border-b border-popup-line p-4 pb-3">
             <div className="min-w-0">
               <h2 id={titleId} className="text-base font-semibold">
                 {title}
@@ -48,7 +48,7 @@ export function Modal({ isOpen, onClose, title, description, footer, size = 'md'
             <IconButton icon={XIcon} label="Close" className="-mt-1 -mr-1" onClick={onClose} />
           </header>
           {children && <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>}
-          {footer && <footer className="flex justify-end gap-2 border-t border-line p-3">{footer}</footer>}
+          {footer && <footer className="flex justify-end gap-2 border-t border-popup-line p-3">{footer}</footer>}
         </div>
       )}
     </Dialog>

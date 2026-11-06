@@ -90,7 +90,7 @@ export function SidebarFlyout({ entry, modules, isActive }: SidebarFlyoutProps) 
       {position &&
         createPortal(
           <div ref={panelRef} onBlur={handlePanelBlur} style={position} className="fixed z-50 w-52 pl-2">
-            <div className="rounded-md border border-line bg-surface p-1.5">
+            <div className="rounded-md border popup-surface p-1.5">
               <p className={`${sectionTitleClass} pt-1`}>{entry.label}</p>
               <ul className="space-y-0.5">
                 {modules.map((module) => (

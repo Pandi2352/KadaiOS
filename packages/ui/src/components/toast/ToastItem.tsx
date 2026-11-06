@@ -34,7 +34,7 @@ export function ToastItem({ toast, onRemove }: ToastItemProps) {
       role={isError ? 'alert' : 'status'}
       onAnimationEnd={handleAnimationEnd}
       className={cn(
-        'group pointer-events-auto relative flex items-start gap-3 overflow-hidden rounded-md border border-line bg-surface p-3 pr-2',
+        'group pointer-events-auto relative flex items-start gap-3 overflow-hidden rounded-md border popup-surface p-3 pr-2',
         isLeaving ? 'motion-safe:animate-toast-out' : 'motion-safe:animate-toast-in',
       )}
     >

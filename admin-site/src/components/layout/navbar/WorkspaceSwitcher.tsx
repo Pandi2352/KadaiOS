@@ -18,7 +18,7 @@ export function WorkspaceSwitcher() {
       triggerClassName={buttonClass('outline', 'responsive')}
       trigger={
         <>
-          <CurrentIcon size={16} aria-hidden className="shrink-0" />
+          <CurrentIcon size={20} aria-hidden className="shrink-0 text-brand" />
           <span className="hidden sm:inline">{current.label}</span>
           <CaretUpDownIcon weight="bold" size={14} aria-hidden className="hidden text-muted sm:inline" />
         </>

@@ -3,7 +3,7 @@ import { type KeyboardEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@/components/ui/Dialog';
 import { useCommandPalette } from '@/context/CommandPaletteContext';
-import { cn } from '@kadai/ui';
+import { cn, IconChip } from '@kadai/ui';
 import { type CommandItem, useCommandItems } from './useCommandItems';
 
 /** Search state lives here and only mounts while open, so it resets each time. */
@@ -37,8 +37,8 @@ function CommandSearch() {
 
   return (
     <>
-      <div className="flex items-center gap-2 border-b border-line px-3">
-        <MagnifyingGlassIcon size={16} aria-hidden className="shrink-0 text-muted" />
+      <div className="flex items-center gap-2 border-b border-popup-line px-3">
+        <MagnifyingGlassIcon size={20} aria-hidden className="shrink-0 text-muted" />
         <input
           data-autofocus
           role="combobox"
@@ -58,7 +58,6 @@ function CommandSearch() {
       </div>
       <ul id="command-results" role="listbox" aria-label="Results" className="max-h-80 overflow-y-auto p-1">
         {items.map((item, index) => {
-          const Icon = item.icon;
           return (
             <li
               key={item.id}
@@ -68,11 +67,11 @@ function CommandSearch() {
               onClick={() => select(item)}
               onMouseMove={() => setActiveIndex(index)}
               className={cn(
-                'flex h-9 cursor-pointer items-center gap-2 rounded-md px-2',
+                'flex h-10 cursor-pointer items-center gap-2.5 rounded-md px-1.5',
                 index === activeIndex && 'bg-hover',
               )}
             >
-              <Icon size={16} aria-hidden className="shrink-0 text-muted" />
+              <IconChip icon={item.icon} />
               <span className="truncate">{item.label}</span>
               <span className="ml-auto text-xs text-muted">{item.hint}</span>
             </li>

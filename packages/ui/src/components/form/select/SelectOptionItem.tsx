@@ -1,5 +1,6 @@
 import { CheckIcon } from '@phosphor-icons/react';
 import { cn } from '../../../cn';
+import { IconChip } from '../../IconChip';
 import type { SelectOption } from './selectOptions';
 
 interface SelectOptionItemProps<T extends string> {
@@ -36,7 +37,7 @@ export function SelectOptionItem<T extends string>({
         isSelected && 'font-medium text-brand-strong',
       )}
     >
-      {Icon && <Icon size={16} aria-hidden className="shrink-0" />}
+      {Icon && <IconChip icon={Icon} />}
       <span className="min-w-0 flex-1">
         <span className="block truncate">{option.label}</span>
         {option.description && (

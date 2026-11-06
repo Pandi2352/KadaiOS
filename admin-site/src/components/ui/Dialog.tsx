@@ -55,7 +55,7 @@ export function Dialog({ isOpen, onClose, role, className, children, ...labels }
       onCancel={handleCancel}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
-      className={cn('mx-auto w-[calc(100vw-2rem)] rounded-md border border-line bg-surface text-ink', className)}
+      className={cn('mx-auto w-[calc(100vw-2rem)] rounded-md border popup-surface text-ink', className)}
       {...labels}
     >
       {children}

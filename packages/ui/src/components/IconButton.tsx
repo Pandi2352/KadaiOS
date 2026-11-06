@@ -14,7 +14,7 @@ export function IconButton({ icon: Icon, label, variant, className, ...props }: 
   return (
     <Tooltip label={label}>
       <button type="button" aria-label={label} className={iconButtonClass(variant, className)} {...props}>
-        <Icon size={18} aria-hidden weight="bold" />
+        <Icon size={20} aria-hidden weight="bold" />
       </button>
     </Tooltip>
   );

@@ -18,7 +18,7 @@ export function SearchTrigger() {
           'font-normal text-muted lg:w-52 lg:justify-start lg:border lg:border-line lg:px-3',
         )}
       >
-        <MagnifyingGlassIcon size={16} aria-hidden />
+        <MagnifyingGlassIcon size={20} aria-hidden />
         <span className="hidden lg:inline">Search</span>
         <kbd className="ml-auto hidden font-sans text-xs lg:inline">Ctrl K</kbd>
       </button>

@@ -49,7 +49,7 @@ export function Dropdown({ label, tooltip = label, trigger, triggerClassName, ch
       {isOpen && (
         <div
           onClick={closeOnSelect}
-          className="absolute top-full right-2 left-2 z-30 mt-1 rounded-md border border-line bg-surface p-1 sm:right-0 sm:left-auto sm:w-64"
+          className="absolute top-full right-2 left-2 z-30 mt-1 rounded-md border popup-surface p-1 sm:right-0 sm:left-auto sm:w-64"
         >
           {children}
         </div>
