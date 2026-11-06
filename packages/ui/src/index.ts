@@ -24,6 +24,8 @@ export * from './components/iconTypes';
 export * from './components/Loader';
 export * from './components/status/StatusPage';
 export * from './components/toast/ToastContext';
+export * from './components/tooltip/Tooltip';
+export type { TooltipSide } from './components/tooltip/positionTooltip';
 export * from './createStrictContext';
 export * from './hooks/useDismiss';
 export * from './hooks/useFloatingPosition';

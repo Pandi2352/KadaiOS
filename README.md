@@ -191,6 +191,14 @@ Successful responses and errors use a shared format. `fields` only appears when 
 - **Icons:** [Phosphor Icons](https://phosphoricons.com) is the only icon package, and a lint rule blocks `lucide-react`. Icons are duotone by default, icons inside `Button` and `IconButton` and small controls such as carets are bold, and the current page's sidebar icon turns solid. Pick a module's icon in `admin-site/src/config/modules.ts`.
 - **Scrollbars:** every scrolling area gets the custom scrollbar from `packages/shared/src/scrollbars.css` automatically. Add `scrollbar-stable` to stop content shifting between short and long pages, or `scrollbar-reveal` for a slim bar that appears on hover.
 - **Error and missing pages:** use `StatusPage` from `@kadai/ui`.
+- **Tooltips:** wrap one element in `Tooltip` from `@kadai/ui`, and never use the `title` attribute. `IconButton` and the admin `Dropdown` already include one.
+
+  ```tsx
+  <Tooltip label="Search pages and actions" shortcut="Ctrl K" side="bottom">
+    <button type="button">Search</button>
+  </Tooltip>
+  ```
+
 - **No shadows:** the shared theme removes Tailwind's shadow utilities.
 - **One radius:** `rounded-md` is the only radius available.
 - **No native `<select>`:** every dropdown uses the common `Select` or `SelectField`.

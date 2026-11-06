@@ -57,8 +57,22 @@
   --color-scrim: rgb(27 38 51 / 0.45);
   --color-scrollbar: #b4bec9;
   --color-scrollbar-hover: #7d8894;
+  --color-tooltip: #12233a;
 
   --animate-sign-swing: sign-swing 1.4s ease-out both;
+  --animate-tooltip-in: tooltip-in 120ms ease-out both;
+
+  /* Tooltip.tsx sets the direction, so it always slides towards what it describes. */
+  @keyframes tooltip-in {
+    from {
+      opacity: 0;
+      transform: translate(var(--tooltip-from-x, 0), var(--tooltip-from-y, 0));
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 
   /* Settles once on the same tilt as the sign's resting position. */
   @keyframes sign-swing {

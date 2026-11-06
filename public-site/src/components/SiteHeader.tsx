@@ -1,4 +1,4 @@
-import { Button, buttonClass, getErrorMessage, useAuth, useToast } from '@kadai/ui';
+import { Button, buttonClass, getErrorMessage, Tooltip, useAuth, useToast } from '@kadai/ui';
 import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config/paths';
 
@@ -34,7 +34,9 @@ export function SiteHeader() {
         )}
         {user && (
           <div className="flex min-w-0 items-center gap-3">
-            <p className="truncate text-muted">{user.name}</p>
+            <Tooltip label={user.email} side="bottom">
+              <p className="truncate text-muted">{user.name}</p>
+            </Tooltip>
             <Button variant="outline" onClick={handleLogout}>
               Log out
             </Button>

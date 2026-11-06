@@ -1,5 +1,6 @@
 import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
+import { Tooltip } from '../tooltip/Tooltip';
 import { type FieldProps, FormField } from './FormField';
 import { Input } from './Input';
 
@@ -36,15 +37,16 @@ export function PasswordField({
             className="pr-10"
             onChange={(event) => onChange(event.target.value)}
           />
-          <button
-            type="button"
-            aria-label={toggleLabel}
-            title={toggleLabel}
-            onClick={() => setVisible(!isVisible)}
-            className="absolute top-0 right-0 flex size-9 cursor-pointer items-center justify-center rounded-md text-muted hover:text-ink"
-          >
-            <Icon size={16} aria-hidden />
-          </button>
+          <Tooltip label={toggleLabel}>
+            <button
+              type="button"
+              aria-label={toggleLabel}
+              onClick={() => setVisible(!isVisible)}
+              className="absolute top-0 right-0 flex size-9 cursor-pointer items-center justify-center rounded-md text-muted hover:text-ink"
+            >
+              <Icon size={16} aria-hidden />
+            </button>
+          </Tooltip>
         </div>
       )}
     </FormField>

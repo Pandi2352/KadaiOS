@@ -14,6 +14,7 @@ export function WorkspaceSwitcher() {
   return (
     <Dropdown
       label={`Business type: ${current.label}. Change`}
+      tooltip="Change business type"
       triggerClassName={buttonClass('outline', 'responsive')}
       trigger={
         <>

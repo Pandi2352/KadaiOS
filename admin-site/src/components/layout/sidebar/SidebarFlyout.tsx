@@ -80,7 +80,6 @@ export function SidebarFlyout({ entry, modules, isActive }: SidebarFlyoutProps) 
       <button
         ref={triggerRef}
         type="button"
-        title={entry.label}
         aria-label={entry.label}
         aria-expanded={isOpen}
         onClick={handleTriggerClick}
