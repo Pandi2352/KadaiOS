@@ -1,0 +1,39 @@
+{
+  "name": "kadai-os",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "workspaces": [
+    "packages/shared",
+    "packages/eslint-config",
+    "server",
+    "admin-site",
+    "public-site"
+  ],
+  "scripts": {
+    "postinstall": "npm run build -w @kadai/shared",
+    "dev": "concurrently -n shared,api,admin,public -c gray,green,blue,magenta \"npm run dev -w @kadai/shared\" \"npm run dev -w kadai-server\" \"npm run dev -w kadai-admin-site\" \"npm run dev -w kadai-public-site\"",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run build -w @kadai/shared && npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test --workspaces --if-present",
+    "db:init-replica": "node scripts/init-replica-set.mjs"
+  },
+  "devDependencies": {
+    "@kadai/eslint-config": "*",
+    "concurrently": "^9.2.5",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "file-type": "21.3.4",
+    "minimatch": "11.0.5"
+  }
+}

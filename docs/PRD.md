@@ -31,7 +31,7 @@ Users are not assumed to be comfortable with software. Counter billing is often 
 
 - Grocery features such as barcode billing and customer credit
 - Bakery and other business types
-- Offline POS, real-time updates and background queues (Phase 6)
+- Offline POS, real-time updates and background queues (Steps 32 to 34 in the [phase plan](./PHASE_PLAN.md))
 - Any AI feature (not planned at all)
 
 ## 5. Functional requirements
@@ -104,7 +104,7 @@ Users are not assumed to be comfortable with software. Counter billing is often 
 
 ## 6. Non-functional requirements
 
-- **Consistency:** billing and stock changes are atomic, using MongoDB transactions. These need a replica set, so local MongoDB must run as a single-node replica set by Phase 3. It runs standalone today.
+- **Consistency:** billing and stock changes are atomic, using MongoDB transactions. These need a replica set, so local MongoDB must run as a single-node replica set before Phase 9. The README has the setup steps.
 - **Auditability:** important business changes record who did what and when.
 - **Speed at the counter:** billing must be usable from the keyboard, with no unnecessary steps.
 - **Responsive:** the app works on phones, tablets and counter desktops.

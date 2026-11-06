@@ -1,5 +1,5 @@
 import { Beef, Flame, Milk, type LucideIcon } from 'lucide-react';
-import type { BusinessType } from '@/types/navigation';
+import type { BusinessType } from '@kadai/shared';
 
 export interface BusinessTypeDefinition {
   id: BusinessType;

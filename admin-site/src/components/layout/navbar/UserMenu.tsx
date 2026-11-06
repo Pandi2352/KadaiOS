@@ -9,7 +9,7 @@ export function UserMenu() {
 
   return (
     <Dropdown label="Account" triggerClassName={iconButtonClass()} trigger={<CircleUser size={18} aria-hidden />}>
-      <MenuNote title="Not signed in">Sign-in arrives in Phase 1.</MenuNote>
+      <MenuNote title="Not signed in">Sign-in arrives in Phase 2.</MenuNote>
       <MenuLink to={setup.path} icon={setup.icon}>
         {setup.label}
       </MenuLink>

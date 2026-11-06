@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 class ErrorDetailDto {
   @ApiProperty({ example: 400 })
@@ -9,6 +9,14 @@ class ErrorDetailDto {
     oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
   })
   message: string | string[];
+
+  @ApiPropertyOptional({
+    description: 'Validation messages by field name. Only sent when a request fails validation.',
+    type: 'object',
+    additionalProperties: { type: 'array', items: { type: 'string' } },
+    example: { name: ['Shop name is required'] },
+  })
+  fields?: Record<string, string[]>;
 }
 
 /** The body AllExceptionsFilter sends for every error. */

@@ -17,15 +17,17 @@ interface ApiEndpointOptions {
   uuidParam?: string;
   /** Entity name for a documented 404, such as "Shop". */
   notFound?: string;
+  /** Message for a documented 503. */
+  unavailable?: string;
 }
 
-const errorResponse = (status: HttpStatus, description: string, message: string | string[]) =>
+const errorResponse = (status: HttpStatus, description: string, message: string | string[], extra: object = {}) =>
   ApiResponse({
     status,
     description,
     schema: {
       allOf: [{ $ref: getSchemaPath(ErrorResponseDto) }],
-      example: { success: false, error: { statusCode: status, message } },
+      example: { success: false, error: { statusCode: status, message, ...extra } },
     },
   });
 
@@ -50,6 +52,7 @@ export function ApiEndpoint({
   validates = false,
   uuidParam,
   notFound,
+  unavailable,
 }: ApiEndpointOptions): MethodDecorator & ClassDecorator {
   const itemRef = getSchemaPath(response);
 
@@ -69,11 +72,18 @@ export function ApiEndpoint({
       },
     }),
     ...(uuidParam ? [ApiParam({ name: uuidParam, type: String, format: 'uuid' })] : []),
-    ...(validates ? [errorResponse(HttpStatus.BAD_REQUEST, 'Invalid input', ['name should not be empty'])] : []),
+    ...(validates
+      ? [
+          errorResponse(HttpStatus.BAD_REQUEST, 'Invalid input', ['Shop name is required'], {
+            fields: { name: ['Shop name is required'] },
+          }),
+        ]
+      : []),
     ...(uuidParam
       ? [errorResponse(HttpStatus.BAD_REQUEST, 'Invalid UUID', 'Validation failed (uuid is expected)')]
       : []),
     ...(notFound ? [errorResponse(HttpStatus.NOT_FOUND, `${notFound} not found`, `${notFound} not found`)] : []),
     errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, 'Server error', 'Something went wrong on the server'),
+    ...(unavailable ? [errorResponse(HttpStatus.SERVICE_UNAVAILABLE, 'Unavailable', unavailable)] : []),
   );
 }

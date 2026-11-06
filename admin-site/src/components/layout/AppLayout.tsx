@@ -1,11 +1,16 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { CommandPaletteProvider } from '@/context/CommandPaletteContext';
 import { SidebarProvider } from '@/context/SidebarContext';
+import { usePageTitle } from '@/hooks/usePageTitle';
+import { getPageTitle } from '@/lib/navigation';
 import { CommandPalette } from './command-palette/CommandPalette';
 import { Navbar } from './navbar/Navbar';
 import { Sidebar } from './sidebar/Sidebar';
 
 export function AppLayout() {
+  const { pathname } = useLocation();
+  usePageTitle(getPageTitle(pathname));
+
   return (
     <SidebarProvider>
       <CommandPaletteProvider>

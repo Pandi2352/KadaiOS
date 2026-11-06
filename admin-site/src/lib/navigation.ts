@@ -55,6 +55,9 @@ const findGroupLabel = (id: ModuleId): string | undefined => {
   return undefined;
 };
 
+export const getPageTitle = (pathname: string): string =>
+  Object.values(MODULES).find((module) => module.path === pathname)?.label ?? 'Page not found';
+
 export function getBreadcrumbs(pathname: string): BreadcrumbItem[] {
   const module = Object.values(MODULES).find((item) => item.path === pathname);
   if (!module) return [{ label: 'Page not found' }];

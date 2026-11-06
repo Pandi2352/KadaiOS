@@ -1,4 +1,8 @@
+import { usePageTitle } from '@/hooks/usePageTitle';
+
 export function HomePage() {
+  usePageTitle();
+
   return (
     <main className="mx-auto max-w-2xl px-4 py-16">
       <h1 className="text-3xl font-semibold text-brand">KadaiOS</h1>

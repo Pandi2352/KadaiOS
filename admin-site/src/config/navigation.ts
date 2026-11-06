@@ -11,7 +11,13 @@ export const NAVIGATION: NavSectionConfig[] = [
     entries: [
       { kind: 'link', module: 'billing' },
       { kind: 'group', id: 'orders', label: 'Orders', icon: ShoppingBag, children: ['orders', 'quotations'] },
-      { kind: 'group', id: 'subscriptions', label: 'Subscriptions', icon: Repeat, children: ['subscriptions', 'deliveries'] },
+      {
+        kind: 'group',
+        id: 'subscriptions',
+        label: 'Subscriptions',
+        icon: Repeat,
+        children: ['subscriptions', 'deliveries'],
+      },
       { kind: 'link', module: 'customers' },
     ],
   },
@@ -19,7 +25,13 @@ export const NAVIGATION: NavSectionConfig[] = [
     title: 'Stock',
     entries: [
       { kind: 'link', module: 'products' },
-      { kind: 'group', id: 'inventory', label: 'Inventory', icon: Boxes, children: ['stock', 'wastage', 'seasonal', 'expiry'] },
+      {
+        kind: 'group',
+        id: 'inventory',
+        label: 'Inventory',
+        icon: Boxes,
+        children: ['stock', 'wastage', 'seasonal', 'expiry'],
+      },
       { kind: 'link', module: 'purchases' },
       { kind: 'link', module: 'suppliers' },
     ],

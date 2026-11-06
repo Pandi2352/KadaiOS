@@ -1,24 +1,21 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { BUSINESS_TYPES, type BusinessType } from '../../../common/constants/business-type.js';
+import { BUSINESS_TYPES, type BusinessType, FIELD_LIMITS } from '@kadai/shared';
+import {
+  EnumField,
+  OptionalPhoneField,
+  OptionalTextField,
+  TextField,
+} from '../../../common/decorators/field.decorators.js';
 
 export class CreateShopDto {
-  @ApiProperty({ example: 'Shop name' })
-  @IsString()
-  @IsNotEmpty()
+  @TextField({ label: 'Shop name', example: 'Shop name' })
   name: string;
 
-  @ApiProperty({ enum: BUSINESS_TYPES, example: 'meat' })
-  @IsIn(BUSINESS_TYPES)
+  @EnumField('Business type', BUSINESS_TYPES, 'meat')
   businessType: BusinessType;
 
-  @ApiPropertyOptional({ example: 'Shop phone number' })
-  @IsOptional()
-  @IsString()
+  @OptionalPhoneField()
   phone?: string;
 
-  @ApiPropertyOptional({ example: 'Shop address' })
-  @IsOptional()
-  @IsString()
+  @OptionalTextField({ label: 'Address', example: 'Shop address', max: FIELD_LIMITS.longText })
   address?: string;
 }

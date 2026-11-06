@@ -1,36 +1,34 @@
 import 'reflect-metadata';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
-import { ResponseInterceptor } from './common/interceptors/response.interceptor.js';
-import { setupSwagger, SWAGGER_PATH } from './common/swagger/swagger.config.js';
+import { configureApp } from './common/bootstrap/configure-app.js';
+import { describeStartupError } from './common/bootstrap/startup-error.js';
+import { SWAGGER_PATH } from './common/swagger/swagger.config.js';
 import type { AppConfig } from './config/app.config.js';
-import { buildCorsOptions } from './config/cors.config.js';
+
+const logger = new Logger('Bootstrap');
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { abortOnError: false });
   const config = app.get<ConfigService<AppConfig, true>>(ConfigService);
-  const logger = new Logger('Bootstrap');
 
-  app.setGlobalPrefix('api');
-  app.enableCors(buildCorsOptions(config.get('clientOrigins', { infer: true })));
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
-  app.useGlobalFilters(new AllExceptionsFilter());
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  configureApp(
+    app,
+    config.getOrThrow('clientOrigins', { infer: true }),
+    config.getOrThrow('swaggerEnabled', { infer: true }),
+  );
 
-  const swaggerEnabled = config.get('swaggerEnabled', { infer: true });
-  if (swaggerEnabled) {
-    setupSwagger(app);
-  }
-
-  const port = config.get('port', { infer: true });
+  const port = config.getOrThrow('port', { infer: true });
   await app.listen(port);
   logger.log(`API running on http://localhost:${port}/api`);
-  if (swaggerEnabled) {
+  if (config.getOrThrow('swaggerEnabled', { infer: true })) {
     logger.log(`API docs on http://localhost:${port}/${SWAGGER_PATH}`);
   }
 }
 
-void bootstrap();
+bootstrap().catch((error: unknown) => {
+  logger.error(describeStartupError(error));
+  process.exit(1);
+});

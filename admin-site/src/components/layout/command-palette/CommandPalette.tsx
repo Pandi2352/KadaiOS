@@ -1,28 +1,18 @@
 import { Search } from 'lucide-react';
-import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Dialog } from '@/components/ui/Dialog';
 import { useCommandPalette } from '@/context/CommandPaletteContext';
 import { cn } from '@/lib/cn';
 import { type CommandItem, useCommandItems } from './useCommandItems';
 
-export function CommandPalette() {
-  const { isOpen, setOpen } = useCommandPalette();
+/** Search state lives here and only mounts while open, so it resets each time. */
+function CommandSearch() {
+  const { setOpen } = useCommandPalette();
   const navigate = useNavigate();
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const items = useCommandItems(query);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (isOpen && !dialog.open) {
-      setQuery('');
-      setActiveIndex(0);
-      dialog.showModal();
-    }
-    if (!isOpen && dialog.open) dialog.close();
-  }, [isOpen]);
 
   const select = (item: CommandItem | undefined) => {
     if (!item) return;
@@ -46,17 +36,11 @@ export function CommandPalette() {
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      aria-label="Search KadaiOS"
-      onClose={() => setOpen(false)}
-      onClick={(event) => event.target === dialogRef.current && setOpen(false)}
-      className="mx-auto mt-[12vh] w-[calc(100vw-2rem)] max-w-lg rounded-md border border-line bg-surface text-ink"
-    >
+    <>
       <div className="flex items-center gap-2 border-b border-line px-3">
         <Search size={16} aria-hidden className="shrink-0 text-muted" />
         <input
-          autoFocus
+          data-autofocus
           role="combobox"
           aria-expanded
           aria-controls="command-results"
@@ -98,6 +82,16 @@ export function CommandPalette() {
       {items.length === 0 && (
         <p className="px-3 pb-4 text-muted">Nothing matches "{query}". Try a module name, like Products.</p>
       )}
-    </dialog>
+    </>
+  );
+}
+
+export function CommandPalette() {
+  const { isOpen, setOpen } = useCommandPalette();
+
+  return (
+    <Dialog isOpen={isOpen} onClose={() => setOpen(false)} aria-label="Search KadaiOS" className="mt-[12vh] max-w-lg">
+      {isOpen && <CommandSearch />}
+    </Dialog>
   );
 }

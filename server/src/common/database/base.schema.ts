@@ -1,5 +1,5 @@
+import { generateUuid } from '@kadai/shared';
 import { Prop } from '@nestjs/mongoose';
-import { generateUuid } from '../utils/uuid.util.js';
 
 /** Every collection extends this so its _id is a UUID, never an ObjectId. */
 export abstract class BaseSchema {

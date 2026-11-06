@@ -5,8 +5,7 @@ export const sidebarWidth = {
   collapsed: 'lg:w-16',
 };
 
-const itemBase =
-  'flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-md text-sm transition-colors';
+const itemBase = 'flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-md text-sm transition-colors';
 
 export const navItemClass = ({
   isActive = false,

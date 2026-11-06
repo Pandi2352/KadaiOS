@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { MODULES } from '@/config/modules';
 import { useSidebar } from '@/context/SidebarContext';
@@ -14,11 +14,9 @@ export function SidebarGroup({ entry }: { entry: NavGroupEntry }) {
   const { pathname } = useLocation();
   const modules = entry.children.map((id) => MODULES[id]);
   const hasActiveChild = modules.some((module) => module.path === pathname);
-  const [isOpen, setOpen] = useState(hasActiveChild);
-
-  useEffect(() => {
-    if (hasActiveChild) setOpen(true);
-  }, [hasActiveChild]);
+  // Until someone toggles the group, it stays open while one of its pages is showing.
+  const [toggled, setToggled] = useState<boolean | null>(null);
+  const isOpen = toggled ?? hasActiveChild;
 
   if (isCollapsed) {
     return <SidebarFlyout entry={entry} modules={modules} isActive={hasActiveChild} />;
@@ -29,7 +27,7 @@ export function SidebarGroup({ entry }: { entry: NavGroupEntry }) {
       <button
         type="button"
         aria-expanded={isOpen}
-        onClick={() => setOpen(!isOpen)}
+        onClick={() => setToggled(!isOpen)}
         className={navItemClass({ isActive: hasActiveChild && !isOpen })}
       >
         <SidebarIcon icon={entry.icon} />

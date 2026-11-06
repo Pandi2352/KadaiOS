@@ -19,13 +19,13 @@ Build one core platform with configurable business modules, not a separate appli
 
 ## MVP scope
 
-The MVP covers three business types, because together they force a flexible design instead of a generic inventory app:
+The first milestone is a working business application for one shop, one business type and one owner, starting with a meat shop. Meat, crackers and dairy then follow, because together they force a flexible design instead of a generic inventory app:
 
 - **Meat shop:** weight-based inventory
 - **Crackers shop:** seasonal inventory
 - **Dairy shop:** subscriptions and expiry
 
-Grocery (barcode billing, customer credit) comes after the MVP.
+Grocery and bakery come later.
 
 ## A day in a meat shop
 
@@ -39,56 +39,61 @@ Grocery (barcode billing, customer credit) comes after the MVP.
 
 ```
 kadai-os/
-├── docs/          Project overview, PRD and module list
-├── admin-site/    Shop owner and staff app (POS, stock, reports)
-├── public-site/   Public website (minimal shell for now)
-└── server/        NestJS API on local MongoDB
+├── admin-site/              Shop owner and staff app (POS, stock, reports)
+├── public-site/             Public website (minimal shell for now)
+├── server/                  NestJS API on local MongoDB
+├── packages/
+│   ├── shared/              Code used by all apps
+│   └── eslint-config/       Lint rules
+├── scripts/                 MongoDB replica set setup
+└── docs/                    Project overview, PRD, modules and phase plan
 ```
 
 ## Running locally
 
-MongoDB must be running on `localhost:27017`. Start each app in its own terminal:
+MongoDB must be running on `localhost:27017`. From the project root:
 
-| App | Command | Address |
-| --- | --- | --- |
-| API | `cd server && npm run dev` | http://localhost:8000/api |
-| Admin app | `cd admin-site && npm run dev` | http://localhost:3000 |
-| Public site | `cd public-site && npm run dev` | http://localhost:3001 |
+```bash
+npm install
+npm run dev
+```
 
-Check the API and its database connection at http://localhost:8000/api/health. API docs are at http://localhost:8000/api/docs.
+| App | Address |
+| --- | --- |
+| Admin app | http://localhost:3000 |
+| Public site | http://localhost:3001 |
+| API | http://localhost:8000/api/v1 |
+| API docs | http://localhost:8000/api/docs |
+
+The [README](../README.md) has full setup, commands and the MongoDB replica set steps.
 
 ## Tech stack
 
 | Layer | Technology |
 | --- | --- |
 | Frontend | React 19, Vite 8, TypeScript 7, Tailwind CSS 4, React Router 7 |
-| Backend | NestJS 12, TypeScript 7 |
-| Database | Local MongoDB 8 with Mongoose 9 |
+| Backend | NestJS 12, TypeScript 7, Mongoose 9, Swagger |
+| Database | Local MongoDB 8 |
+| Tooling | npm workspaces, Vitest 4, ESLint 10, Prettier 3 |
 
-Target runtime is Node 20.19.4. Every package is on its latest release that supports this Node version, with these exceptions:
-
-- **`@types/node`** stays on the 20.x line so its types match the installed Node.
-- **`@nestjs/cli`** is not installed. Its dependencies need Node 22 or newer, so the server builds with `tsc` and runs with `node --watch`. Nest files are created by hand instead of with `nest generate`.
-- **`file-type`** is overridden to 21.3.4 in `server/package.json`, because `@nestjs/common` pins a release that needs Node 22. Remove the override after moving to Node 22.
-- **`concurrently`** stays on version 9, because version 10 needs Node 22.
-- **`@nestjs/swagger`** has a TypeScript override in `server/package.json`, because it lists TypeScript 6 as its newest supported version. Only its compiler plugin uses TypeScript, and this project doesn't use the plugin. Remove the override when Swagger supports TypeScript 7.
-
-Redis, Socket.IO and BullMQ come from the original plan and are deferred to Phase 6. They are not installed yet.
+The target runtime is Node 20.19.4. Packages are on their latest release that supports this Node version, and the README lists the exceptions. Redis, Socket.IO and BullMQ come from the original plan, arrive with Steps 31 to 33, and are not installed yet.
 
 ## Engineering rules
 
 ### UI
 
-- No shadows anywhere.
-- `rounded-md` is the only radius.
-- Both rules are enforced in `src/styles/theme.css`, which removes the other shadow and radius utilities from Tailwind. Writing `shadow-md` or `rounded-lg` generates no CSS.
-- Colours come from the theme tokens in the same file.
+- No shadows anywhere, and `rounded-md` is the only radius. `packages/shared/src/theme.css` removes the other utilities from Tailwind, so `shadow-md` or `rounded-lg` generate no CSS.
+- Never use the native `<select>`. Every dropdown uses the common `Select`.
+- Every form field shares the same props and shows its own label, hint and error.
+- Colours come from the theme tokens.
 
-### IDs
+### Data
 
-- Never use MongoDB ObjectId.
-- Every ID comes from `generateUuid()` in `server/src/common/utils/uuid.util.ts`, which creates a UUID v7. These sort by creation time, so newest-first queries can sort on `_id`.
-- Every schema extends `BaseSchema`, which sets this up. API responses expose `id`, not `_id`.
+- Never use MongoDB ObjectId. Every ID comes from `generateUuid()` in `@kadai/shared`, which creates a UUID v7. These sort by creation time, so newest-first queries can sort on `_id`.
+- Every schema extends `BaseSchema`. API responses expose `id`, not `_id`.
+- Money is stored as whole paise, and quantities as whole grams, millilitres or items, so bills have no rounding errors.
+- Reports use the shop's local day and month, not UTC.
+- Stock changes are written as ledger entries, never by overwriting a quantity.
 
 ### Reuse and file size
 
@@ -97,26 +102,22 @@ Redis, Socket.IO and BullMQ come from the original plan and are deferred to Phas
 
 | Need | Location |
 | --- | --- |
+| Code used by more than one app | `packages/shared/` |
 | Admin UI building blocks | `admin-site/src/components/ui/` |
 | Admin hooks and helpers | `admin-site/src/hooks/`, `admin-site/src/lib/` |
 | Modules, navigation, quick actions | `admin-site/src/config/` |
-| Server schema, repository, filter, interceptor, helpers | `server/src/common/` |
+| Feature screens and their API calls | `admin-site/src/features/` |
+| Server schema, repository, filter, pipes, decorators | `server/src/common/` |
 
 - Sidebar, routes, breadcrumbs and the command palette are all generated from `admin-site/src/config/`. Adding a module there adds it everywhere.
 
 ### Multi-tenancy
 
-Every business record will carry a `shopId`, and every query will filter by it. This starts with Phase 2 records.
+Every business record carries a `shopId` through `TenantSchema`, and is read through `TenantRepository`, which requires one. Products in Phase 5 are the first records to use this.
 
 ## Roadmap
 
-1. **Core foundation:** authentication, shop registration, business type selection, multi-tenant database design.
-2. **Product and inventory:** product CRUD, units, variants, stock ledger, suppliers, purchases.
-3. **POS billing:** cart, weight-based billing, discounts, taxes, payment methods, receipts.
-4. **Business operations:** customers, expenses, staff, permissions, orders.
-5. **Industry-specific features:** meat stock, crackers seasonal inventory, dairy expiry and subscriptions.
-6. **Advanced engineering:** offline support, Redis, queues, WebSockets, analytics, audit logs.
-7. **Production:** Docker, testing, CI/CD, deployment, monitoring, documentation.
+[PHASE_PLAN.md](./PHASE_PLAN.md) is the source of truth for the roadmap and progress.
 
 ## Advanced engineering challenges
 
@@ -135,3 +136,4 @@ Every business record will carry a `shopId`, and every query will filter by it. 
 
 - [PRD.md](./PRD.md): product requirements
 - [MODULES.md](./MODULES.md): module list with simple descriptions
+- [PHASE_PLAN.md](./PHASE_PLAN.md): phase-wise plan and progress

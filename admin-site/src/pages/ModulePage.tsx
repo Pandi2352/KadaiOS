@@ -34,12 +34,14 @@ export function ModulePage({ module }: { module: ModuleDefinition }) {
   }
 
   const businessNote = module.byBusiness?.[businessType];
-  const scopeNote = audience ? `This module is only for ${audience}.` : 'This module works the same way for every business type.';
+  const scopeNote = audience
+    ? `This module is only for ${audience}.`
+    : 'This module works the same way for every business type.';
 
   return (
     <div className="space-y-4">
       <PageHeader title={module.label} description={module.description} />
-      <Notice title={`Not built yet: planned for Phase ${module.phase}`}>
+      <Notice title={`Not built yet: planned for ${module.planned}`}>
         {businessNote ? `For a ${business.label.toLowerCase()}: ${businessNote}` : scopeNote}
       </Notice>
     </div>

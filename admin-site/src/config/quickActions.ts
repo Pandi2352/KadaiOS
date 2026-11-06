@@ -1,4 +1,13 @@
-import { CalendarPlus, ClipboardPlus, FilePlus, PackagePlus, ReceiptText, Trash2, UserPlus, Wallet } from 'lucide-react';
+import {
+  CalendarPlus,
+  ClipboardPlus,
+  FilePlus,
+  PackagePlus,
+  ReceiptText,
+  Trash2,
+  UserPlus,
+  Wallet,
+} from 'lucide-react';
 import type { QuickAction } from '@/types/navigation';
 
 export const QUICK_ACTIONS: QuickAction[] = [

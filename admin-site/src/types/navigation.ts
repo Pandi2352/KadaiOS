@@ -1,6 +1,7 @@
+import type { BusinessType } from '@kadai/shared';
 import type { LucideIcon } from 'lucide-react';
 
-export type BusinessType = 'meat' | 'crackers' | 'dairy';
+export type { BusinessType };
 
 export type ModuleId =
   | 'dashboard'
@@ -28,7 +29,8 @@ export interface ModuleDefinition {
   path: string;
   icon: LucideIcon;
   description: string;
-  phase: number;
+  /** Where this module sits in docs/PHASE_PLAN.md, such as "Phase 5" or "Step 25". */
+  planned: string;
   /** Leave unset when every business type gets this module. */
   businessTypes?: BusinessType[];
   /** How the module behaves for a specific business type. */

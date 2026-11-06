@@ -5,12 +5,12 @@ import { PaginationQueryDto } from '../../common/dto/pagination-query.dto.js';
 import { ApiEndpoint } from '../../common/swagger/api-endpoint.decorator.js';
 import { CreateShopDto } from './dto/create-shop.dto.js';
 import { ShopResponseDto } from './dto/shop-response.dto.js';
-import { ShopsRepository } from './shops.repository.js';
+import { ShopsService } from './shops.service.js';
 
 @ApiTags('Shops')
 @Controller('shops')
 export class ShopsController {
-  constructor(private readonly shops: ShopsRepository) {}
+  constructor(private readonly shops: ShopsService) {}
 
   @Post()
   @ApiEndpoint({ summary: 'Create a shop', response: ShopResponseDto, status: HttpStatus.CREATED, validates: true })
@@ -21,12 +21,12 @@ export class ShopsController {
   @Get()
   @ApiEndpoint({ summary: 'List shops, newest first', response: ShopResponseDto, paginated: true, validates: true })
   list(@Query() query: PaginationQueryDto) {
-    return this.shops.findPage(query);
+    return this.shops.list(query);
   }
 
   @Get(':id')
   @ApiEndpoint({ summary: 'Get one shop', response: ShopResponseDto, uuidParam: 'id', notFound: 'Shop' })
   get(@UuidParam() id: string) {
-    return this.shops.findByIdOrThrow(id);
+    return this.shops.get(id);
   }
 }

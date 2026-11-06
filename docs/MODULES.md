@@ -2,35 +2,35 @@
 
 ## Core modules
 
-Every shop gets these. Phases 1 to 5 follow the roadmap in [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md). The original plan did not assign Dashboard and Reports to a phase, so Phase 4 is a proposal. Advanced analytics follow in Phase 6.
+Every shop gets these. "Planned for" matches [PHASE_PLAN.md](./PHASE_PLAN.md), where Phases 1 to 13 are the first MVP and Steps 14 onward come after it.
 
-| Module | Simple description | Phase |
+| Module | Simple description | Planned for |
 | --- | --- | --- |
-| Business Setup | Register the shop and choose its business type | 1 |
-| Products | Products, variants, units and pricing | 2 |
-| Inventory | Stock in, stock out and adjustments, kept as a ledger | 2 |
-| Purchases | Supplier purchases and invoices | 2 |
-| Suppliers | Supplier details and purchase history | 2 |
-| POS Billing | Fast counter billing with discounts, taxes and receipts | 3 |
-| Customers | Customer profiles and purchase history | 4 |
-| Orders | Online, offline and bulk orders | 4 |
-| Expenses | Rent, electricity, transport and other costs | 4 |
-| Staff | Employees, roles and permissions | 4 |
-| Dashboard | Daily overview of the business | 4 |
-| Reports | Sales, profit, stock and expense reports | 4 |
+| Business Setup | Register the shop and choose its business type | Phase 3 |
+| Dashboard | Daily overview of the business | Phase 4 |
+| Products | Products, variants, units and pricing | Phase 5 |
+| Inventory | Stock in, stock out and adjustments, kept as a ledger | Phase 6 |
+| Customers | Customer profiles and purchase history | Phase 7 |
+| Suppliers | Supplier details and purchase history | Phase 8 |
+| Purchases | Supplier purchases and invoices | Phase 9 |
+| POS Billing | Fast counter billing with discounts, taxes and receipts | Phase 10 |
+| Orders and Sales | Sales history, returns, and online, offline and bulk orders | Phase 11 |
+| Expenses | Rent, electricity, transport and other costs | Phase 12 |
+| Reports | Sales, profit, stock and expense reports | Phase 13 |
+| Staff | Employees, roles and permissions | Step 14 |
 
 ## Business-specific modules
 
 These appear only for the matching business type.
 
-| Module | Business type | Simple description | Phase |
+| Module | Business type | Simple description | Planned for |
 | --- | --- | --- | --- |
-| Cutting & Wastage | Meat | Record what is lost in cutting and spoilage | 5 |
-| Seasonal Stock | Crackers | Plan and track stock for the festival season | 5 |
-| Quotations | Crackers | Prepare price quotes for bulk buyers | 5 |
-| Expiry Tracking | Dairy | Track daily stock and items close to expiry | 5 |
-| Subscriptions | Dairy | Recurring milk and dairy delivery plans | 5 |
-| Daily Deliveries | Dairy | Track what was delivered each day | 5 |
+| Cutting & Wastage | Meat | Record what is lost in cutting and spoilage | Phase 6 |
+| Seasonal Stock | Crackers | Plan and track stock for the festival season | Step 25 |
+| Quotations | Crackers | Prepare price quotes for bulk buyers | Step 25 |
+| Expiry Tracking | Dairy | Track daily stock and items close to expiry | Step 26 |
+| Subscriptions | Dairy | Recurring milk and dairy delivery plans | Step 26 |
+| Daily Deliveries | Dairy | Track what was delivered each day | Step 26 |
 
 ## How each core module adapts
 
@@ -45,4 +45,6 @@ These appear only for the matching business type.
 
 ## After the MVP
 
-**Grocery shop:** barcode billing, product variants, stock alerts, customer credit tracking, supplier purchases, and daily profit and sales reports.
+**Grocery shop (Step 27):** barcode, bulk products and reorder management.
+
+**Bakery shop (Step 28):** recipes, production, raw materials and custom orders.

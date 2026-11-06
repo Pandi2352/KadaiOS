@@ -325,7 +325,7 @@
 
 ## 24. Technical & System Modules
 
-- [ ] API Versioning
+- [x] API Versioning
 - [ ] File Management
 - [ ] Background Jobs
 - [ ] Scheduled Tasks
@@ -367,9 +367,47 @@ Start here
 - [x] 9. Set up global API response structure.
 - [x] 10. Configure API validation.
 - [x] 11. Configure Swagger.
-- [ ] 12. Create frontend API integration.
+- [x] 12. Create frontend API integration.
 - [x] 13. Create common layouts.
-- [ ] 14. Create reusable Button, Input, Select, Modal and Table components.
+- [x] 14. Create reusable Button, Input, Select, Modal and Table components.
+
+### Phase 1 audit: fixes
+
+- [x] 15. Stop the admin app crashing when the saved business type is invalid.
+- [x] 16. Return 400 instead of 500 for whitespace-only text fields.
+- [x] 17. Add maximum lengths to text fields.
+- [x] 18. Validate phone number format.
+- [x] 19. Return 503 from the health check when the database is disconnected.
+- [x] 20. Move shop logic from the controller into a ShopsService.
+- [x] 21. Update old phase numbers in the admin app and docs to match this plan.
+
+### Phase 1 audit: backend foundation
+
+- [x] 22. Validate environment variables at startup with clear error messages.
+- [x] 23. Show a clear error when MongoDB is unavailable at startup.
+- [x] 24. Add API versioning (`/api/v1`) before frontend API integration.
+- [x] 25. Add Helmet security headers and remove the `X-Powered-By` header.
+- [x] 26. Enable graceful shutdown hooks.
+- [x] 27. Create a common base schema with `shopId` for business records.
+- [ ] 28. Run local MongoDB as a single-node replica set for transactions.
+- [x] 29. Create common money and quantity helpers (paise, grams, millilitres).
+- [x] 30. Create common date helpers for shop-local days and months.
+
+### Phase 1 audit: frontend foundation
+
+- [x] 31. Add a common error page to the admin app and public site.
+- [x] 32. Add frontend environment variables and `.env.example` for the API address.
+- [x] 33. Create reusable Form Field, Toast, Loader, Empty State, Confirm Dialog and Pagination components.
+- [x] 34. Show API validation errors in forms.
+- [x] 35. Set the browser tab title for each page.
+
+### Phase 1 audit: project tooling
+
+- [x] 36. Configure ESLint and Prettier in all three apps.
+- [x] 37. Add `.editorconfig`, `.gitattributes` and `.nvmrc`.
+- [x] 38. Set up a test runner in the server and admin app.
+- [x] 39. Add a root command to start all three apps together.
+- [x] 40. Share theme tokens, business types and API response types across apps.
 
 ## Phase 2 – Authentication
 

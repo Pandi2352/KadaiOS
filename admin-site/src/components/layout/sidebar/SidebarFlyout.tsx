@@ -90,23 +90,13 @@ export function SidebarFlyout({ entry, modules, isActive }: SidebarFlyoutProps) 
       </button>
       {position &&
         createPortal(
-          <div
-            ref={panelRef}
-            onBlur={handlePanelBlur}
-            style={position}
-            className="fixed z-50 w-52 pl-2"
-          >
+          <div ref={panelRef} onBlur={handlePanelBlur} style={position} className="fixed z-50 w-52 pl-2">
             <div className="rounded-md border border-line bg-surface p-1.5">
               <p className={`${sectionTitleClass} pt-1`}>{entry.label}</p>
               <ul className="space-y-0.5">
                 {modules.map((module) => (
                   <li key={module.id}>
-                    <NavLink
-                      to={module.path}
-                      end
-                      onClick={close}
-                      className={navItemClass}
-                    >
+                    <NavLink to={module.path} end onClick={close} className={navItemClass}>
                       <span className="truncate">{module.label}</span>
                     </NavLink>
                   </li>

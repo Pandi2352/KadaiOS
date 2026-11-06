@@ -1,18 +1,34 @@
+import type { ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { MODULES } from '@/config/modules';
+import { BusinessSetupPage } from '@/pages/BusinessSetupPage';
 import { ModulePage } from '@/pages/ModulePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { RouteErrorPage } from '@/pages/RouteErrorPage';
+import type { ModuleId } from '@/types/navigation';
+
+/** Modules with a real screen. Every other module shows the shared "not built yet" page. */
+const BUILT_PAGES: Partial<Record<ModuleId, ReactNode>> = {
+  setup: <BusinessSetupPage />,
+};
 
 export const router = createBrowserRouter([
   {
     element: <AppLayout />,
+    // The outer error page catches a crash in the layout. The inner one keeps the sidebar when a page crashes.
+    errorElement: <RouteErrorPage />,
     children: [
-      ...Object.values(MODULES).map((module) => ({
-        path: module.path,
-        element: <ModulePage module={module} />,
-      })),
-      { path: '*', element: <NotFoundPage /> },
+      {
+        errorElement: <RouteErrorPage />,
+        children: [
+          ...Object.values(MODULES).map((module) => ({
+            path: module.path,
+            element: BUILT_PAGES[module.id] ?? <ModulePage module={module} />,
+          })),
+          { path: '*', element: <NotFoundPage /> },
+        ],
+      },
     ],
   },
 ]);
