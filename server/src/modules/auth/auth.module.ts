@@ -7,6 +7,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import type { AppConfig } from '../../config/app.config.js';
 import { UsersModule } from '../users/users.module.js';
 import { AccessTokenService } from './access-token.service.js';
+import { AccountController } from './account.controller.js';
+import { AccountService } from './account.service.js';
 import { AdminAuthController } from './admin-auth.controller.js';
 import { AuthCookieService } from './auth-cookie.service.js';
 import { AuthService } from './auth.service.js';
@@ -37,8 +39,9 @@ const ONE_MINUTE_MS = 60 * 1000;
       }),
     }),
   ],
-  controllers: [AdminAuthController, CustomerAuthController],
+  controllers: [AdminAuthController, CustomerAuthController, AccountController],
   providers: [
+    AccountService,
     AuthService,
     AccessTokenService,
     RefreshTokenService,

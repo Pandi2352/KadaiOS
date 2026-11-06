@@ -7,6 +7,8 @@ export interface FieldControlProps {
   'aria-describedby'?: string;
   'aria-invalid'?: true;
   'aria-required'?: true;
+  /** Only for groups, which have no single input for a label to point at. */
+  'aria-labelledby'?: string;
 }
 
 /** The props every *Field component accepts, however its value is entered. */
@@ -28,18 +30,22 @@ interface FormFieldProps {
   required?: boolean;
   /** Shows "12/120" under the field. */
   count?: { length: number; max: number };
+  /** For several inputs under one label, such as radio buttons. */
+  group?: boolean;
   children: (control: FieldControlProps) => ReactNode;
 }
 
 /** Label, message and counter for any control. An error replaces the hint, so there is one message at a time. */
-export function FormField({ label, error, hint, required, count, children }: FormFieldProps) {
+export function FormField({ label, error, hint, required, count, group, children }: FormFieldProps) {
   const id = useId();
+  const labelId = `${id}-label`;
   const messageId = `${id}-message`;
   const hasMessage = Boolean(error || hint);
+  const Label = group ? 'span' : 'label';
 
   return (
     <div>
-      <label htmlFor={id} className="mb-1 block font-medium">
+      <Label id={labelId} htmlFor={group ? undefined : id} className="mb-1 block font-medium">
         {label}
         {required ? (
           <span aria-hidden className="text-danger">
@@ -49,9 +55,10 @@ export function FormField({ label, error, hint, required, count, children }: For
         ) : (
           <span className="font-normal text-muted"> (optional)</span>
         )}
-      </label>
+      </Label>
       {children({
         id,
+        'aria-labelledby': group ? labelId : undefined,
         'aria-describedby': hasMessage ? messageId : undefined,
         'aria-invalid': error ? true : undefined,
         'aria-required': required ? true : undefined,

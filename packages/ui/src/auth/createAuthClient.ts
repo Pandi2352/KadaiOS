@@ -2,6 +2,8 @@ import type {
   AuthRole,
   AuthSession,
   AuthUser,
+  ChangeEmailInput,
+  ChangePasswordInput,
   LoginInput,
   RegisterInput,
   UpdateProfileInput,
@@ -35,6 +37,10 @@ export interface AuthClient {
   getProfile: (signal?: AbortSignal) => Promise<UserProfile>;
   /** Also updates the logged-in user, so names shown elsewhere change straight away. */
   updateProfile: (input: UpdateProfileInput) => Promise<UserProfile>;
+  /** Logs out other devices. This one gets a new session, so it stays logged in. */
+  changePassword: (input: ChangePasswordInput) => Promise<AuthUser>;
+  /** Logs out other devices. This one gets a new session, so it stays logged in. */
+  changeEmail: (input: ChangeEmailInput) => Promise<AuthUser>;
 }
 
 /** Each refresh token works once, so tabs take turns. The later tab sends the newest cookie. */
@@ -126,6 +132,16 @@ export function createAuthClient({ api, role }: { api: ApiClient; role: AuthRole
       const { createdAt: _createdAt, ...user } = profile;
       setState({ status: 'authenticated', user });
       return profile;
+    },
+    changePassword: async (input) => {
+      const session = await api.put<AuthSession>(`${PROFILE_PATH}/password`, input);
+      applySession(session);
+      return session.user;
+    },
+    changeEmail: async (input) => {
+      const session = await api.put<AuthSession>(`${PROFILE_PATH}/email`, input);
+      applySession(session);
+      return session.user;
     },
   };
 }

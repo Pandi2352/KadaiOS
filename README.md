@@ -152,6 +152,8 @@ All routes start with `/api/v1`. Interactive docs are at `/api/docs` and the Ope
 | `GET` | `/shops/:id` | Admin only. Get one shop |
 | `GET` | `/users/me` | Any logged-in user. Get your own profile |
 | `PUT` | `/users/me` | Any logged-in user. Update your own name and phone. Leave out the phone to remove it |
+| `PUT` | `/users/me/password` | Any logged-in user. Needs the current password. Logs out other devices and returns a new session |
+| `PUT` | `/users/me/email` | Any logged-in user. Needs the current password. Logs out other devices and returns a new session. The new email isn't verified, because the API can't send email yet |
 | `POST` | `/auth/customer/register` | Public. Create a customer account and log in. Admins have no equivalent |
 | `POST` | `/auth/customer/login`, `/auth/admin/login` | Public. Log in |
 | `POST` | `/auth/customer/refresh`, `/auth/admin/refresh` | Public. Get a new access token using the refresh cookie |
@@ -240,7 +242,7 @@ Successful responses and errors use a shared format. `fields` only appears when 
 
 | Need | Use | From |
 | --- | --- | --- |
-| Form fields | `TextField`, `EmailField`, `PhoneField`, `NumberField`, `PasswordField`, `TextareaField`, `SelectField`, `CheckboxField` | `@kadai/ui` |
+| Form fields | `TextField`, `EmailField`, `PhoneField`, `NumberField`, `PasswordField`, `TextareaField`, `SelectField`, `CheckboxField`, `RadioGroupField`, `DateField`, `FileField` | `@kadai/ui` |
 | Field extras | `startIcon`, `startText`, `endText`, `clearable`, `showCount`; `NumberField` has `min`, `max`, `step`, `decimals`, `steppers`; `PasswordField` has `showStrength` and warns about Caps Lock | `@kadai/ui` |
 | A new kind of field | `FormField`, which adds the label, message and counter; `FieldAction` for a button inside a field | `@kadai/ui` |
 | Form state, validation and API errors | `useForm` with `fieldRules` and `FormAlert` | `@kadai/ui` |

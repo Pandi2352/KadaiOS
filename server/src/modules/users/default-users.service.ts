@@ -22,7 +22,11 @@ export class DefaultUsersService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<void> {
     await this.users.ensureIndexes();
-    await this.ensureUser('admin', this.config.get('defaultAdmin', { infer: true }));
+    // Only when there are no admins. Otherwise changing the admin's email would bring back
+    // an account with the default password on the next restart.
+    if (!(await this.users.hasAnyWithRole('admin'))) {
+      await this.ensureUser('admin', this.config.get('defaultAdmin', { infer: true }));
+    }
     await this.ensureUser('customer', this.config.get('defaultCustomer', { infer: true }));
   }
 

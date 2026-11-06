@@ -44,6 +44,11 @@ export class RefreshTokenService {
     if (stored) await this.tokens.revokeFamily(stored.familyId);
   }
 
+  /** Ends every login the user has, on every device. */
+  revokeAllForUser(userId: string): Promise<void> {
+    return this.tokens.revokeAllForUser(userId);
+  }
+
   /**
    * A token that can't be claimed. Used moments ago, it's a browser that never received the reply,
    * such as a reload during a refresh, so it gets a new token. Used longer ago, it was probably

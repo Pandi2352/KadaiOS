@@ -12,10 +12,15 @@ interface UseFormOptions<T> {
   rules?: FormRules<T>;
 }
 
+const FOCUSABLE = 'input:not(:disabled), button:not(:disabled), textarea:not(:disabled)';
+
 /** Puts the errors on screen first, so the first invalid field can then take focus. */
 const showFieldErrors = (form: HTMLFormElement, setErrors: (errors: FieldErrors) => void, errors: FieldErrors) => {
   flushSync(() => setErrors(errors));
-  form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+  const invalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+  // A radio group marks the group as invalid, and focus goes to its first radio.
+  const target = invalid?.matches(FOCUSABLE) ? invalid : invalid?.querySelector<HTMLElement>(FOCUSABLE);
+  target?.focus();
 };
 
 /**
@@ -92,7 +97,13 @@ export function useForm<T extends object>({ initialValues, onSubmit, rules }: Us
     }
   };
 
+  const reset = () => {
+    setValues(initial);
+    setFieldErrors({});
+    setFormError(undefined);
+  };
+
   const isDirty = (Object.keys(values) as (keyof T)[]).some((name) => values[name] !== initial[name]);
 
-  return { values, field, setValue, handleSubmit, fieldErrors, formError, isSubmitting, isDirty };
+  return { values, field, setValue, reset, handleSubmit, fieldErrors, formError, isSubmitting, isDirty };
 }

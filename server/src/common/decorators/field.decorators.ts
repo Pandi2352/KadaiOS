@@ -66,7 +66,7 @@ export const EmailField = () =>
   );
 
 /** A password being set. Never trimmed, because spaces can be part of a password. */
-export const NewPasswordField = () =>
+export const NewPasswordField = (label = 'Password') =>
   applyDecorators(
     ApiProperty({
       type: String,
@@ -75,18 +75,18 @@ export const NewPasswordField = () =>
       maxLength: PASSWORD_LIMITS.max,
       example: 'choose-a-long-password',
     }),
-    IsString({ message: 'Password is required' }),
-    MinLength(PASSWORD_LIMITS.min, { message: `Password must have at least ${PASSWORD_LIMITS.min} characters` }),
-    MaxLength(PASSWORD_LIMITS.max, { message: `Password must be ${PASSWORD_LIMITS.max} characters or fewer` }),
+    IsString({ message: `${label} is required` }),
+    MinLength(PASSWORD_LIMITS.min, { message: `${label} must have at least ${PASSWORD_LIMITS.min} characters` }),
+    MaxLength(PASSWORD_LIMITS.max, { message: `${label} must be ${PASSWORD_LIMITS.max} characters or fewer` }),
   );
 
 /** A password being checked. It skips the length rules, so an older password can still log in if rules change. */
-export const CurrentPasswordField = () =>
+export const CurrentPasswordField = (label = 'Password') =>
   applyDecorators(
     ApiProperty({ type: String, format: 'password', example: 'your-password' }),
-    IsString({ message: 'Password is required' }),
-    IsNotEmpty({ message: 'Password is required' }),
-    MaxLength(PASSWORD_LIMITS.max, { message: `Password must be ${PASSWORD_LIMITS.max} characters or fewer` }),
+    IsString({ message: `${label} is required` }),
+    IsNotEmpty({ message: `${label} is required` }),
+    MaxLength(PASSWORD_LIMITS.max, { message: `${label} must be ${PASSWORD_LIMITS.max} characters or fewer` }),
   );
 
 export const EnumField = <T extends string>(label: string, values: readonly T[], example: T) =>

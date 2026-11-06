@@ -111,6 +111,72 @@ describe('ProfileCard', () => {
     expect(put).not.toHaveBeenCalled();
   });
 
+  const passwordInput = (label: RegExp) => screen.getByLabelText(label, { selector: 'input' });
+
+  it('changes the password, keeps the login and empties the form', async () => {
+    const { put } = await setup(vi.fn().mockResolvedValue(PROFILE), vi.fn().mockResolvedValue(SESSION));
+    await nameField();
+
+    await userEvent.type(passwordInput(/^New password/), 'another-long-password');
+    await userEvent.type(passwordInput(/^Confirm new password/), 'another-long-password');
+    const [, current] = screen.getAllByLabelText(/^Current password/, { selector: 'input' });
+    await userEvent.type(current, 'old-password');
+    await userEvent.click(screen.getByRole('button', { name: 'Change password' }));
+
+    await screen.findByText('Password changed');
+    expect(put).toHaveBeenCalledWith('/users/me/password', {
+      currentPassword: 'old-password',
+      newPassword: 'another-long-password',
+    });
+    expect((current as HTMLInputElement).value).toBe('');
+    expect(screen.getByTestId('navbar-name').textContent).toBe('Default Admin');
+  });
+
+  it('does not send a new password that was typed differently', async () => {
+    const { put } = await setup(vi.fn().mockResolvedValue(PROFILE));
+    await nameField();
+
+    await userEvent.type(passwordInput(/^New password/), 'another-long-password');
+    await userEvent.type(passwordInput(/^Confirm new password/), 'something-else');
+    const [, current] = screen.getAllByLabelText(/^Current password/, { selector: 'input' });
+    await userEvent.type(current, 'old-password');
+    await userEvent.click(screen.getByRole('button', { name: 'Change password' }));
+
+    await screen.findByText('Passwords must match');
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('shows a wrong current password under its field', async () => {
+    const message = 'Current password is incorrect';
+    const error = new ApiError({ statusCode: 400, message, fields: { currentPassword: [message] } });
+    await setup(vi.fn().mockResolvedValue(PROFILE), vi.fn().mockRejectedValue(error));
+    await nameField();
+
+    await userEvent.type(screen.getByRole('textbox', { name: /^New email/ }), 'new@kadaios.test');
+    const [current] = screen.getAllByLabelText(/^Current password/, { selector: 'input' });
+    await userEvent.type(current, 'wrong-password');
+    await userEvent.click(screen.getByRole('button', { name: 'Change email' }));
+
+    await screen.findByText(message);
+    expect(current.getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('shows the new email everywhere once it is changed', async () => {
+    const session = { ...SESSION, user: { ...USER, email: 'new@kadaios.test' } };
+    const { put } = await setup(vi.fn().mockResolvedValue(PROFILE), vi.fn().mockResolvedValue(session));
+    await nameField();
+
+    await userEvent.type(screen.getByRole('textbox', { name: /^New email/ }), 'new@kadaios.test');
+    const [current] = screen.getAllByLabelText(/^Current password/, { selector: 'input' });
+    await userEvent.type(current, 'my-password');
+    await userEvent.click(screen.getByRole('button', { name: 'Change email' }));
+
+    await screen.findByText('Email changed');
+    expect(put).toHaveBeenCalledWith('/users/me/email', { email: 'new@kadaios.test', currentPassword: 'my-password' });
+    expect((screen.getByRole('textbox', { name: 'Email' }) as HTMLInputElement).value).toBe('new@kadaios.test');
+    expect((screen.getByRole('textbox', { name: /^New email/ }) as HTMLInputElement).value).toBe('');
+  });
+
   it('offers a retry when loading fails', async () => {
     const get = vi
       .fn()

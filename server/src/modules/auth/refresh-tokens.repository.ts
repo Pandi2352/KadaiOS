@@ -25,6 +25,10 @@ export class RefreshTokensRepository extends BaseRepository<RefreshToken> {
     return this.model.findOne({ tokenHash }).exec();
   }
 
+  async revokeAllForUser(userId: string): Promise<void> {
+    await this.model.updateMany({ userId, revokedAt: null }, { revokedAt: new Date() }).exec();
+  }
+
   async revokeFamily(familyId: string): Promise<void> {
     await this.model.updateMany({ familyId, revokedAt: null }, { revokedAt: new Date() }).exec();
   }

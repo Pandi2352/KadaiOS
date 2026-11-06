@@ -43,7 +43,7 @@ export function ProfileForm({ profile, onSaved }: ProfileFormProps) {
         disabled
         value={profile.email}
         onChange={() => undefined}
-        hint="You can't change your email yet."
+        hint="To change it, use Change email below."
       />
       <PhoneField
         {...field('phone')}

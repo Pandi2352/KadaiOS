@@ -28,6 +28,16 @@ export interface UpdateProfileInput {
   phone?: string;
 }
 
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface ChangeEmailInput {
+  email: string;
+  currentPassword: string;
+}
+
 export interface AuthSession {
   accessToken: string;
   /** Seconds until the access token expires. */

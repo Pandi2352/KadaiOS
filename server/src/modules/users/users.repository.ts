@@ -24,8 +24,25 @@ export class UsersRepository extends BaseRepository<User> {
     return this.model.exists({ email, role }).exec();
   }
 
+  hasAnyWithRole(role: AuthRole) {
+    return this.model.exists({ role }).exec();
+  }
+
   findActiveById(id: string) {
     return this.model.findOne({ _id: id, isActive: true }).exec();
+  }
+
+  findActiveByIdWithPassword(id: string) {
+    return this.model.findOne({ _id: id, isActive: true }).select('+passwordHash').exec();
+  }
+
+  async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await this.model.updateOne({ _id: id }, { passwordHash }).exec();
+  }
+
+  /** Fails with a duplicate key error if another account of the same role has this email. */
+  updateEmail(id: string, email: string) {
+    return this.model.findOneAndUpdate({ _id: id }, { email }, { returnDocument: 'after', runValidators: true }).exec();
   }
 
   /** Replaces the editable details. With no phone, any saved phone is removed. */

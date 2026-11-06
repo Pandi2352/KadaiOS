@@ -3,7 +3,17 @@ import { createStrictContext } from '../createStrictContext';
 import type { AuthClient, AuthState } from './createAuthClient';
 
 type AuthValue = AuthState &
-  Pick<AuthClient, 'login' | 'register' | 'logout' | 'onSessionEnded' | 'getProfile' | 'updateProfile'>;
+  Pick<
+    AuthClient,
+    | 'login'
+    | 'register'
+    | 'logout'
+    | 'onSessionEnded'
+    | 'getProfile'
+    | 'updateProfile'
+    | 'changePassword'
+    | 'changeEmail'
+  >;
 
 const [Provider, useAuth] = createStrictContext<AuthValue>('Auth');
 
@@ -25,6 +35,8 @@ export function AuthProvider({ auth, children }: { auth: AuthClient; children: R
       onSessionEnded: auth.onSessionEnded,
       getProfile: auth.getProfile,
       updateProfile: auth.updateProfile,
+      changePassword: auth.changePassword,
+      changeEmail: auth.changeEmail,
     }),
     [state, auth],
   );

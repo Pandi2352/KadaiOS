@@ -71,7 +71,7 @@ export class AuthService {
     return this.refreshTokens.revoke(token);
   }
 
-  private async startSession(user: User): Promise<IssuedSession> {
+  async startSession(user: User): Promise<IssuedSession> {
     const refreshToken = await this.refreshTokens.issue(user._id, user.role);
     return { session: await this.buildSession(user), refreshToken };
   }

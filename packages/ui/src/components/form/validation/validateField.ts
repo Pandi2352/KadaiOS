@@ -41,7 +41,8 @@ const checkText = <V, T>(rule: FieldRule<V, T>, text: string): string | undefine
 export function validateField<V, T>(rule: FieldRule<V, T>, value: V, values: T): string | undefined {
   const text = typeof value === 'string' && !rule.keepSpaces ? value.trim() : value;
 
-  if (text === '' || text === false || text === undefined || text === null) {
+  const isEmpty = Array.isArray(text) ? text.length === 0 : text === '' || text === false || text == null;
+  if (isEmpty) {
     return rule.required ? `${rule.label} is required` : undefined;
   }
 
