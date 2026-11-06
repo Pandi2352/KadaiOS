@@ -54,3 +54,34 @@ export interface RegisterInput extends LoginInput {
   name: string;
   phone?: string;
 }
+
+export const ADMIN_INVITE_STATUSES = ['pending', 'accepted', 'expired'] as const;
+
+export type AdminInviteStatus = (typeof ADMIN_INVITE_STATUSES)[number];
+
+export interface AdminInvite {
+  id: string;
+  email: string;
+  invitedBy: string;
+  invitedByName?: string;
+  status: AdminInviteStatus;
+  expiresAt: string;
+  acceptedAt?: string;
+  createdAt: string;
+}
+
+export interface CreateAdminInviteInput {
+  email: string;
+}
+
+export interface AcceptAdminInviteInput {
+  token: string;
+  name: string;
+  password: string;
+  phone?: string;
+}
+
+export interface ValidateAdminInviteResponse {
+  email: string;
+  valid: boolean;
+}

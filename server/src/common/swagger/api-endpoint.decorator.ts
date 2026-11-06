@@ -11,6 +11,8 @@ interface ApiEndpointOptions {
   status?: HttpStatus.OK | HttpStatus.CREATED;
   /** Documents `data` as `{ items, total, page, limit }`. */
   paginated?: boolean;
+  /** Documents `data` as an array of items `T[]`. */
+  isArray?: boolean;
   /** `data` can be null. */
   nullable?: boolean;
   /** The route validates a body or query, so it can return 400. */
@@ -55,8 +57,9 @@ const paginatedSchema = (itemRef: string) => ({
   },
 });
 
-const dataSchema = (itemRef: string, paginated: boolean, nullable: boolean) => {
+const dataSchema = (itemRef: string, paginated: boolean, nullable: boolean, isArray: boolean) => {
   if (paginated) return paginatedSchema(itemRef);
+  if (isArray) return { type: 'array', items: { $ref: itemRef } };
   return nullable ? { allOf: [{ $ref: itemRef }], nullable: true } : { $ref: itemRef };
 };
 
@@ -67,6 +70,7 @@ export function ApiEndpoint({
   response,
   status = HttpStatus.OK,
   paginated = false,
+  isArray = false,
   nullable = false,
   validates = false,
   uuidParam,
@@ -89,7 +93,7 @@ export function ApiEndpoint({
         required: ['success', 'data'],
         properties: {
           success: { type: 'boolean', example: true },
-          data: dataSchema(itemRef, paginated, nullable),
+          data: dataSchema(itemRef, paginated, nullable, isArray),
         },
       },
     }),

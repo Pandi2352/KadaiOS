@@ -70,6 +70,33 @@ export class EnvironmentVariables {
     message: `DEFAULT_CUSTOMER_PASSWORD must have at least ${PASSWORD_LIMITS.min} characters`,
   })
   DEFAULT_CUSTOMER_PASSWORD?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_HOST?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'SMTP_PORT must be a whole number' })
+  @Min(1, { message: 'SMTP_PORT must be between 1 and 65535' })
+  @Max(65535, { message: 'SMTP_PORT must be between 1 and 65535' })
+  SMTP_PORT?: number;
+
+  @IsOptional()
+  @IsString()
+  SMTP_USER?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_PASS?: string;
+
+  @IsOptional()
+  @IsString()
+  MAIL_FROM?: string;
+
+  @IsOptional()
+  @IsString()
+  ADMIN_APP_URL?: string;
 }
 
 export function findEnvErrors(env: Record<string, unknown>): string[] {

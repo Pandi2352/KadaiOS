@@ -28,6 +28,14 @@ export class UsersRepository extends BaseRepository<User> {
     return this.model.exists({ role }).exec();
   }
 
+  findById(id: string) {
+    return this.model.findById(id).exec();
+  }
+
+  findAdmins() {
+    return this.model.find({ role: 'admin' }).sort({ _id: -1 }).exec();
+  }
+
   findActiveById(id: string) {
     return this.model.findOne({ _id: id, isActive: true }).exec();
   }

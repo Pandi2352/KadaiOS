@@ -7,6 +7,7 @@ type AuthValue = AuthState &
     AuthClient,
     | 'login'
     | 'register'
+    | 'setSession'
     | 'logout'
     | 'onSessionEnded'
     | 'getProfile'
@@ -31,6 +32,7 @@ export function AuthProvider({ auth, children }: { auth: AuthClient; children: R
       ...state,
       login: auth.login,
       register: auth.register,
+      setSession: auth.setSession,
       logout: auth.logout,
       onSessionEnded: auth.onSessionEnded,
       getProfile: auth.getProfile,

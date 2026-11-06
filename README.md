@@ -4,7 +4,7 @@ Software for small local shops to run billing, stock, customers, suppliers, expe
 
 One core platform adapts to each trade, starting with meat, crackers and dairy shops.
 
-> **Status: Phase 2 (authentication).** Customers can register and log in on the public site. The admin app and its API need an admin login. Billing and stock are not built, so most module pages are placeholders. See [the phase plan](docs/PHASE_PLAN.md) for exact progress.
+> **Status: Phase 2 (authentication) complete.** Customers can register and log in on the public site. Admins can log in or join via email invitation sent by existing admins. See [the phase plan](docs/PHASE_PLAN.md) for exact progress.
 
 ## Project structure
 
@@ -158,6 +158,13 @@ All routes start with `/api/v1`. Interactive docs are at `/api/docs` and the Ope
 | `POST` | `/auth/customer/login`, `/auth/admin/login` | Public. Log in |
 | `POST` | `/auth/customer/refresh`, `/auth/admin/refresh` | Public. Get a new access token using the refresh cookie |
 | `POST` | `/auth/customer/logout`, `/auth/admin/logout` | Public. Log out |
+| `POST` | `/auth/admin/invites` | Admin only. Send an email invitation to a new administrator |
+| `GET` | `/auth/admin/invites` | Admin only. List administrator invitations and their statuses |
+| `GET` | `/auth/admin/invites/admins` | Admin only. List current administrator accounts |
+| `POST` | `/auth/admin/invites/:id/resend` | Admin only. Resend an invitation email |
+| `DELETE` | `/auth/admin/invites/:id` | Admin only. Revoke a pending invitation |
+| `GET` | `/auth/admin/invites/validate` | Public. Validate an invite token from an email link |
+| `POST` | `/auth/admin/invites/accept` | Public. Accept an invitation, set password and create admin account |
 
 CORS still allows every origin, so run the API locally only.
 

@@ -3,7 +3,7 @@
 ## 1. Authentication & Security
 
 - [x] Registration
-- [ ] Admin Invites
+- [x] Admin Invites
 - [x] Login / Logout
 - [ ] Email / Mobile Verification
 - [ ] Forgot / Reset Password
@@ -423,7 +423,7 @@ Start here
 - [x] 9. Authentication Guards
 - [x] 10. Current User Profile
 - [x] 11. Default Admin User (seeded for login and testing)
-- [ ] 12. Admin Invites (an admin invites other admins, because admins cannot register themselves)
+- [x] 12. Admin Invites (an admin invites other admins, because admins cannot register themselves)
 
 ## Phase 3 – Business Setup
 

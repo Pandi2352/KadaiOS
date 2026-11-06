@@ -32,6 +32,8 @@ export interface AuthClient {
   login: (input: LoginInput) => Promise<AuthUser>;
   /** Only the customer site calls this. The API has no admin registration route. */
   register: (input: RegisterInput) => Promise<AuthUser>;
+  /** Sets an active session directly (e.g. after accepting an invite). */
+  setSession: (session: AuthSession) => AuthUser;
   /** Throws if the server couldn't be reached, because the session would still be alive. */
   logout: () => Promise<void>;
   getProfile: (signal?: AbortSignal) => Promise<UserProfile>;
@@ -119,6 +121,10 @@ export function createAuthClient({ api, role }: { api: ApiClient; role: AuthRole
     },
     register: async (input) => {
       const session = await api.post<AuthSession>(`${basePath}/register`, input);
+      applySession(session);
+      return session.user;
+    },
+    setSession: (session) => {
       applySession(session);
       return session.user;
     },

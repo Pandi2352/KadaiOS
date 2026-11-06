@@ -5,11 +5,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import type { AppConfig } from '../../config/app.config.js';
+import { MailModule } from '../mail/mail.module.js';
 import { UsersModule } from '../users/users.module.js';
 import { AccessTokenService } from './access-token.service.js';
 import { AccountController } from './account.controller.js';
 import { AccountService } from './account.service.js';
 import { AdminAuthController } from './admin-auth.controller.js';
+import { AdminInvite, AdminInviteSchema } from './admin-invite.schema.js';
+import { AdminInvitesController } from './admin-invites.controller.js';
+import { AdminInvitesRepository } from './admin-invites.repository.js';
+import { AdminInvitesService } from './admin-invites.service.js';
 import { AuthCookieService } from './auth-cookie.service.js';
 import { AuthService } from './auth.service.js';
 import { CustomerAuthController } from './customer-auth.controller.js';
@@ -24,7 +29,11 @@ const ONE_MINUTE_MS = 60 * 1000;
 @Module({
   imports: [
     UsersModule,
-    MongooseModule.forFeature([{ name: RefreshToken.name, schema: RefreshTokenSchema }]),
+    MailModule,
+    MongooseModule.forFeature([
+      { name: RefreshToken.name, schema: RefreshTokenSchema },
+      { name: AdminInvite.name, schema: AdminInviteSchema },
+    ]),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService<AppConfig, true>) => ({
@@ -39,10 +48,12 @@ const ONE_MINUTE_MS = 60 * 1000;
       }),
     }),
   ],
-  controllers: [AdminAuthController, CustomerAuthController, AccountController],
+  controllers: [AdminAuthController, CustomerAuthController, AccountController, AdminInvitesController],
   providers: [
     AccountService,
     AuthService,
+    AdminInvitesService,
+    AdminInvitesRepository,
     AccessTokenService,
     RefreshTokenService,
     RefreshTokensRepository,
@@ -51,6 +62,6 @@ const ONE_MINUTE_MS = 60 * 1000;
     { provide: APP_GUARD, useClass: AccessTokenGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
   ],
-  exports: [AccessTokenService],
+  exports: [AccessTokenService, AdminInvitesService],
 })
 export class AuthModule {}
