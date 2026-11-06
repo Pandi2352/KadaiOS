@@ -1,8 +1,17 @@
-import type { AuthRole, AuthSession, AuthUser, LoginInput, RegisterInput } from '@kadai/shared';
+import type {
+  AuthRole,
+  AuthSession,
+  AuthUser,
+  LoginInput,
+  RegisterInput,
+  UpdateProfileInput,
+  UserProfile,
+} from '@kadai/shared';
 import { ApiError } from '../api/ApiError';
 import type { ApiClient } from '../api/createApiClient';
 
 const UNAUTHORIZED = 401;
+const PROFILE_PATH = '/users/me';
 
 export type AuthStatus = 'loading' | 'authenticated' | 'anonymous';
 
@@ -23,6 +32,9 @@ export interface AuthClient {
   register: (input: RegisterInput) => Promise<AuthUser>;
   /** Throws if the server couldn't be reached, because the session would still be alive. */
   logout: () => Promise<void>;
+  getProfile: (signal?: AbortSignal) => Promise<UserProfile>;
+  /** Also updates the logged-in user, so names shown elsewhere change straight away. */
+  updateProfile: (input: UpdateProfileInput) => Promise<UserProfile>;
 }
 
 /** Each refresh token works once, so tabs take turns. The later tab sends the newest cookie. */
@@ -107,6 +119,13 @@ export function createAuthClient({ api, role }: { api: ApiClient; role: AuthRole
     logout: async () => {
       await api.post(`${basePath}/logout`);
       applySession(null);
+    },
+    getProfile: (signal) => api.get<UserProfile>(PROFILE_PATH, { signal }),
+    updateProfile: async (input) => {
+      const profile = await api.put<UserProfile>(PROFILE_PATH, input);
+      const { createdAt: _createdAt, ...user } = profile;
+      setState({ status: 'authenticated', user });
+      return profile;
     },
   };
 }

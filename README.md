@@ -150,6 +150,8 @@ All routes start with `/api/v1`. Interactive docs are at `/api/docs` and the Ope
 | `POST` | `/shops` | Admin only. Create a shop |
 | `GET` | `/shops?page=1&limit=20` | Admin only. List shops, newest first |
 | `GET` | `/shops/:id` | Admin only. Get one shop |
+| `GET` | `/users/me` | Any logged-in user. Get your own profile |
+| `PUT` | `/users/me` | Any logged-in user. Update your own name and phone. Leave out the phone to remove it |
 | `POST` | `/auth/customer/register` | Public. Create a customer account and log in. Admins have no equivalent |
 | `POST` | `/auth/customer/login`, `/auth/admin/login` | Public. Log in |
 | `POST` | `/auth/customer/refresh`, `/auth/admin/refresh` | Public. Get a new access token using the refresh cookie |
@@ -245,7 +247,9 @@ Successful responses and errors use a shared format. `fields` only appears when 
 | Login state and actions | `useAuth`, `LoginForm`, `AuthPage` | `@kadai/ui` |
 | Dialogs | `Modal`, `ConfirmDialog` | `admin-site/src/components/ui/` |
 | Lists | `Table`, `Pagination` | `admin-site/src/components/ui/` |
-| Loading, error and empty screens | `QueryState`, `EmptyState` | `admin-site/src/components/ui/` |
+| Loading and error screens | `QueryState`, `useApiQuery`, `Notice` | `@kadai/ui` |
+| Empty screens | `EmptyState` | `admin-site/src/components/ui/` |
+| The logged-in person's profile | `ProfileCard` | `@kadai/ui` |
 
 If the public site needs something from the admin folder, move it to `packages/ui` rather than copying it.
 

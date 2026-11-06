@@ -1,15 +1,13 @@
 import type { Shop } from '@kadai/shared';
 import { PlusIcon, StorefrontIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { Button, useToast } from '@kadai/ui';
+import { Button, useToast, useApiQuery, QueryState } from '@kadai/ui';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Pagination } from '@/components/ui/Pagination';
-import { QueryState } from '@/components/ui/QueryState';
 import { CreateShopModal } from '@/features/shops/CreateShopModal';
 import { shopsApi } from '@/features/shops/shopsApi';
 import { ShopsTable } from '@/features/shops/ShopsTable';
-import { useApiQuery } from '@/hooks/useApiQuery';
 
 const PAGE_SIZE = 20;
 

@@ -1,9 +1,11 @@
+import { RequireAuth } from '@kadai/ui';
 import { createBrowserRouter } from 'react-router-dom';
 import { PageMessage } from '@/components/PageMessage';
 import { SiteLayout } from '@/components/SiteLayout';
 import { PATHS } from '@/config/paths';
 import { HomePage } from '@/pages/HomePage';
 import { LoginPage } from '@/pages/LoginPage';
+import { ProfilePage } from '@/pages/ProfilePage';
 import { RegisterPage } from '@/pages/RegisterPage';
 
 export const router = createBrowserRouter([
@@ -14,6 +16,14 @@ export const router = createBrowserRouter([
       { path: PATHS.home, element: <HomePage /> },
       { path: PATHS.login, element: <LoginPage /> },
       { path: PATHS.register, element: <RegisterPage /> },
+      {
+        path: PATHS.profile,
+        element: (
+          <RequireAuth loginPath={PATHS.login}>
+            <ProfilePage />
+          </RequireAuth>
+        ),
+      },
       {
         path: '*',
         element: (

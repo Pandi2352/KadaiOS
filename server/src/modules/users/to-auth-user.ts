@@ -1,4 +1,4 @@
-import type { AuthUser } from '@kadai/shared';
+import type { AuthUser, UserProfile } from '@kadai/shared';
 import type { User } from './user.schema.js';
 
 /** The only user details that leave the API. It's built field by field, so a new private field can't leak. */
@@ -8,4 +8,9 @@ export const toAuthUser = (user: Pick<User, '_id' | 'name' | 'email' | 'phone' |
   email: user.email,
   ...(user.phone && { phone: user.phone }),
   role: user.role,
+});
+
+export const toUserProfile = (user: User): UserProfile => ({
+  ...toAuthUser(user),
+  createdAt: user.createdAt.toISOString(),
 });

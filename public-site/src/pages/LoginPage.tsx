@@ -1,15 +1,16 @@
-import { AuthPage, LoginForm, useAuth, useAuthActions } from '@kadai/ui';
-import { Link, Navigate } from 'react-router-dom';
+import { AuthPage, getReturnPath, LoginForm, useAuth, useAuthActions } from '@kadai/ui';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { PATHS } from '@/config/paths';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function LoginPage() {
   const { status } = useAuth();
   const { loginWithToast } = useAuthActions();
+  const { state } = useLocation();
   usePageTitle('Log in');
 
   if (status === 'loading') return null;
-  if (status === 'authenticated') return <Navigate to={PATHS.home} replace />;
+  if (status === 'authenticated') return <Navigate to={getReturnPath(state, PATHS.home)} replace />;
 
   return (
     <AuthPage

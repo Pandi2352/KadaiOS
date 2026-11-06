@@ -28,6 +28,17 @@ export class UsersRepository extends BaseRepository<User> {
     return this.model.findOne({ _id: id, isActive: true }).exec();
   }
 
+  /** Replaces the editable details. With no phone, any saved phone is removed. */
+  updateProfile(id: string, { name, phone }: { name: string; phone?: string }) {
+    return this.model
+      .findOneAndUpdate(
+        { _id: id, isActive: true },
+        phone ? { $set: { name, phone } } : { $set: { name }, $unset: { phone: 1 } },
+        { returnDocument: 'after', runValidators: true },
+      )
+      .exec();
+  }
+
   async recordLogin(id: string): Promise<void> {
     await this.model.updateOne({ _id: id }, { lastLoginAt: new Date() }).exec();
   }

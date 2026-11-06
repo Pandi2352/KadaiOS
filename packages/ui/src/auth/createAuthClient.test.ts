@@ -177,6 +177,35 @@ describe('createAuthClient', () => {
     });
   });
 
+  it('updates the logged-in user when the profile is saved', async () => {
+    const { client, post } = fakeApi();
+    post.mockResolvedValue(SESSION);
+    const put = vi.fn().mockResolvedValue({ ...SESSION.user, name: 'New Name', createdAt: '2026-11-06T00:00:00.000Z' });
+    client.put = put;
+    const auth = createAuthClient({ api: client, role: 'admin' });
+    await auth.restore();
+    const listener = vi.fn();
+    auth.subscribe(listener);
+
+    const saved = await auth.updateProfile({ name: 'New Name' });
+
+    expect(put).toHaveBeenCalledWith('/users/me', { name: 'New Name' });
+    expect(saved.createdAt).toBeTruthy();
+    expect(auth.getState().user).toEqual({ ...SESSION.user, name: 'New Name' });
+    expect(listener).toHaveBeenCalled();
+  });
+
+  it('keeps the logged-in user when saving the profile fails', async () => {
+    const { client, post } = fakeApi();
+    post.mockResolvedValue(SESSION);
+    client.put = vi.fn().mockRejectedValue(new ApiError({ statusCode: 400, message: 'Bad' }));
+    const auth = createAuthClient({ api: client, role: 'admin' });
+    await auth.restore();
+
+    await expect(auth.updateProfile({ name: '' })).rejects.toThrow('Bad');
+    expect(auth.getState().user).toEqual(SESSION.user);
+  });
+
   it('logs in and notifies subscribers', async () => {
     const { client, post } = fakeApi();
     post.mockResolvedValue(SESSION);

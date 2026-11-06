@@ -2,7 +2,8 @@ import { type ReactNode, useEffect, useMemo, useSyncExternalStore } from 'react'
 import { createStrictContext } from '../createStrictContext';
 import type { AuthClient, AuthState } from './createAuthClient';
 
-type AuthValue = AuthState & Pick<AuthClient, 'login' | 'register' | 'logout' | 'onSessionEnded'>;
+type AuthValue = AuthState &
+  Pick<AuthClient, 'login' | 'register' | 'logout' | 'onSessionEnded' | 'getProfile' | 'updateProfile'>;
 
 const [Provider, useAuth] = createStrictContext<AuthValue>('Auth');
 
@@ -22,6 +23,8 @@ export function AuthProvider({ auth, children }: { auth: AuthClient; children: R
       register: auth.register,
       logout: auth.logout,
       onSessionEnded: auth.onSessionEnded,
+      getProfile: auth.getProfile,
+      updateProfile: auth.updateProfile,
     }),
     [state, auth],
   );

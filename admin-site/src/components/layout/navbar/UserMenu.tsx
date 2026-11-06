@@ -11,7 +11,7 @@ export function UserMenu() {
   const { user } = useAuth();
   const { logoutWithToast } = useAuthActions();
   const navigate = useNavigate();
-  const { setup, staff } = MODULES;
+  const { profile, setup, staff } = MODULES;
 
   const handleLogout = async () => {
     if (await logoutWithToast()) navigate(SITE.loginPath, { replace: true });
@@ -20,6 +20,9 @@ export function UserMenu() {
   return (
     <Dropdown label="Account" triggerClassName={iconButtonClass()} trigger={<UserCircleIcon size={24} aria-hidden />}>
       {user && <MenuNote title={user.name}>{user.email}</MenuNote>}
+      <MenuLink to={profile.path} icon={profile.icon}>
+        {profile.label}
+      </MenuLink>
       <MenuLink to={setup.path} icon={setup.icon}>
         {setup.label}
       </MenuLink>

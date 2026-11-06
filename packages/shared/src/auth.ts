@@ -18,6 +18,16 @@ export interface AuthUser {
   role: AuthRole;
 }
 
+export interface UserProfile extends AuthUser {
+  createdAt: string;
+}
+
+export interface UpdateProfileInput {
+  name: string;
+  /** Leave out or send empty to remove it. */
+  phone?: string;
+}
+
 export interface AuthSession {
   accessToken: string;
   /** Seconds until the access token expires. */

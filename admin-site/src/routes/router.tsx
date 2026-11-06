@@ -8,12 +8,14 @@ import { BusinessSetupPage } from '@/pages/BusinessSetupPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { ModulePage } from '@/pages/ModulePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { ProfilePage } from '@/pages/ProfilePage';
 import { RouteErrorPage } from '@/pages/RouteErrorPage';
 import type { ModuleId } from '@/types/navigation';
 
 /** Modules with a real screen. Every other module shows the shared "not built yet" page. */
 const BUILT_PAGES: Partial<Record<ModuleId, ReactNode>> = {
   setup: <BusinessSetupPage />,
+  profile: <ProfilePage />,
 };
 
 export const router = createBrowserRouter([

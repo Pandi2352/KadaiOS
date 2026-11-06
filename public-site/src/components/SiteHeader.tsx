@@ -30,7 +30,9 @@ export function SiteHeader() {
         {user && (
           <div className="flex min-w-0 items-center gap-3">
             <Tooltip label={user.email} side="bottom">
-              <p className="truncate text-muted">{user.name}</p>
+              <Link to={PATHS.profile} className="truncate rounded-md text-muted hover:text-ink hover:underline">
+                {user.name}
+              </Link>
             </Tooltip>
             <Button variant="outline" onClick={handleLogout}>
               Log out

@@ -21,7 +21,8 @@ export type ModuleId =
   | 'expenses'
   | 'reports'
   | 'staff'
-  | 'setup';
+  | 'setup'
+  | 'profile';
 
 export interface ModuleDefinition {
   id: ModuleId;

@@ -15,6 +15,7 @@ import {
   SquaresFourIcon,
   StorefrontIcon,
   TruckIcon,
+  UserCircleIcon,
   UsersThreeIcon,
   WalletIcon,
 } from '@phosphor-icons/react';
@@ -196,5 +197,13 @@ export const MODULES: Record<ModuleId, ModuleDefinition> = {
     icon: StorefrontIcon,
     planned: 'Phase 3',
     description: 'Shop registration and business type.',
+  },
+  profile: {
+    id: 'profile',
+    label: 'My Profile',
+    path: '/profile',
+    icon: UserCircleIcon,
+    planned: 'Phase 2',
+    description: 'Your name and contact details.',
   },
 };
