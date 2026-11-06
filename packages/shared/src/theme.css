@@ -2,9 +2,32 @@
   Shared by every KadaiOS frontend. Design rules enforced here:
   - No shadows: every shadow utility is removed.
   - One radius: rounded-md is the only radius utility that exists.
-  - Colours come only from these tokens.
-  System fonts keep the POS usable with no network and cover Tamil script.
+  - Colours come only from these tokens. The brand colour is rgb(30, 81, 133) with white text.
+  - The font is IBM Plex Sans, named IBMSans. It's bundled, not loaded from a CDN, so the POS works offline.
 */
+@font-face {
+  font-family: IBMSans;
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 700;
+  src: url('./fonts/ibm-plex-sans-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Includes the rupee sign. Browsers only download this file when a page uses one of its characters. */
+@font-face {
+  font-family: IBMSans;
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 700;
+  src: url('./fonts/ibm-plex-sans-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 @theme {
   --shadow-*: initial;
   --inset-shadow-*: initial;
@@ -14,22 +37,22 @@
   --radius-*: initial;
   --radius-md: 0.375rem;
 
-  --font-sans: system-ui, -apple-system, 'Segoe UI', 'Noto Sans Tamil', 'Nirmala UI', sans-serif;
+  --font-sans: IBMSans, sans-serif;
 
   --color-*: initial;
-  --color-canvas: #f6f4ee;
+  --color-canvas: #f4f6f9;
   --color-surface: #ffffff;
-  --color-hover: #eeebe2;
-  --color-line: #dfdbcf;
-  --color-field: #8c8676;
-  --color-ink: #24211b;
-  --color-muted: #625d51;
-  --color-brand: #17654b;
-  --color-brand-strong: #114e3a;
-  --color-brand-soft: #e1efe9;
-  --color-on-brand: #ffffff;
+  --color-hover: #e9eef4;
+  --color-line: #d9e0e8;
+  --color-field: #7d8894;
+  --color-ink: #1b2633;
+  --color-muted: #56616e;
+  --color-brand: rgb(30, 81, 133);
+  --color-brand-strong: #173f68;
+  --color-brand-soft: #e4edf6;
+  --color-on-brand: rgb(255, 255, 255);
   --color-danger: #a8261c;
   --color-danger-strong: #8a1e16;
   --color-danger-soft: #fbeae8;
-  --color-scrim: rgb(36 33 27 / 0.45);
+  --color-scrim: rgb(27 38 51 / 0.45);
 }

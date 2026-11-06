@@ -86,7 +86,8 @@ The target runtime is Node 20.19.4. Packages are on their latest release that su
 - No shadows anywhere, and `rounded-md` is the only radius. `packages/shared/src/theme.css` removes the other utilities from Tailwind, so `shadow-md` or `rounded-lg` generate no CSS.
 - Never use the native `<select>`. Every dropdown uses the common `Select`.
 - Every form field shares the same props and shows its own label, hint and error.
-- Colours come from the theme tokens.
+- Colours come from the theme tokens. The brand colour is `rgb(30, 81, 133)` with white text.
+- The font is `IBMSans` (IBM Plex Sans), bundled in the project so it works offline.
 
 ### Data
 

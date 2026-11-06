@@ -185,6 +185,7 @@ Successful responses and errors use a shared format. `fields` only appears when 
 
 ### UI
 
+- **Theme:** the brand colour is `rgb(30, 81, 133)` with white text, and the font is `IBMSans` (IBM Plex Sans). Both are set once in `packages/shared/src/theme.css`. The font files are bundled in the project, so the POS works offline.
 - **No shadows:** the shared theme removes Tailwind's shadow utilities.
 - **One radius:** `rounded-md` is the only radius available.
 - **No native `<select>`:** every dropdown uses the common `Select` or `SelectField`.
