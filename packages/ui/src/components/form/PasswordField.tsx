@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from 'lucide-react';
+import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { type FieldProps, FormField } from './FormField';
 import { Input } from './Input';
@@ -19,7 +19,7 @@ export function PasswordField({
   autoComplete,
 }: PasswordFieldProps) {
   const [isVisible, setVisible] = useState(false);
-  const Icon = isVisible ? EyeOff : Eye;
+  const Icon = isVisible ? EyeSlashIcon : EyeIcon;
   const toggleLabel = isVisible ? 'Hide password' : 'Show password';
 
   return (

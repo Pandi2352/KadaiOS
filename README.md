@@ -188,7 +188,7 @@ Successful responses and errors use a shared format. `fields` only appears when 
 ### UI
 
 - **Theme:** the brand colour is `rgb(30, 81, 133)` with white text, and the font is `IBMSans` (IBM Plex Sans). Both are set once in `packages/shared/src/theme.css`. The font files are bundled in the project, so the POS works offline.
-- **Icons:** the sidebar, search and New menu use [Phosphor Icons](https://phosphoricons.com) in the duotone style, and the current page's icon turns solid. Pick a module's icon in `admin-site/src/config/modules.ts`. The rest of the UI still uses `lucide-react`.
+- **Icons:** [Phosphor Icons](https://phosphoricons.com) is the only icon package, and a lint rule blocks `lucide-react`. Icons are duotone by default, icons inside `Button` and `IconButton` and small controls such as carets are bold, and the current page's sidebar icon turns solid. Pick a module's icon in `admin-site/src/config/modules.ts`.
 - **Scrollbars:** every scrolling area gets the custom scrollbar from `packages/shared/src/scrollbars.css` automatically. Add `scrollbar-stable` to stop content shifting between short and long pages, or `scrollbar-reveal` for a slim bar that appears on hover.
 - **Error and missing pages:** use `StatusPage` from `@kadai/ui`.
 - **No shadows:** the shared theme removes Tailwind's shadow utilities.

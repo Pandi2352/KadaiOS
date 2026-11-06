@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { XIcon } from '@phosphor-icons/react';
 import { type ReactNode, useId } from 'react';
 import { cn, IconButton } from '@kadai/ui';
 import { Dialog } from './Dialog';
@@ -45,7 +45,7 @@ export function Modal({ isOpen, onClose, title, description, footer, size = 'md'
                 </p>
               )}
             </div>
-            <IconButton icon={X} label="Close" className="-mt-1 -mr-1" onClick={onClose} />
+            <IconButton icon={XIcon} label="Close" className="-mt-1 -mr-1" onClick={onClose} />
           </header>
           {children && <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>}
           {footer && <footer className="flex justify-end gap-2 border-t border-line p-3">{footer}</footer>}

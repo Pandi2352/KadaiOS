@@ -1,4 +1,4 @@
-import { CircleAlert, CircleCheck, X } from 'lucide-react';
+import { WarningCircleIcon, CheckCircleIcon, XIcon } from '@phosphor-icons/react';
 import { useEffect } from 'react';
 import type { Toast } from './ToastContext';
 import { cn } from '../../cn';
@@ -8,7 +8,7 @@ const AUTO_DISMISS_MS = 5000;
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {
   const isError = toast.tone === 'error';
-  const Icon = isError ? CircleAlert : CircleCheck;
+  const Icon = isError ? WarningCircleIcon : CheckCircleIcon;
 
   useEffect(() => {
     // Errors stay until they are closed, so they can't be missed.
@@ -27,7 +27,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
     >
       <Icon size={18} aria-hidden className={cn('mt-2 shrink-0', isError ? 'text-danger' : 'text-brand')} />
       <p className="min-w-0 flex-1 py-1.5">{toast.message}</p>
-      <IconButton icon={X} label="Dismiss" onClick={() => onDismiss(toast.id)} />
+      <IconButton icon={XIcon} label="Dismiss" onClick={() => onDismiss(toast.id)} />
     </li>
   );
 }

@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@kadai/shared": "*",
-    "clsx": "^2.1.1",
-    "lucide-react": "^1.69.0"
+    "@phosphor-icons/react": "^2.1.10",
+    "clsx": "^2.1.1"
   },
   "peerDependencies": {
     "react": "^19.0.0",

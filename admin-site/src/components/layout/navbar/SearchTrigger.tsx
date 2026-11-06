@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { buttonClass } from '@kadai/ui';
 import { useCommandPalette } from '@/context/CommandPaletteContext';
 
@@ -17,7 +17,7 @@ export function SearchTrigger() {
         'font-normal text-muted lg:w-52 lg:justify-start lg:border lg:border-line lg:px-3',
       )}
     >
-      <Search size={16} aria-hidden />
+      <MagnifyingGlassIcon size={16} aria-hidden />
       <span className="hidden lg:inline">Search</span>
       <kbd className="ml-auto hidden font-sans text-xs lg:inline">Ctrl K</kbd>
     </button>

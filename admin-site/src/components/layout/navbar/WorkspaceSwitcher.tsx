@@ -1,4 +1,4 @@
-import { ChevronsUpDown } from 'lucide-react';
+import { CaretUpDownIcon } from '@phosphor-icons/react';
 import { buttonClass } from '@kadai/ui';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { MenuButton, MenuNote } from '@/components/ui/MenuItem';
@@ -19,7 +19,7 @@ export function WorkspaceSwitcher() {
         <>
           <CurrentIcon size={16} aria-hidden className="shrink-0" />
           <span className="hidden sm:inline">{current.label}</span>
-          <ChevronsUpDown size={14} aria-hidden className="hidden text-muted sm:inline" />
+          <CaretUpDownIcon weight="bold" size={14} aria-hidden className="hidden text-muted sm:inline" />
         </>
       }
     >

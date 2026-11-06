@@ -1,4 +1,4 @@
-import { ChevronDown, Search, X } from 'lucide-react';
+import { CaretDownIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import { useRef } from 'react';
 import { cn } from '../../../cn';
 import { fieldClass } from '../fieldStyles';
@@ -85,7 +85,8 @@ export function Select<T extends string>({
         <span className={cn('min-w-0 flex-1 truncate', !selected && 'text-muted')}>
           {selected?.label ?? placeholder}
         </span>
-        <ChevronDown
+        <CaretDownIcon
+          weight="bold"
           size={16}
           aria-hidden
           className={cn('shrink-0 text-muted transition-transform', isOpen && 'rotate-180')}
@@ -101,7 +102,7 @@ export function Select<T extends string>({
         >
           {searchable && (
             <div className="flex shrink-0 items-center gap-2 border-b border-line px-2">
-              <Search size={16} aria-hidden className="shrink-0 text-muted" />
+              <MagnifyingGlassIcon size={16} aria-hidden className="shrink-0 text-muted" />
               <input
                 ref={searchRef}
                 role="combobox"
@@ -141,7 +142,7 @@ export function Select<T extends string>({
               onClick={clear}
               className="flex h-9 shrink-0 cursor-pointer items-center gap-2 border-t border-line px-3 text-muted hover:bg-hover hover:text-ink"
             >
-              <X size={16} aria-hidden />
+              <XIcon size={16} aria-hidden />
               Clear selection
             </button>
           )}

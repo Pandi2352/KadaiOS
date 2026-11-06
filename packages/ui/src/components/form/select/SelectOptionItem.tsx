@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { CheckIcon } from '@phosphor-icons/react';
 import { cn } from '../../../cn';
 import type { SelectOption } from './selectOptions';
 
@@ -43,7 +43,7 @@ export function SelectOptionItem<T extends string>({
           <span className="block truncate text-xs font-normal text-muted">{option.description}</span>
         )}
       </span>
-      {isSelected && <Check size={16} aria-hidden className="shrink-0" />}
+      {isSelected && <CheckIcon weight="bold" size={16} aria-hidden className="shrink-0" />}
     </li>
   );
 }

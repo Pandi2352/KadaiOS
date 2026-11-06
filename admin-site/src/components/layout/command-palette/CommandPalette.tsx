@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { type KeyboardEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@/components/ui/Dialog';
@@ -38,7 +38,7 @@ function CommandSearch() {
   return (
     <>
       <div className="flex items-center gap-2 border-b border-line px-3">
-        <Search size={16} aria-hidden className="shrink-0 text-muted" />
+        <MagnifyingGlassIcon size={16} aria-hidden className="shrink-0 text-muted" />
         <input
           data-autofocus
           role="combobox"

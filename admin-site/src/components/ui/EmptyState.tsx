@@ -1,8 +1,8 @@
-import type { LucideIcon } from 'lucide-react';
+import type { IconComponent } from '@kadai/ui';
 import type { ReactNode } from 'react';
 
 interface EmptyStateProps {
-  icon?: LucideIcon;
+  icon?: IconComponent;
   title: string;
   /** Say why it's empty and what to do first. */
   description: string;

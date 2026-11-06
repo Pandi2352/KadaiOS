@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { useSidebar } from '@/context/SidebarContext';
 import { useDismiss, cn } from '@kadai/ui';
 import { SidebarBrand } from './SidebarBrand';
-import { SidebarFooter } from './SidebarFooter';
 import { SidebarNav } from './SidebarNav';
 import { sidebarWidth } from './sidebarStyles';
 
@@ -31,7 +30,6 @@ export function Sidebar() {
       >
         <SidebarBrand />
         <SidebarNav />
-        <SidebarFooter />
       </aside>
     </>
   );

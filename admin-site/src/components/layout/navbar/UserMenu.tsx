@@ -1,5 +1,5 @@
 import { getErrorMessage, iconButtonClass, useAuth, useToast } from '@kadai/ui';
-import { CircleUser, LogIn, LogOut } from 'lucide-react';
+import { UserCircleIcon, SignInIcon, SignOutIcon } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { MenuButton, MenuLink, MenuNote } from '@/components/ui/MenuItem';
@@ -22,7 +22,7 @@ export function UserMenu() {
   };
 
   return (
-    <Dropdown label="Account" triggerClassName={iconButtonClass()} trigger={<CircleUser size={18} aria-hidden />}>
+    <Dropdown label="Account" triggerClassName={iconButtonClass()} trigger={<UserCircleIcon size={18} aria-hidden />}>
       {user ? (
         <MenuNote title={user.name}>{user.email}</MenuNote>
       ) : (
@@ -35,11 +35,11 @@ export function UserMenu() {
         {staff.label}
       </MenuLink>
       {user ? (
-        <MenuButton icon={LogOut} onClick={handleLogout}>
+        <MenuButton icon={SignOutIcon} onClick={handleLogout}>
           Log out
         </MenuButton>
       ) : (
-        <MenuLink to={SITE.loginPath} icon={LogIn}>
+        <MenuLink to={SITE.loginPath} icon={SignInIcon}>
           Log in
         </MenuLink>
       )}

@@ -1,5 +1,5 @@
 import type { Shop } from '@kadai/shared';
-import { Plus, Store } from 'lucide-react';
+import { PlusIcon, StorefrontIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Button, useToast } from '@kadai/ui';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -27,7 +27,7 @@ export function BusinessSetupPage() {
   };
 
   const addButton = (
-    <Button variant="primary" icon={Plus} onClick={() => setCreating(true)}>
+    <Button variant="primary" icon={PlusIcon} onClick={() => setCreating(true)}>
       Add shop
     </Button>
   );
@@ -46,7 +46,7 @@ export function BusinessSetupPage() {
         isEmpty={(data) => data.total === 0}
         empty={
           <EmptyState
-            icon={Store}
+            icon={StorefrontIcon}
             title="No shops yet"
             description="Add your first shop to choose its business type."
             action={addButton}

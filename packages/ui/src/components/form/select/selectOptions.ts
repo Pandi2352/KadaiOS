@@ -1,11 +1,11 @@
-import type { LucideIcon } from 'lucide-react';
+import type { IconComponent } from '../../iconTypes';
 
 export interface SelectOption<T extends string = string> {
   value: T;
   label: string;
   /** A second line, such as a unit or a supplier's city. */
   description?: string;
-  icon?: LucideIcon;
+  icon?: IconComponent;
   disabled?: boolean;
 }
 

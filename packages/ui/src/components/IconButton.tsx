@@ -12,7 +12,7 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function IconButton({ icon: Icon, label, variant, className, ...props }: IconButtonProps) {
   return (
     <button type="button" aria-label={label} title={label} className={iconButtonClass(variant, className)} {...props}>
-      <Icon size={18} aria-hidden />
+      <Icon size={18} aria-hidden weight="bold" />
     </button>
   );
 }

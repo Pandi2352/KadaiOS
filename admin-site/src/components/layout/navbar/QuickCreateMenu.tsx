@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { buttonClass } from '@kadai/ui';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { MenuLink } from '@/components/ui/MenuItem';
@@ -15,7 +15,7 @@ export function QuickCreateMenu() {
       triggerClassName={buttonClass('primary', 'responsive')}
       trigger={
         <>
-          <Plus size={16} aria-hidden />
+          <PlusIcon weight="bold" size={16} aria-hidden />
           <span className="hidden sm:inline">New</span>
         </>
       }

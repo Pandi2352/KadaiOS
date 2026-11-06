@@ -20,6 +20,10 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-restricted-imports': [
+        'error',
+        { paths: [{ name: 'lucide-react', message: 'Use @phosphor-icons/react, the only icon package in KadaiOS.' }] },
+      ],
     },
   },
   {

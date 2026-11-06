@@ -1,19 +1,7 @@
 import { MODULES } from '@/config/modules';
 import { NAVIGATION } from '@/config/navigation';
 import { QUICK_ACTIONS } from '@/config/quickActions';
-import type {
-  BusinessType,
-  ModuleDefinition,
-  ModuleId,
-  NavEntry,
-  NavSectionConfig,
-  QuickAction,
-} from '@/types/navigation';
-
-export interface BreadcrumbItem {
-  label: string;
-  path?: string;
-}
+import type { BusinessType, ModuleDefinition, NavEntry, NavSectionConfig, QuickAction } from '@/types/navigation';
 
 const isAllowed = (allowed: BusinessType[] | undefined, type: BusinessType) => !allowed || allowed.includes(type);
 
@@ -46,22 +34,5 @@ export const getVisibleModules = (type: BusinessType): ModuleDefinition[] =>
 export const getVisibleQuickActions = (type: BusinessType): QuickAction[] =>
   QUICK_ACTIONS.filter((action) => isAllowed(action.businessTypes, type));
 
-const findGroupLabel = (id: ModuleId): string | undefined => {
-  for (const section of NAVIGATION) {
-    for (const entry of section.entries) {
-      if (entry.kind === 'group' && entry.children.includes(id)) return entry.label;
-    }
-  }
-  return undefined;
-};
-
 export const getPageTitle = (pathname: string): string =>
   Object.values(MODULES).find((module) => module.path === pathname)?.label ?? 'Page not found';
-
-export function getBreadcrumbs(pathname: string): BreadcrumbItem[] {
-  const module = Object.values(MODULES).find((item) => item.path === pathname);
-  if (!module) return [{ label: 'Page not found' }];
-
-  const group = findGroupLabel(module.id);
-  return [...(group ? [{ label: group }] : []), { label: module.label, path: module.path }];
-}

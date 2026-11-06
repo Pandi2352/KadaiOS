@@ -19,6 +19,7 @@ export * from './components/form/Textarea';
 export * from './components/form/TextareaField';
 export * from './components/form/TextField';
 export * from './components/IconButton';
+export * from './components/IconDefaults';
 export * from './components/iconTypes';
 export * from './components/Loader';
 export * from './components/status/StatusPage';
