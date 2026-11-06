@@ -1,6 +1,15 @@
 import { type BusinessType, type CreateShopInput, FIELD_LIMITS, type Shop } from '@kadai/shared';
 import { useEffect } from 'react';
-import { FormAlert, SelectField, TextareaField, TextField, useForm } from '@kadai/ui';
+import {
+  fieldRules,
+  FormAlert,
+  type FormRules,
+  PhoneField,
+  SelectField,
+  TextareaField,
+  TextField,
+  useForm,
+} from '@kadai/ui';
 import { BUSINESS_TYPES } from '@/config/businessTypes';
 import { shopsApi } from './shopsApi';
 
@@ -19,6 +28,12 @@ interface ShopFormValues {
 }
 
 const EMPTY_VALUES: ShopFormValues = { name: '', businessType: '', phone: '', address: '' };
+const RULES: FormRules<ShopFormValues> = {
+  name: fieldRules.text('Shop name', { required: true }),
+  businessType: { label: 'Business type', required: true },
+  phone: fieldRules.phone(),
+  address: fieldRules.text('Address', { max: FIELD_LIMITS.longText }),
+};
 
 interface ShopFormProps {
   id: string;
@@ -30,7 +45,7 @@ interface ShopFormProps {
 export function ShopForm({ id, onCreated, onDirtyChange, onSubmittingChange }: ShopFormProps) {
   const { field, handleSubmit, formError, isSubmitting, isDirty } = useForm<ShopFormValues>({
     initialValues: EMPTY_VALUES,
-    // The API validates everything, including a missing business type, and the form shows its messages.
+    rules: RULES,
     onSubmit: async (values) => onCreated(await shopsApi.create(values as CreateShopInput)),
   });
 
@@ -43,7 +58,7 @@ export function ShopForm({ id, onCreated, onDirtyChange, onSubmittingChange }: S
       <TextField
         {...field('name')}
         label="Shop name"
-        required
+        placeholder="For example, Ponni Dairy"
         maxLength={FIELD_LIMITS.shortText}
         autoComplete="organization"
         data-autofocus
@@ -51,22 +66,16 @@ export function ShopForm({ id, onCreated, onDirtyChange, onSubmittingChange }: S
       <SelectField
         {...field('businessType')}
         label="Business type"
-        required
         placeholder="Choose a business type"
         hint="This decides the units and features the shop gets."
         options={BUSINESS_TYPE_OPTIONS}
       />
-      <TextField
-        {...field('phone')}
-        label="Phone"
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel"
-        hint="10 to 15 digits. A + at the start is fine."
-      />
+      <PhoneField {...field('phone')} />
       <TextareaField
         {...field('address')}
         label="Address"
+        placeholder="Street, area, city and PIN code"
+        showCount
         maxLength={FIELD_LIMITS.longText}
         autoComplete="street-address"
       />

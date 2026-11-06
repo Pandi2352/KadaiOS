@@ -2,7 +2,15 @@ import type { TextareaHTMLAttributes } from 'react';
 import { type FieldProps, FormField } from './FormField';
 import { Textarea } from './Textarea';
 
-type NativeProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'value' | 'onChange' | 'disabled' | 'required'>;
+type NativeProps = Omit<
+  TextareaHTMLAttributes<HTMLTextAreaElement>,
+  'value' | 'onChange' | 'onBlur' | 'disabled' | 'required'
+>;
+
+interface TextareaFieldProps extends FieldProps<string>, NativeProps {
+  /** Shows "12/500" under the field. Needs maxLength. */
+  showCount?: boolean;
+}
 
 export function TextareaField({
   label,
@@ -12,10 +20,19 @@ export function TextareaField({
   hint,
   required,
   disabled,
+  showCount,
   ...textareaProps
-}: FieldProps<string> & NativeProps) {
+}: TextareaFieldProps) {
+  const { maxLength } = textareaProps;
+
   return (
-    <FormField label={label} error={error} hint={hint} required={required}>
+    <FormField
+      label={label}
+      error={error}
+      hint={hint}
+      required={required}
+      count={showCount && maxLength ? { length: value.length, max: maxLength } : undefined}
+    >
       {(control) => (
         <Textarea
           {...control}

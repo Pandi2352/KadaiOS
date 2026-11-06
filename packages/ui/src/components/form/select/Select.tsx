@@ -1,5 +1,5 @@
 import { CaretDownIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
-import { useRef } from 'react';
+import { type FocusEvent, useRef } from 'react';
 import { cn } from '../../../cn';
 import { fieldClass } from '../fieldStyles';
 import { SelectOptionItem } from './SelectOptionItem';
@@ -12,6 +12,8 @@ interface SelectProps<T extends string> {
   options: SelectOption<T>[];
   value: T | '';
   onChange: (value: T | '') => void;
+  /** Runs when focus leaves the whole dropdown, not when it moves from the button to the search box. */
+  onBlur?: (event: FocusEvent<HTMLElement>) => void;
   id?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -29,6 +31,7 @@ export function Select<T extends string>({
   options,
   value,
   onChange,
+  onBlur,
   id,
   placeholder = 'Choose an option',
   disabled = false,
@@ -62,7 +65,12 @@ export function Select<T extends string>({
   const SelectedIcon = selected?.icon;
 
   return (
-    <div ref={rootRef}>
+    <div
+      ref={rootRef}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) onBlur?.(event);
+      }}
+    >
       <button
         ref={triggerRef}
         id={id}

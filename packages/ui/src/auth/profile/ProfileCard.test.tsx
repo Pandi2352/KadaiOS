@@ -91,12 +91,24 @@ describe('ProfileCard', () => {
     const phone = screen.getByRole('textbox', { name: /Phone/ }) as HTMLInputElement;
 
     await userEvent.clear(phone);
-    await userEvent.type(phone, 'nope');
+    await userEvent.type(phone, '9000099999');
     await userEvent.click(saveButton());
 
     await screen.findByText('Bad phone');
-    expect(phone.value).toBe('nope');
+    expect(phone.value).toBe('9000099999');
     expect(document.querySelector('[popover] li')).toBeNull();
+  });
+
+  it('shows validation errors without calling the API', async () => {
+    const { put } = await setup(vi.fn().mockResolvedValue(PROFILE));
+    const phone = await screen.findByRole('textbox', { name: /Phone/ });
+
+    await userEvent.clear(phone);
+    await userEvent.type(phone, 'nope');
+    await userEvent.click(saveButton());
+
+    await screen.findByText('Phone must have 10 to 15 digits');
+    expect(put).not.toHaveBeenCalled();
   });
 
   it('offers a retry when loading fails', async () => {

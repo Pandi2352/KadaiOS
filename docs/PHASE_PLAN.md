@@ -421,7 +421,7 @@ Start here
 - [x] 7. Logout
 - [x] 8. Protected Routes
 - [x] 9. Authentication Guards
-- [ ] 10. Current User Profile
+- [x] 10. Current User Profile
 - [x] 11. Default Admin User (seeded for login and testing)
 - [ ] 12. Admin Invites (an admin invites other admins, because admins cannot register themselves)
 

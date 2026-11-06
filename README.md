@@ -234,13 +234,16 @@ Successful responses and errors use a shared format. `fields` only appears when 
 - **No shadows:** the shared theme removes Tailwind's shadow utilities.
 - **One radius:** `rounded-md` is the only radius available.
 - **No native `<select>`:** every dropdown uses the common `Select` or `SelectField`.
-- **Common fields:** every field takes the same props: `label`, `value`, `onChange(value)`, `error`, `hint`, `required` and `disabled`.
+- **Common fields:** every field takes the same props: `label`, `value`, `onChange(value)`, `onBlur`, `error`, `hint`, `required` and `disabled`. Text fields also take `placeholder`.
+- **One focus border:** a focused field shows a single brand-colour border and no outline. An error replaces the hint under the field, so there's one message at a time.
+- **Validation:** give `useForm` its `rules` so errors appear before anything is sent. The rules show on blur and on submit, and also set the required mark. The API still checks everything.
 
 | Need | Use | From |
 | --- | --- | --- |
-| Form fields | `TextField`, `PasswordField`, `TextareaField`, `SelectField`, `CheckboxField` | `@kadai/ui` |
-| A new kind of field | `FormField`, which adds the label, hint and error | `@kadai/ui` |
-| Form state and API errors | `useForm` with `FormAlert` | `@kadai/ui` |
+| Form fields | `TextField`, `EmailField`, `PhoneField`, `NumberField`, `PasswordField`, `TextareaField`, `SelectField`, `CheckboxField` | `@kadai/ui` |
+| Field extras | `startIcon`, `startText`, `endText`, `clearable`, `showCount`; `NumberField` has `min`, `max`, `step`, `decimals`, `steppers`; `PasswordField` has `showStrength` and warns about Caps Lock | `@kadai/ui` |
+| A new kind of field | `FormField`, which adds the label, message and counter; `FieldAction` for a button inside a field | `@kadai/ui` |
+| Form state, validation and API errors | `useForm` with `fieldRules` and `FormAlert` | `@kadai/ui` |
 | Buttons | `Button`, `IconButton` | `@kadai/ui` |
 | Messages after an action | `useToast` | `@kadai/ui` |
 | Loading text | `Loader` | `@kadai/ui` |
@@ -254,12 +257,18 @@ Successful responses and errors use a shared format. `fields` only appears when 
 If the public site needs something from the admin folder, move it to `packages/ui` rather than copying it.
 
 ```tsx
-const { field, handleSubmit, formError, isSubmitting } = useForm({ initialValues, onSubmit });
+const rules = {
+  name: fieldRules.text('Shop name', { required: true }),
+  businessType: { label: 'Business type', required: true },
+  phone: fieldRules.phone(),
+};
+const { field, handleSubmit, formError, isSubmitting } = useForm({ initialValues, rules, onSubmit });
 
 <form noValidate onSubmit={handleSubmit}>
   <FormAlert message={formError} />
-  <TextField {...field('name')} label="Shop name" required />
-  <SelectField {...field('businessType')} label="Business type" required options={options} />
+  <TextField {...field('name')} label="Shop name" placeholder="For example, Ponni Dairy" />
+  <SelectField {...field('businessType')} label="Business type" options={options} />
+  <PhoneField {...field('phone')} />
 </form>;
 ```
 

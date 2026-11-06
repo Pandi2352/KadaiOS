@@ -1,14 +1,31 @@
-import { EMAIL_MAX_LENGTH, FIELD_LIMITS, PASSWORD_LIMITS, type RegisterInput } from '@kadai/shared';
-import { Button, FormAlert, PasswordField, TextField, useAuth, useForm, useToast } from '@kadai/ui';
+import { FIELD_LIMITS, PASSWORD_LIMITS, type RegisterInput } from '@kadai/shared';
+import {
+  Button,
+  EmailField,
+  fieldRules,
+  FormAlert,
+  PasswordField,
+  PhoneField,
+  TextField,
+  useAuth,
+  useForm,
+  useToast,
+} from '@kadai/ui';
 
 const EMPTY_VALUES: Required<RegisterInput> = { name: '', email: '', phone: '', password: '' };
+const RULES = {
+  name: fieldRules.text('Name', { required: true }),
+  email: fieldRules.email(),
+  phone: fieldRules.phone(),
+  password: fieldRules.newPassword(),
+};
 
 export function RegisterForm() {
   const { register } = useAuth();
   const { showToast } = useToast();
   const { field, handleSubmit, formError, isSubmitting } = useForm({
     initialValues: EMPTY_VALUES,
-    // The API validates everything and the form shows its messages.
+    rules: RULES,
     onSubmit: async (values) => {
       await register(values);
       showToast(`Welcome, ${values.name.trim()}.`, { title: 'Account created' });
@@ -18,30 +35,22 @@ export function RegisterForm() {
   return (
     <form noValidate onSubmit={handleSubmit} className="space-y-4">
       <FormAlert message={formError} />
-      <TextField {...field('name')} label="Name" required maxLength={FIELD_LIMITS.shortText} autoComplete="name" />
       <TextField
-        {...field('email')}
-        label="Email"
-        required
-        type="email"
-        inputMode="email"
-        maxLength={EMAIL_MAX_LENGTH}
-        autoComplete="username"
+        {...field('name')}
+        label="Name"
+        placeholder="Your full name"
+        maxLength={FIELD_LIMITS.shortText}
+        autoComplete="name"
       />
-      <TextField
-        {...field('phone')}
-        label="Phone"
-        type="tel"
-        inputMode="tel"
-        autoComplete="tel"
-        hint="10 to 15 digits. A + at the start is fine."
-      />
+      <EmailField {...field('email')} />
+      <PhoneField {...field('phone')} />
       <PasswordField
         {...field('password')}
         label="Password"
-        required
         autoComplete="new-password"
+        placeholder="Create a password"
         hint={`At least ${PASSWORD_LIMITS.min} characters.`}
+        showStrength
       />
       <Button type="submit" variant="primary" isLoading={isSubmitting} className="w-full">
         Create account

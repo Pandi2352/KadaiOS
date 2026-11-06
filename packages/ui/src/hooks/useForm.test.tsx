@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { FormAlert } from '../components/form/FormAlert';
 import { TextField } from '../components/form/TextField';
+import { fieldRules } from '../components/form/validation/fieldRules';
 import { ApiError } from '../api/ApiError';
 import { useForm } from './useForm';
 
@@ -64,6 +65,75 @@ describe('useForm', () => {
     render(<TestForm onSubmit={vi.fn().mockRejectedValue(error)} />);
     await save();
     expect(screen.getByRole('alert').textContent).toBe('Bad id');
+  });
+
+  describe('with rules', () => {
+    const name = () => screen.getByRole('textbox', { name: 'Name' });
+
+    function RulesForm({ onSubmit }: { onSubmit: (values: { name: string; phone: string }) => Promise<void> }) {
+      const { field, handleSubmit } = useForm({
+        initialValues: { name: '', phone: '' },
+        rules: { name: fieldRules.text('Name', { required: true }), phone: fieldRules.phone() },
+        onSubmit,
+      });
+      return (
+        <form noValidate onSubmit={handleSubmit}>
+          <TextField {...field('name')} label="Name" />
+          <TextField {...field('phone')} label="Phone" />
+          <button type="button">Cancel</button>
+          <button type="submit">Save</button>
+        </form>
+      );
+    }
+
+    it('does not call the API while a field is invalid, and focuses the first problem', async () => {
+      const onSubmit = vi.fn();
+      render(<RulesForm onSubmit={onSubmit} />);
+      await save();
+
+      expect(onSubmit).not.toHaveBeenCalled();
+      expect(screen.getByText('Name is required')).toBeTruthy();
+      expect(document.activeElement).toBe(name());
+    });
+
+    it('shows required from the rules', () => {
+      render(<RulesForm onSubmit={vi.fn()} />);
+      expect(name().getAttribute('aria-required')).toBe('true');
+      expect(screen.getByLabelText('Phone (optional)')).toBeTruthy();
+    });
+
+    it('checks a field when leaving it', async () => {
+      render(<RulesForm onSubmit={vi.fn()} />);
+      await userEvent.click(name());
+      await userEvent.tab();
+      expect(screen.getByText('Name is required')).toBeTruthy();
+    });
+
+    it('does not show an error when leaving a field to click a button', async () => {
+      render(<RulesForm onSubmit={vi.fn()} />);
+      await userEvent.click(name());
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(screen.queryByText('Name is required')).toBeNull();
+    });
+
+    it('removes the error as soon as it is fixed', async () => {
+      render(<RulesForm onSubmit={vi.fn()} />);
+      const phone = screen.getByRole('textbox', { name: /Phone/ });
+      await userEvent.type(phone, '12');
+      await userEvent.click(name());
+      expect(screen.getByText('Phone must have 10 to 15 digits')).toBeTruthy();
+
+      await userEvent.clear(phone);
+      expect(screen.queryByText('Phone must have 10 to 15 digits')).toBeNull();
+    });
+
+    it('submits once everything is valid', async () => {
+      const onSubmit = vi.fn().mockResolvedValue(undefined);
+      render(<RulesForm onSubmit={onSubmit} />);
+      await userEvent.type(name(), 'Kavi');
+      await save();
+      expect(onSubmit).toHaveBeenCalledWith({ name: 'Kavi', phone: '' });
+    });
   });
 
   it('tracks unsaved changes', async () => {

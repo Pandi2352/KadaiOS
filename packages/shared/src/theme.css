@@ -38,6 +38,26 @@
   border-color: var(--color-popup-line);
 }
 
+/*
+  The input inside a field. Browsers paint autofilled inputs blue, which would show as a box inside
+  the field, so the long transition holds that colour off. Edge's own password eye and clear X are
+  hidden because the fields have their own.
+*/
+@utility field-input {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-ink);
+    caret-color: var(--color-ink);
+    transition: background-color 99999s ease-out;
+  }
+
+  &::-ms-reveal,
+  &::-ms-clear {
+    display: none;
+  }
+}
+
 @theme {
   --shadow-*: initial;
   --inset-shadow-*: initial;
@@ -66,6 +86,7 @@
   --color-on-brand: rgb(255, 255, 255);
   --color-success: #17724c;
   --color-success-soft: #e2f3ea;
+  --color-warning: #8a5a00;
   --color-danger: #a8261c;
   --color-danger-strong: #8a1e16;
   --color-danger-soft: #fbeae8;
