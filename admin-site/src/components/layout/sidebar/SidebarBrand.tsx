@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { XIcon } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 import { IconButton, cn } from '@kadai/ui';
 import { MODULES } from '@/config/modules';
@@ -24,7 +24,7 @@ export function SidebarBrand() {
         </span>
         {!isCollapsed && <span className="text-base font-semibold">{SITE.name}</span>}
       </Link>
-      <IconButton icon={X} label="Close menu" className="lg:hidden" onClick={() => setMobileOpen(false)} />
+      <IconButton icon={XIcon} label="Close menu" className="lg:hidden" onClick={() => setMobileOpen(false)} />
     </div>
   );
 }

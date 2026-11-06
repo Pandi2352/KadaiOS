@@ -1,5 +1,11 @@
-import type { LucideIcon } from 'lucide-react';
+import type { Icon } from '@phosphor-icons/react';
 
-export function SidebarIcon({ icon: Icon }: { icon: LucideIcon }) {
-  return <Icon size={18} aria-hidden className="shrink-0" />;
+interface SidebarIconProps {
+  icon: Icon;
+  /** The current page's icon turns solid, so it stands out from the duotone ones. */
+  isActive?: boolean;
+}
+
+export function SidebarIcon({ icon: Icon, isActive = false }: SidebarIconProps) {
+  return <Icon size={20} aria-hidden weight={isActive ? 'fill' : 'duotone'} className="shrink-0" />;
 }

@@ -1,5 +1,5 @@
 import type { BusinessType } from '@kadai/shared';
-import type { LucideIcon } from 'lucide-react';
+import type { Icon } from '@phosphor-icons/react';
 
 export type { BusinessType };
 
@@ -27,7 +27,7 @@ export interface ModuleDefinition {
   id: ModuleId;
   label: string;
   path: string;
-  icon: LucideIcon;
+  icon: Icon;
   description: string;
   /** Where this module sits in docs/PHASE_PLAN.md, such as "Phase 5" or "Step 25". */
   planned: string;
@@ -46,7 +46,7 @@ export interface NavGroupEntry {
   kind: 'group';
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: Icon;
   children: ModuleId[];
 }
 
@@ -61,6 +61,6 @@ export interface QuickAction {
   id: string;
   label: string;
   module: ModuleId;
-  icon: LucideIcon;
+  icon: Icon;
   businessTypes?: BusinessType[];
 }

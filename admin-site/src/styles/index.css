@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '@kadai/shared/theme.css';
+@import '@kadai/shared/scrollbars.css';
 @source '../../../packages/ui/src';
 
 @layer base {

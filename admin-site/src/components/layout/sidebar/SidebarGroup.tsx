@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { CaretRightIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { MODULES } from '@/config/modules';
@@ -30,11 +30,12 @@ export function SidebarGroup({ entry }: { entry: NavGroupEntry }) {
         onClick={() => setToggled(!isOpen)}
         className={navItemClass({ isActive: hasActiveChild && !isOpen })}
       >
-        <SidebarIcon icon={entry.icon} />
+        <SidebarIcon icon={entry.icon} isActive={hasActiveChild} />
         <span className="truncate">{entry.label}</span>
-        <ChevronRight
+        <CaretRightIcon
           size={14}
           aria-hidden
+          weight="bold"
           className={cn('ml-auto shrink-0 text-muted transition-transform', isOpen && 'rotate-90')}
         />
       </button>

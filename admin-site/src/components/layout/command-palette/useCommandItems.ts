@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
+import type { IconComponent } from '@kadai/ui';
 import { useMemo } from 'react';
 import { MODULES } from '@/config/modules';
 import { useWorkspace } from '@/context/WorkspaceContext';
@@ -9,7 +9,7 @@ export interface CommandItem {
   label: string;
   hint: 'Open' | 'Create';
   path: string;
-  icon: LucideIcon;
+  icon: IconComponent;
 }
 
 /** Everything the palette can jump to for this business type, filtered by the query. */

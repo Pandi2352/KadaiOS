@@ -55,4 +55,27 @@
   --color-danger-strong: #8a1e16;
   --color-danger-soft: #fbeae8;
   --color-scrim: rgb(27 38 51 / 0.45);
+  --color-scrollbar: #b4bec9;
+  --color-scrollbar-hover: #7d8894;
+
+  --animate-sign-swing: sign-swing 1.4s ease-out both;
+
+  /* Settles once on the same tilt as the sign's resting position. */
+  @keyframes sign-swing {
+    0% {
+      transform: rotate(14deg);
+    }
+    30% {
+      transform: rotate(-12deg);
+    }
+    55% {
+      transform: rotate(4deg);
+    }
+    78% {
+      transform: rotate(-7deg);
+    }
+    100% {
+      transform: rotate(-4deg);
+    }
+  }
 }

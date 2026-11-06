@@ -1,21 +1,28 @@
+import { buttonClass, StatusPage } from '@kadai/ui';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface PageMessageProps {
+  mark: '!' | '?';
   title: string;
   message: string;
 }
 
-/** Shared layout for the not-found and error pages. A plain link recovers even if the app's state broke. */
-export function PageMessage({ title, message }: PageMessageProps) {
+/** The not-found and error pages. A plain link recovers even if the app's state broke. */
+export function PageMessage({ mark, title, message }: PageMessageProps) {
   usePageTitle(title);
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-16">
-      <h1 className="text-2xl font-semibold">{title}</h1>
-      <p className="mt-2 text-muted">{message}</p>
-      <a href="/" className="mt-4 inline-block rounded-md font-medium text-brand underline">
-        Go to the home page
-      </a>
+    <main className="flex min-h-full flex-1 flex-col">
+      <StatusPage
+        mark={mark}
+        title={title}
+        message={message}
+        actions={
+          <a href="/" className={buttonClass('primary')}>
+            Go to the home page
+          </a>
+        }
+      />
     </main>
   );
 }

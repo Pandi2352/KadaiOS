@@ -86,7 +86,7 @@ export function SidebarFlyout({ entry, modules, isActive }: SidebarFlyoutProps) 
         onClick={handleTriggerClick}
         className={navItemClass({ isActive, isCollapsed: true })}
       >
-        <SidebarIcon icon={entry.icon} />
+        <SidebarIcon icon={entry.icon} isActive={isActive} />
       </button>
       {position &&
         createPortal(

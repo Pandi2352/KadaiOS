@@ -15,8 +15,12 @@ export function SidebarLink({ module }: { module: ModuleDefinition }) {
       aria-label={isCollapsed ? module.label : undefined}
       className={({ isActive }) => navItemClass({ isActive, isCollapsed })}
     >
-      <SidebarIcon icon={module.icon} />
-      {!isCollapsed && <span className="truncate">{module.label}</span>}
+      {({ isActive }) => (
+        <>
+          <SidebarIcon icon={module.icon} isActive={isActive} />
+          {!isCollapsed && <span className="truncate">{module.label}</span>}
+        </>
+      )}
     </NavLink>
   );
 }

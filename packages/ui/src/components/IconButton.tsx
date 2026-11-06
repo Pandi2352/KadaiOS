@@ -1,9 +1,9 @@
-import type { LucideIcon } from 'lucide-react';
 import type { ButtonHTMLAttributes } from 'react';
 import { type ButtonVariant, iconButtonClass } from './buttonStyles';
+import type { IconComponent } from './iconTypes';
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  icon: LucideIcon;
+  icon: IconComponent;
   /** Required: the icon has no visible text, so this is its accessible name. */
   label: string;
   variant?: ButtonVariant;

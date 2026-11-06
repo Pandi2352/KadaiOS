@@ -1,4 +1,4 @@
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { SidebarSimpleIcon } from '@phosphor-icons/react';
 import { useSidebar } from '@/context/SidebarContext';
 import { SidebarIcon } from './SidebarIcon';
 import { navItemClass } from './sidebarStyles';
@@ -17,7 +17,7 @@ export function SidebarFooter() {
         onClick={toggleCollapsed}
         className={navItemClass({ isCollapsed })}
       >
-        <SidebarIcon icon={isCollapsed ? PanelLeftOpen : PanelLeftClose} />
+        <SidebarIcon icon={SidebarSimpleIcon} />
         {!isCollapsed && <span>Collapse</span>}
       </button>
     </div>

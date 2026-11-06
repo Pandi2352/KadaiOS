@@ -1,4 +1,4 @@
-import { Boxes, Repeat, ShoppingBag } from 'lucide-react';
+import { CalendarCheckIcon, ShoppingBagOpenIcon, WarehouseIcon } from '@phosphor-icons/react';
 import type { NavSectionConfig } from '@/types/navigation';
 
 export const NAVIGATION: NavSectionConfig[] = [
@@ -10,12 +10,12 @@ export const NAVIGATION: NavSectionConfig[] = [
     title: 'Sales',
     entries: [
       { kind: 'link', module: 'billing' },
-      { kind: 'group', id: 'orders', label: 'Orders', icon: ShoppingBag, children: ['orders', 'quotations'] },
+      { kind: 'group', id: 'orders', label: 'Orders', icon: ShoppingBagOpenIcon, children: ['orders', 'quotations'] },
       {
         kind: 'group',
         id: 'subscriptions',
         label: 'Subscriptions',
-        icon: Repeat,
+        icon: CalendarCheckIcon,
         children: ['subscriptions', 'deliveries'],
       },
       { kind: 'link', module: 'customers' },
@@ -29,7 +29,7 @@ export const NAVIGATION: NavSectionConfig[] = [
         kind: 'group',
         id: 'inventory',
         label: 'Inventory',
-        icon: Boxes,
+        icon: WarehouseIcon,
         children: ['stock', 'wastage', 'seasonal', 'expiry'],
       },
       { kind: 'link', module: 'purchases' },

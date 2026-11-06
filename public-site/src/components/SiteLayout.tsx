@@ -5,7 +5,7 @@ export function SiteLayout() {
   return (
     <div className="flex min-h-full flex-col">
       <SiteHeader />
-      <div className="flex-1">
+      <div className="flex flex-1 flex-col">
         <Outlet />
       </div>
     </div>

@@ -1,7 +1,6 @@
-import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { cn } from '@kadai/ui';
+import { cn, type IconComponent } from '@kadai/ui';
 
 const itemClass = (isActive = false) =>
   cn(
@@ -11,7 +10,7 @@ const itemClass = (isActive = false) =>
 
 interface MenuLinkProps {
   to: string;
-  icon?: LucideIcon;
+  icon?: IconComponent;
   children: ReactNode;
 }
 
@@ -25,7 +24,7 @@ export function MenuLink({ to, icon: Icon, children }: MenuLinkProps) {
 }
 
 interface MenuButtonProps {
-  icon?: LucideIcon;
+  icon?: IconComponent;
   isActive?: boolean;
   onClick: () => void;
   children: ReactNode;

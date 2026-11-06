@@ -93,6 +93,8 @@ These ports are fixed. If one is already in use, that app stops with an error in
 
 To start one app, use `npm run dev -w kadai-server`, `-w kadai-admin-site` or `-w kadai-public-site`.
 
+Restart this command after changing `.env`, the theme or scrollbar CSS in `packages/shared`, or any `package.json`. A running server won't pick those up. If it says a port is in use, an old server is still running, so stop it first.
+
 ### Default users
 
 The API creates these when it starts, if they don't exist yet. Restarting never changes an existing user, so editing `.env` later won't change their passwords.
@@ -186,6 +188,9 @@ Successful responses and errors use a shared format. `fields` only appears when 
 ### UI
 
 - **Theme:** the brand colour is `rgb(30, 81, 133)` with white text, and the font is `IBMSans` (IBM Plex Sans). Both are set once in `packages/shared/src/theme.css`. The font files are bundled in the project, so the POS works offline.
+- **Icons:** the sidebar, search and New menu use [Phosphor Icons](https://phosphoricons.com) in the duotone style, and the current page's icon turns solid. Pick a module's icon in `admin-site/src/config/modules.ts`. The rest of the UI still uses `lucide-react`.
+- **Scrollbars:** every scrolling area gets the custom scrollbar from `packages/shared/src/scrollbars.css` automatically. Add `scrollbar-stable` to stop content shifting between short and long pages, or `scrollbar-reveal` for a slim bar that appears on hover.
+- **Error and missing pages:** use `StatusPage` from `@kadai/ui`.
 - **No shadows:** the shared theme removes Tailwind's shadow utilities.
 - **One radius:** `rounded-md` is the only radius available.
 - **No native `<select>`:** every dropdown uses the common `Select` or `SelectField`.
