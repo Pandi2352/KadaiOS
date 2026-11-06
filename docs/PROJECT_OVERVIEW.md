@@ -55,7 +55,7 @@ MongoDB must be running on `localhost:27017`. Start each app in its own terminal
 | Admin app | `cd admin-site && npm run dev` | http://localhost:3000 |
 | Public site | `cd public-site && npm run dev` | http://localhost:3001 |
 
-Check the API and its database connection at http://localhost:8000/api/health.
+Check the API and its database connection at http://localhost:8000/api/health. API docs are at http://localhost:8000/api/docs.
 
 ## Tech stack
 
@@ -70,6 +70,8 @@ Target runtime is Node 20.19.4. Every package is on its latest release that supp
 - **`@types/node`** stays on the 20.x line so its types match the installed Node.
 - **`@nestjs/cli`** is not installed. Its dependencies need Node 22 or newer, so the server builds with `tsc` and runs with `node --watch`. Nest files are created by hand instead of with `nest generate`.
 - **`file-type`** is overridden to 21.3.4 in `server/package.json`, because `@nestjs/common` pins a release that needs Node 22. Remove the override after moving to Node 22.
+- **`concurrently`** stays on version 9, because version 10 needs Node 22.
+- **`@nestjs/swagger`** has a TypeScript override in `server/package.json`, because it lists TypeScript 6 as its newest supported version. Only its compiler plugin uses TypeScript, and this project doesn't use the plugin. Remove the override when Swagger supports TypeScript 7.
 
 Redis, Socket.IO and BullMQ come from the original plan and are deferred to Phase 6. They are not installed yet.
 

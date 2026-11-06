@@ -55,7 +55,7 @@ On Windows Command Prompt, use `copy server\.env.example server\.env`.
 | --- | --- | --- |
 | `PORT` | API port | `8000` |
 | `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/kadai_os` |
-| `CLIENT_ORIGINS` | Comma-separated frontend addresses allowed by CORS | `http://localhost:3000,http://localhost:3001` |
+| `CLIENT_ORIGINS` | Addresses allowed by CORS: `*` for all, or a comma-separated list | `*` |
 
 ### 3. Start the apps
 
@@ -70,6 +70,7 @@ cd public-site && npm run dev
 | App | Address |
 | --- | --- |
 | API | http://localhost:8000/api |
+| API docs (Swagger) | http://localhost:8000/api/docs |
 | Admin app | http://localhost:3000 |
 | Public site | http://localhost:3001 |
 
@@ -89,7 +90,7 @@ To confirm the API can reach MongoDB, open http://localhost:8000/api/health. It 
 
 ## API
 
-All routes start with `/api`.
+All routes start with `/api`. Interactive docs are at `/api/docs` and the OpenAPI JSON is at `/api/docs-json`. Both are turned off when `NODE_ENV=production`.
 
 | Method | Route | Purpose |
 | --- | --- | --- |
@@ -98,7 +99,7 @@ All routes start with `/api`.
 | `GET` | `/shops?page=1&limit=20` | List shops, newest first |
 | `GET` | `/shops/:id` | Get one shop |
 
-These routes have no login protection yet, so run the API locally only.
+These routes have no login protection yet and CORS allows every origin, so run the API locally only.
 
 Successful responses and errors use a shared format:
 
@@ -117,6 +118,12 @@ Successful responses and errors use a shared format:
 - **UUIDs only:** never use MongoDB ObjectId. Schemas extend `BaseSchema`, which gets IDs from `generateUuid()` in `server/src/common/utils/uuid.util.ts`.
 - **Reusable code:** keep files small, and put shared code in `admin-site/src/components/ui/`, `admin-site/src/hooks/`, `admin-site/src/lib/` or `server/src/common/`.
 - **Config-driven navigation:** to add an admin module, update `admin-site/src/config/`. The sidebar, routes, breadcrumbs and search all read from it.
+- **Documented routes:** add `@ApiTags` to every controller and `@ApiEndpoint` to every route. Add `@ApiProperty` to every DTO field, and extend `BaseResponseDto` for response DTOs. The Swagger compiler plugin isn't used, so nothing is documented automatically.
+
+```ts
+@Get(':id')
+@ApiEndpoint({ summary: 'Get one shop', response: ShopResponseDto, uuidParam: 'id', notFound: 'Shop' })
+```
 
 ## Node version notes
 
@@ -125,6 +132,8 @@ The project targets Node 20.19, which affects three dependencies:
 - `@nestjs/cli` isn't installed because its dependencies need Node 22, so create Nest files by hand.
 - `file-type` is overridden to 21.3.4 in `server/package.json`, because `@nestjs/common` pins a release that needs Node 22.
 - `concurrently` stays on version 9 because version 10 needs Node 22.
+
+Separately, `@nestjs/swagger` lists TypeScript 6 as its newest supported version, so `server/package.json` overrides that for TypeScript 7. Only its compiler plugin uses TypeScript, and this project doesn't use the plugin.
 
 ## Documents
 

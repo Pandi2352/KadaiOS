@@ -366,7 +366,7 @@ Start here
 - [x] 8. Configure environment variables.
 - [x] 9. Set up global API response structure.
 - [x] 10. Configure API validation.
-- [ ] 11. Configure Swagger.
+- [x] 11. Configure Swagger.
 - [ ] 12. Create frontend API integration.
 - [x] 13. Create common layouts.
 - [ ] 14. Create reusable Button, Input, Select, Modal and Table components.
