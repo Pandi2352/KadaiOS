@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import { cn } from '@/lib/cn';
+import { cn } from '../../../cn';
 import type { SelectOption } from './selectOptions';
 
 interface SelectOptionItemProps<T extends string> {

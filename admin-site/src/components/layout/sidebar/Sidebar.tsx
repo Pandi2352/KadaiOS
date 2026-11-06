@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSidebar } from '@/context/SidebarContext';
-import { useDismiss } from '@/hooks/useDismiss';
-import { cn } from '@/lib/cn';
+import { useDismiss, cn } from '@kadai/ui';
 import { SidebarBrand } from './SidebarBrand';
 import { SidebarFooter } from './SidebarFooter';
 import { SidebarNav } from './SidebarNav';

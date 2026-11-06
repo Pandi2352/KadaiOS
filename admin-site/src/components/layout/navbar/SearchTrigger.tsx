@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import { buttonClass } from '@/components/ui/buttonStyles';
+import { buttonClass } from '@kadai/ui';
 import { useCommandPalette } from '@/context/CommandPaletteContext';
 
 export function SearchTrigger() {

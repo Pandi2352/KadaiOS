@@ -2,12 +2,13 @@
 
 ## 1. Authentication & Security
 
-- [ ] Registration
-- [ ] Login / Logout
+- [x] Registration
+- [ ] Admin Invites
+- [x] Login / Logout
 - [ ] Email / Mobile Verification
 - [ ] Forgot / Reset Password
-- [ ] JWT Authentication
-- [ ] Refresh Token Rotation
+- [x] JWT Authentication
+- [x] Refresh Token Rotation
 - [ ] Session Management
 - [ ] Two-Factor Authentication
 - [ ] Role-Based Access Control
@@ -411,16 +412,18 @@ Start here
 
 ## Phase 2 – Authentication
 
-- [ ] 1. User Registration
-- [ ] 2. User Login
-- [ ] 3. Password Hashing
-- [ ] 4. JWT Authentication
-- [ ] 5. Access Token
-- [ ] 6. Refresh Token
-- [ ] 7. Logout
+- [x] 1. User Registration
+- [x] 2. User Login
+- [x] 3. Password Hashing
+- [x] 4. JWT Authentication
+- [x] 5. Access Token
+- [x] 6. Refresh Token
+- [x] 7. Logout
 - [ ] 8. Protected Routes
 - [ ] 9. Authentication Guards
 - [ ] 10. Current User Profile
+- [x] 11. Default Admin User (seeded for login and testing)
+- [ ] 12. Admin Invites (an admin invites other admins, because admins cannot register themselves)
 
 ## Phase 3 – Business Setup
 

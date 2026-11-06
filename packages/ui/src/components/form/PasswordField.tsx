@@ -1,0 +1,52 @@
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { type FieldProps, FormField } from './FormField';
+import { Input } from './Input';
+
+interface PasswordFieldProps extends FieldProps<string> {
+  autoComplete: 'current-password' | 'new-password';
+}
+
+/** Password input with a show or hide button, which helps people avoid typing mistakes. */
+export function PasswordField({
+  label,
+  value,
+  onChange,
+  error,
+  hint,
+  required,
+  disabled,
+  autoComplete,
+}: PasswordFieldProps) {
+  const [isVisible, setVisible] = useState(false);
+  const Icon = isVisible ? EyeOff : Eye;
+  const toggleLabel = isVisible ? 'Hide password' : 'Show password';
+
+  return (
+    <FormField label={label} error={error} hint={hint} required={required}>
+      {(control) => (
+        <div className="relative">
+          <Input
+            {...control}
+            type={isVisible ? 'text' : 'password'}
+            value={value}
+            disabled={disabled}
+            autoComplete={autoComplete}
+            spellCheck={false}
+            className="pr-10"
+            onChange={(event) => onChange(event.target.value)}
+          />
+          <button
+            type="button"
+            aria-label={toggleLabel}
+            title={toggleLabel}
+            onClick={() => setVisible(!isVisible)}
+            className="absolute top-0 right-0 flex size-9 cursor-pointer items-center justify-center rounded-md text-muted hover:text-ink"
+          >
+            <Icon size={16} aria-hidden />
+          </button>
+        </div>
+      )}
+    </FormField>
+  );
+}

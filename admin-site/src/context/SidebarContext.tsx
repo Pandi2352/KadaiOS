@@ -1,7 +1,7 @@
 import { type ReactNode, useMemo, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { usePersistentState } from '@/hooks/usePersistentState';
-import { createStrictContext } from '@/lib/createStrictContext';
+import { createStrictContext } from '@kadai/ui';
 
 interface SidebarValue {
   /** Icon-only mode. Desktop only: the mobile drawer is always full width. */

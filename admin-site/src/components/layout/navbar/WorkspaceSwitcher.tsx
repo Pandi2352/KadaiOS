@@ -1,5 +1,5 @@
 import { ChevronsUpDown } from 'lucide-react';
-import { buttonClass } from '@/components/ui/buttonStyles';
+import { buttonClass } from '@kadai/ui';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { MenuButton, MenuNote } from '@/components/ui/MenuItem';
 import { BUSINESS_TYPES } from '@/config/businessTypes';

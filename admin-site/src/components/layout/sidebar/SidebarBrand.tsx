@@ -1,10 +1,9 @@
 import { X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { IconButton } from '@/components/ui/IconButton';
+import { IconButton, cn } from '@kadai/ui';
 import { MODULES } from '@/config/modules';
 import { SITE } from '@/config/site';
 import { useSidebar } from '@/context/SidebarContext';
-import { cn } from '@/lib/cn';
 
 export function SidebarBrand() {
   const { isCollapsed, setMobileOpen } = useSidebar();

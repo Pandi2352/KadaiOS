@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { cn } from '@/lib/cn';
+import { cn } from '@kadai/ui';
 
 const itemClass = (isActive = false) =>
   cn(

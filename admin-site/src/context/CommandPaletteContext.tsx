@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import { createStrictContext } from '@/lib/createStrictContext';
+import { createStrictContext } from '@kadai/ui';
 
 interface CommandPaletteValue {
   isOpen: boolean;

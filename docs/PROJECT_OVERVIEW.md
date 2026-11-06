@@ -40,10 +40,11 @@ Grocery and bakery come later.
 ```
 kadai-os/
 ├── admin-site/              Shop owner and staff app (POS, stock, reports)
-├── public-site/             Public website (minimal shell for now)
+├── public-site/             Customer site: register and log in
 ├── server/                  NestJS API on local MongoDB
 ├── packages/
 │   ├── shared/              Code used by all apps
+│   ├── ui/                  Code both websites share
 │   └── eslint-config/       Lint rules
 ├── scripts/                 MongoDB replica set setup
 └── docs/                    Project overview, PRD, modules and phase plan
@@ -103,13 +104,18 @@ The target runtime is Node 20.19.4. Packages are on their latest release that su
 | Need | Location |
 | --- | --- |
 | Code used by more than one app | `packages/shared/` |
-| Admin UI building blocks | `admin-site/src/components/ui/` |
+| Code both websites use: fields, buttons, API client, login | `packages/ui/` |
+| Admin-only UI building blocks | `admin-site/src/components/ui/` |
 | Admin hooks and helpers | `admin-site/src/hooks/`, `admin-site/src/lib/` |
 | Modules, navigation, quick actions | `admin-site/src/config/` |
 | Feature screens and their API calls | `admin-site/src/features/` |
 | Server schema, repository, filter, pipes, decorators | `server/src/common/` |
 
 - Sidebar, routes, breadcrumbs and the command palette are all generated from `admin-site/src/config/`. Adding a module there adds it everywhere.
+
+### Accounts
+
+Customers register themselves on the public site. Admins can't register: the first admin comes from `.env`, and other admins join by invitation (planned in Phase 2). Both log in through separate routes and sessions.
 
 ### Multi-tenancy
 

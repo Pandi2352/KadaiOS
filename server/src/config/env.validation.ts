@@ -1,6 +1,23 @@
 import { Logger } from '@nestjs/common';
+import { PASSWORD_LIMITS } from '@kadai/shared';
 import { plainToInstance, Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString, Matches, Max, Min, validateSync } from 'class-validator';
+import {
+  IsEmail,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  Matches,
+  Max,
+  Min,
+  MinLength,
+  validateSync,
+} from 'class-validator';
+
+const JWT_SECRET_MIN_LENGTH = 32;
+
+/** The published development password. Production must never use it. */
+export const EXAMPLE_ADMIN_PASSWORD = 'Admin@12345';
 
 export class EnvironmentVariables {
   @IsOptional()
@@ -21,11 +38,47 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsIn(['development', 'production', 'test'], { message: 'NODE_ENV must be development, production or test' })
   NODE_ENV?: string;
+
+  @IsString({ message: 'JWT_ACCESS_SECRET is required' })
+  @MinLength(JWT_SECRET_MIN_LENGTH, {
+    message: `JWT_ACCESS_SECRET must have at least ${JWT_SECRET_MIN_LENGTH} characters. Create one with: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`,
+  })
+  JWT_ACCESS_SECRET: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'AUTH_RATE_LIMIT must be a whole number' })
+  @Min(1, { message: 'AUTH_RATE_LIMIT must be at least 1' })
+  AUTH_RATE_LIMIT?: number;
+
+  @IsOptional()
+  @IsEmail({}, { message: 'DEFAULT_ADMIN_EMAIL must be a valid email address' })
+  DEFAULT_ADMIN_EMAIL?: string;
+
+  @IsOptional()
+  @MinLength(PASSWORD_LIMITS.min, {
+    message: `DEFAULT_ADMIN_PASSWORD must have at least ${PASSWORD_LIMITS.min} characters`,
+  })
+  DEFAULT_ADMIN_PASSWORD?: string;
+
+  @IsOptional()
+  @IsEmail({}, { message: 'DEFAULT_CUSTOMER_EMAIL must be a valid email address' })
+  DEFAULT_CUSTOMER_EMAIL?: string;
+
+  @IsOptional()
+  @MinLength(PASSWORD_LIMITS.min, {
+    message: `DEFAULT_CUSTOMER_PASSWORD must have at least ${PASSWORD_LIMITS.min} characters`,
+  })
+  DEFAULT_CUSTOMER_PASSWORD?: string;
 }
 
 export function findEnvErrors(env: Record<string, unknown>): string[] {
   const values = plainToInstance(EnvironmentVariables, env);
   const messages = validateSync(values).flatMap((error) => Object.values(error.constraints ?? {}));
+
+  if (env.NODE_ENV === 'production' && env.DEFAULT_ADMIN_PASSWORD === EXAMPLE_ADMIN_PASSWORD) {
+    messages.push('DEFAULT_ADMIN_PASSWORD must not be the example password in production');
+  }
   return [...new Set(messages)];
 }
 

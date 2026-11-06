@@ -1,6 +1,5 @@
 import { useRouteError } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
-import { buttonClass } from '@/components/ui/buttonStyles';
+import { Button, buttonClass } from '@kadai/ui';
 import { Notice } from '@/components/ui/Notice';
 import { usePageTitle } from '@/hooks/usePageTitle';
 

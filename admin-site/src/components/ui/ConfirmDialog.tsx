@@ -1,5 +1,4 @@
-import { Button } from './Button';
-import type { ButtonVariant } from './buttonStyles';
+import { Button, type ButtonVariant } from '@kadai/ui';
 import { Modal } from './Modal';
 
 interface ConfirmDialogProps {

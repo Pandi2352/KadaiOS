@@ -1,7 +1,7 @@
 import { generateUuid } from '@kadai/shared';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
-import { ToastViewport } from '@/components/ui/ToastViewport';
-import { createStrictContext } from '@/lib/createStrictContext';
+import { ToastViewport } from './ToastViewport';
+import { createStrictContext } from '../../createStrictContext';
 
 export type ToastTone = 'success' | 'error';
 

@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react';
-import { IconButton } from '@/components/ui/IconButton';
+import { IconButton } from '@kadai/ui';
 import { useSidebar } from '@/context/SidebarContext';
 import { Breadcrumbs } from './Breadcrumbs';
 import { NotificationsMenu } from './NotificationsMenu';

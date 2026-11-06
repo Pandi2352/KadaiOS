@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn';
+import { cn } from '../../cn';
 
 /** Shared look for every text-like control, so inputs and dropdowns always match. */
 export const fieldClass = (invalid?: boolean, className?: string) =>

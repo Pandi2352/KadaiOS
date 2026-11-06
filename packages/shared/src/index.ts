@@ -1,4 +1,5 @@
 export * from './api.js';
+export * from './auth.js';
 export * from './business-types.js';
 export * from './date.js';
 export * from './field-limits.js';

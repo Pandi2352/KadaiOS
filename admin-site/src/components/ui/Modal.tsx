@@ -1,8 +1,7 @@
 import { X } from 'lucide-react';
 import { type ReactNode, useId } from 'react';
-import { cn } from '@/lib/cn';
+import { cn, IconButton } from '@kadai/ui';
 import { Dialog } from './Dialog';
-import { IconButton } from './IconButton';
 
 interface ModalProps {
   isOpen: boolean;

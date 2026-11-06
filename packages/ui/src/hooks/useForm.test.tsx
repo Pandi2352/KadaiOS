@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { FormAlert } from '@/components/ui/form/FormAlert';
-import { TextField } from '@/components/ui/form/TextField';
-import { ApiError } from '@/lib/api/ApiError';
+import { FormAlert } from '../components/form/FormAlert';
+import { TextField } from '../components/form/TextField';
+import { ApiError } from '../api/ApiError';
 import { useForm } from './useForm';
 
 function TestForm({ onSubmit }: { onSubmit: (values: { name: string }) => Promise<void> }) {

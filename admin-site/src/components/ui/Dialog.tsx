@@ -1,5 +1,5 @@
 import { type MouseEvent, type ReactNode, type SyntheticEvent, useEffect, useRef } from 'react';
-import { cn } from '@/lib/cn';
+import { cn } from '@kadai/ui';
 
 interface DialogProps {
   isOpen: boolean;

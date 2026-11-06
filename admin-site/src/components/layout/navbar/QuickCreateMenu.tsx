@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { buttonClass } from '@/components/ui/buttonStyles';
+import { buttonClass } from '@kadai/ui';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { MenuLink } from '@/components/ui/MenuItem';
 import { MODULES } from '@/config/modules';

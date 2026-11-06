@@ -1,11 +1,7 @@
 import { type BusinessType, type CreateShopInput, FIELD_LIMITS, type Shop } from '@kadai/shared';
 import { useEffect } from 'react';
-import { FormAlert } from '@/components/ui/form/FormAlert';
-import { SelectField } from '@/components/ui/form/SelectField';
-import { TextareaField } from '@/components/ui/form/TextareaField';
-import { TextField } from '@/components/ui/form/TextField';
+import { FormAlert, SelectField, TextareaField, TextField, useForm } from '@kadai/ui';
 import { BUSINESS_TYPES } from '@/config/businessTypes';
-import { useForm } from '@/hooks/useForm';
 import { shopsApi } from './shopsApi';
 
 const BUSINESS_TYPE_OPTIONS = Object.values(BUSINESS_TYPES).map(({ id, label, units, icon }) => ({

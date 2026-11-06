@@ -1,6 +1,6 @@
 import type { Shop } from '@kadai/shared';
 import { useId, useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@kadai/ui';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Modal } from '@/components/ui/Modal';
 import { ShopForm } from './ShopForm';

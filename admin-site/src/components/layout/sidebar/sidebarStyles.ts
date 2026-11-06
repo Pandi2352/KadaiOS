@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn';
+import { cn } from '@kadai/ui';
 
 export const sidebarWidth = {
   expanded: 'w-64 lg:w-60',

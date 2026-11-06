@@ -5,7 +5,11 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-const FRONTEND_FILES = ['admin-site/src/**/*.{ts,tsx}', 'public-site/src/**/*.{ts,tsx}'];
+const FRONTEND_FILES = [
+  'admin-site/src/**/*.{ts,tsx}',
+  'public-site/src/**/*.{ts,tsx}',
+  'packages/ui/src/**/*.{ts,tsx}',
+];
 
 export default tseslint.config(
   { ignores: ['**/dist/**', '**/node_modules/**', '**/*.tsbuildinfo'] },
@@ -37,7 +41,13 @@ export default tseslint.config(
   },
   {
     // Context and test files export hooks and helpers beside components. Only Fast Refresh notices.
-    files: ['**/*.test.{ts,tsx}', 'admin-site/src/test/**', 'admin-site/src/context/**'],
+    files: [
+      '**/*.test.{ts,tsx}',
+      '**/src/test/**',
+      'admin-site/src/context/**',
+      'packages/ui/src/auth/AuthProvider.tsx',
+      'packages/ui/src/components/toast/ToastContext.tsx',
+    ],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
   prettier,

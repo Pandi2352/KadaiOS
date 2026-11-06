@@ -1,6 +1,6 @@
 import { type KeyboardEvent, type RefObject, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { type DismissReason, useDismiss } from '@/hooks/useDismiss';
-import { useFloatingPosition } from '@/hooks/useFloatingPosition';
+import { type DismissReason, useDismiss } from '../../../hooks/useDismiss';
+import { useFloatingPosition } from '../../../hooks/useFloatingPosition';
 import {
   filterOptions,
   findTypeaheadMatch,

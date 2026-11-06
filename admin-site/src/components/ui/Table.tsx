@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { cn } from '@/lib/cn';
+import { cn } from '@kadai/ui';
 
 export interface TableColumn<T> {
   key: string;

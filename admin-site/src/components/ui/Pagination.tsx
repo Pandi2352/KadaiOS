@@ -1,4 +1,4 @@
-import { Button } from './Button';
+import { Button } from '@kadai/ui';
 
 interface PaginationProps {
   page: number;

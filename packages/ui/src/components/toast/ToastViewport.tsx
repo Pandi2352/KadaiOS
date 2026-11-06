@@ -1,8 +1,8 @@
 import { CircleAlert, CircleCheck, X } from 'lucide-react';
 import { useEffect } from 'react';
-import type { Toast } from '@/context/ToastContext';
-import { cn } from '@/lib/cn';
-import { IconButton } from './IconButton';
+import type { Toast } from './ToastContext';
+import { cn } from '../../cn';
+import { IconButton } from '../IconButton';
 
 const AUTO_DISMISS_MS = 5000;
 

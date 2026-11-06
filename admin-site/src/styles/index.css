@@ -1,7 +1,14 @@
 @import 'tailwindcss';
 @import '@kadai/shared/theme.css';
+@source '../../../packages/ui/src';
 
 @layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
   body {
     @apply bg-canvas font-sans text-sm text-ink antialiased;
   }

@@ -3,7 +3,7 @@ import { type KeyboardEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@/components/ui/Dialog';
 import { useCommandPalette } from '@/context/CommandPaletteContext';
-import { cn } from '@/lib/cn';
+import { cn } from '@kadai/ui';
 import { type CommandItem, useCommandItems } from './useCommandItems';
 
 /** Search state lives here and only mounts while open, so it resets each time. */

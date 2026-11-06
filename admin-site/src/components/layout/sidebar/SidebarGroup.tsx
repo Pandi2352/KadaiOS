@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { MODULES } from '@/config/modules';
 import { useSidebar } from '@/context/SidebarContext';
-import { cn } from '@/lib/cn';
+import { cn } from '@kadai/ui';
 import type { NavGroupEntry } from '@/types/navigation';
 import { SidebarFlyout } from './SidebarFlyout';
 import { SidebarIcon } from './SidebarIcon';

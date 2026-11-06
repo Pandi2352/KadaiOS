@@ -1,5 +1,5 @@
 import { Bell } from 'lucide-react';
-import { iconButtonClass } from '@/components/ui/buttonStyles';
+import { iconButtonClass } from '@kadai/ui';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { MenuNote } from '@/components/ui/MenuItem';
 

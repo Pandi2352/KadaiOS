@@ -1,5 +1,6 @@
 import { type INestApplication, VersioningType } from '@nestjs/common';
 import { API_PREFIX, API_VERSION } from '@kadai/shared';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { buildCorsOptions } from '../../config/cors.config.js';
 import { AllExceptionsFilter } from '../filters/all-exceptions.filter.js';
@@ -16,6 +17,7 @@ export function configureApp(app: INestApplication, clientOrigins: string[], swa
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
+  app.use(cookieParser());
   app.setGlobalPrefix(API_PREFIX);
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: API_VERSION });
   app.enableCors(buildCorsOptions(clientOrigins));

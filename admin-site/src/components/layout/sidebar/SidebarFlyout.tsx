@@ -1,7 +1,7 @@
 import { type FocusEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink } from 'react-router-dom';
-import { type DismissReason, useDismiss } from '@/hooks/useDismiss';
+import { type DismissReason, useDismiss } from '@kadai/ui';
 import type { ModuleDefinition, NavGroupEntry } from '@/types/navigation';
 import { SidebarIcon } from './SidebarIcon';
 import { navItemClass, sectionTitleClass } from './sidebarStyles';

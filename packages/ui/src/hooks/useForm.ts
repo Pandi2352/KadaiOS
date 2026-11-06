@@ -1,5 +1,5 @@
 import { type FormEvent, useCallback, useState } from 'react';
-import { ApiError, getErrorMessage } from '@/lib/api/ApiError';
+import { ApiError, getErrorMessage } from '../api/ApiError';
 
 interface UseFormOptions<T> {
   initialValues: T;

@@ -2,7 +2,9 @@ import type { ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { MODULES } from '@/config/modules';
+import { SITE } from '@/config/site';
 import { BusinessSetupPage } from '@/pages/BusinessSetupPage';
+import { LoginPage } from '@/pages/LoginPage';
 import { ModulePage } from '@/pages/ModulePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { RouteErrorPage } from '@/pages/RouteErrorPage';
@@ -14,6 +16,7 @@ const BUILT_PAGES: Partial<Record<ModuleId, ReactNode>> = {
 };
 
 export const router = createBrowserRouter([
+  { path: SITE.loginPath, element: <LoginPage />, errorElement: <RouteErrorPage /> },
   {
     element: <AppLayout />,
     // The outer error page catches a crash in the layout. The inner one keeps the sidebar when a page crashes.

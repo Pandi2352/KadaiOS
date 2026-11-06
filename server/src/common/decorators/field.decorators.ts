@@ -1,8 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { FIELD_LIMITS, normalizePhone, PHONE_PATTERN } from '@kadai/shared';
+import { EMAIL_MAX_LENGTH, FIELD_LIMITS, normalizePhone, PASSWORD_LIMITS, PHONE_PATTERN } from '@kadai/shared';
 import { Transform } from 'class-transformer';
-import { IsIn, IsNotEmpty, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 interface TextFieldOptions {
   /** Used in error messages that forms show to people, such as "Shop name is required". */
@@ -54,6 +54,39 @@ export const OptionalPhoneField = (label = 'Phone') =>
     }),
     IsOptional(),
     Matches(PHONE_PATTERN, { message: `${label} must have 10 to 15 digits` }),
+  );
+
+export const EmailField = () =>
+  applyDecorators(
+    ApiProperty({ type: String, format: 'email', example: 'name@example.com', maxLength: EMAIL_MAX_LENGTH }),
+    Transform(({ value }: { value: unknown }) => (typeof value === 'string' ? value.trim().toLowerCase() : value)),
+    IsNotEmpty({ message: 'Email is required' }),
+    IsEmail({}, { message: 'Email must be a valid email address' }),
+    MaxLength(EMAIL_MAX_LENGTH, { message: `Email must be ${EMAIL_MAX_LENGTH} characters or fewer` }),
+  );
+
+/** A password being set. Never trimmed, because spaces can be part of a password. */
+export const NewPasswordField = () =>
+  applyDecorators(
+    ApiProperty({
+      type: String,
+      format: 'password',
+      minLength: PASSWORD_LIMITS.min,
+      maxLength: PASSWORD_LIMITS.max,
+      example: 'choose-a-long-password',
+    }),
+    IsString({ message: 'Password is required' }),
+    MinLength(PASSWORD_LIMITS.min, { message: `Password must have at least ${PASSWORD_LIMITS.min} characters` }),
+    MaxLength(PASSWORD_LIMITS.max, { message: `Password must be ${PASSWORD_LIMITS.max} characters or fewer` }),
+  );
+
+/** A password being checked. It skips the length rules, so an older password can still log in if rules change. */
+export const CurrentPasswordField = () =>
+  applyDecorators(
+    ApiProperty({ type: String, format: 'password', example: 'your-password' }),
+    IsString({ message: 'Password is required' }),
+    IsNotEmpty({ message: 'Password is required' }),
+    MaxLength(PASSWORD_LIMITS.max, { message: `Password must be ${PASSWORD_LIMITS.max} characters or fewer` }),
   );
 
 export const EnumField = <T extends string>(label: string, values: readonly T[], example: T) =>

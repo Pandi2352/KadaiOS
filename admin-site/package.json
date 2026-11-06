@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@kadai/shared": "*",
-    "clsx": "^2.1.1",
+    "@kadai/ui": "*",
     "lucide-react": "^1.69.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

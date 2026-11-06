@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
 import type { ApiQuery } from '@/hooks/useApiQuery';
-import { getErrorMessage } from '@/lib/api/ApiError';
-import { Button } from './Button';
-import { Loader } from './Loader';
+import { getErrorMessage, Button, Loader } from '@kadai/ui';
 import { Notice } from './Notice';
 
 interface QueryStateProps<T> {

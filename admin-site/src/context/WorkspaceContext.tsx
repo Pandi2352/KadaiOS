@@ -2,7 +2,7 @@ import { type BusinessType, isBusinessType } from '@kadai/shared';
 import { type ReactNode, useMemo } from 'react';
 import { DEFAULT_BUSINESS_TYPE } from '@/config/businessTypes';
 import { usePersistentState } from '@/hooks/usePersistentState';
-import { createStrictContext } from '@/lib/createStrictContext';
+import { createStrictContext } from '@kadai/ui';
 
 interface WorkspaceValue {
   businessType: BusinessType;

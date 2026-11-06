@@ -4,7 +4,7 @@ Software for small local shops to run billing, stock, customers, suppliers, expe
 
 One core platform adapts to each trade, starting with meat, crackers and dairy shops.
 
-> **Status: Phase 1 (project foundation).** The admin app layout, common components and API foundation are in place. Business Setup can add and list shops. Login, billing and stock are not built yet, so the other module pages are placeholders. See [the phase plan](docs/PHASE_PLAN.md) for exact progress.
+> **Status: Phase 2 (authentication).** Customers can register and log in on the public site, and admins can log in on the admin app. Pages and API routes aren't protected yet, so the admin app is still open without logging in. Billing and stock are not built, so most module pages are placeholders. See [the phase plan](docs/PHASE_PLAN.md) for exact progress.
 
 ## Project structure
 
@@ -13,10 +13,11 @@ This is an npm workspace, so one install at the root covers everything.
 ```
 kadai-os/
 ├── admin-site/              Shop owner and staff app
-├── public-site/             Public website (placeholder page for now)
+├── public-site/             Customer site: register and log in
 ├── server/                  NestJS API
 ├── packages/
 │   ├── shared/              Code used by all apps: UUIDs, money, quantities, dates, types, theme
+│   ├── ui/                  Code both websites share: buttons, form fields, API client, login
 │   └── eslint-config/       Lint rules
 ├── scripts/                 MongoDB replica set setup
 └── docs/                    Project documents
@@ -56,12 +57,21 @@ cp public-site/.env.example public-site/.env
 
 On Windows Command Prompt, use `copy` and backslashes instead.
 
+Then put a secret in `JWT_ACCESS_SECRET` in `server/.env`. This command creates one:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+```
+
 | File | Variable | Purpose | Default |
 | --- | --- | --- | --- |
+| `server/.env` | `JWT_ACCESS_SECRET` | Signs access tokens. Required, at least 32 characters | None |
 | `server/.env` | `PORT` | API port | `8000` |
 | `server/.env` | `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/kadai_os` |
-| `server/.env` | `CLIENT_ORIGINS` | Addresses allowed by CORS: `*` for all, or a comma-separated list | `*` |
+| `server/.env` | `CLIENT_ORIGINS` | Addresses allowed by CORS: `*` for all, or a comma-separated list. Keep `*` only while the websites reach the API through the Vite proxy, because browsers refuse login cookies from another origin with `*` | `*` |
 | `server/.env` | `NODE_ENV` | `development`, `production` or `test` | `development` |
+| `server/.env` | `AUTH_RATE_LIMIT` | Login and register attempts per minute, per address | `10` |
+| `server/.env` | `DEFAULT_ADMIN_*`, `DEFAULT_CUSTOMER_*` | The default users below | See `.env.example` |
 | `admin-site/.env`, `public-site/.env` | `VITE_API_URL` | Base address of the API | `/api/v1` |
 
 The API checks its values when it starts, and stops with a clear message if one is wrong.
@@ -82,6 +92,17 @@ npm run dev
 These ports are fixed. If one is already in use, that app stops with an error instead of moving to another port.
 
 To start one app, use `npm run dev -w kadai-server`, `-w kadai-admin-site` or `-w kadai-public-site`.
+
+### Default users
+
+The API creates these when it starts, if they don't exist yet. Restarting never changes an existing user, so editing `.env` later won't change their passwords.
+
+| Log in at | Role | Email | Password |
+| --- | --- | --- | --- |
+| http://localhost:3000/login | Admin | `admin@kadaios.test` | `Admin@12345` |
+| http://localhost:3001/login | Customer | `customer@kadaios.test` | `Customer@12345` |
+
+These are for development only. In production, the API refuses to start with the example admin password, and never creates the test customer.
 
 ### 4. Set up the MongoDB replica set
 
@@ -115,7 +136,7 @@ Run these from the project root.
 | `npm run lint:fix` | Fix what ESLint can fix |
 | `npm run format` | Format code with Prettier |
 | `npm run format:check` | Check formatting |
-| `npm test` | Run all tests |
+| `npm test` | Run all tests. Needs MongoDB running, and uses temporary `kadai_*_test` databases that it deletes afterwards |
 
 ## API
 
@@ -127,8 +148,21 @@ All routes start with `/api/v1`. Interactive docs are at `/api/docs` and the Ope
 | `POST` | `/shops` | Create a shop |
 | `GET` | `/shops?page=1&limit=20` | List shops, newest first |
 | `GET` | `/shops/:id` | Get one shop |
+| `POST` | `/auth/customer/register` | Create a customer account and log in. Admins have no equivalent |
+| `POST` | `/auth/customer/login`, `/auth/admin/login` | Log in |
+| `POST` | `/auth/customer/refresh`, `/auth/admin/refresh` | Get a new access token using the refresh cookie |
+| `POST` | `/auth/customer/logout`, `/auth/admin/logout` | Log out |
 
-These routes have no login protection yet and CORS allows every origin, so run the API locally only.
+The shop routes have no login protection yet and CORS allows every origin, so run the API locally only.
+
+### How login works
+
+- **Accounts:** customers register on the public site. Admins can't register. The first admin comes from `.env`, and admin invites are planned (Phase 2, item 12). The same email can have a separate customer and admin account.
+- **Passwords:** hashed with Argon2id. Login gives the same answer for a wrong password and an unknown email, and login and register are rate limited.
+- **Access token:** a JWT that lasts 15 minutes, kept in memory only and sent as `Authorization: Bearer <token>`. It works only for its own role.
+- **Refresh token:** a random value that lasts 30 days, in an `httpOnly` cookie that page scripts can't read. Only its hash is stored. Each one is replaced when used.
+- **Stolen tokens:** if a replaced token comes back more than 10 seconds later, the whole login ends. Within 10 seconds it's treated as a browser that lost the reply, such as a reload during a refresh.
+- **Separate sessions:** admin and customer sessions have separate routes and cookies, so they can't overwrite each other even though `localhost` shares cookies across ports.
 
 Successful responses and errors use a shared format. `fields` only appears when validation fails:
 
@@ -156,16 +190,20 @@ Successful responses and errors use a shared format. `fields` only appears when 
 - **No native `<select>`:** every dropdown uses the common `Select` or `SelectField`.
 - **Common fields:** every field takes the same props: `label`, `value`, `onChange(value)`, `error`, `hint`, `required` and `disabled`.
 
-| Need | Use (in `admin-site/src/components/ui/`) |
-| --- | --- |
-| Form fields | `form/TextField`, `form/TextareaField`, `form/SelectField`, `form/CheckboxField` |
-| A new kind of field | `form/FormField`, which adds the label, hint and error |
-| Form state and API errors | `useForm` with `form/FormAlert` |
-| Dialogs | `Modal`, `ConfirmDialog` |
-| Lists | `Table`, `Pagination` |
-| Loading, error and empty screens | `QueryState`, `Loader`, `EmptyState` |
-| Messages after an action | `useToast` |
-| Buttons | `Button`, `IconButton` |
+| Need | Use | From |
+| --- | --- | --- |
+| Form fields | `TextField`, `PasswordField`, `TextareaField`, `SelectField`, `CheckboxField` | `@kadai/ui` |
+| A new kind of field | `FormField`, which adds the label, hint and error | `@kadai/ui` |
+| Form state and API errors | `useForm` with `FormAlert` | `@kadai/ui` |
+| Buttons | `Button`, `IconButton` | `@kadai/ui` |
+| Messages after an action | `useToast` | `@kadai/ui` |
+| Loading text | `Loader` | `@kadai/ui` |
+| Login state and actions | `useAuth`, `LoginForm`, `AuthPage` | `@kadai/ui` |
+| Dialogs | `Modal`, `ConfirmDialog` | `admin-site/src/components/ui/` |
+| Lists | `Table`, `Pagination` | `admin-site/src/components/ui/` |
+| Loading, error and empty screens | `QueryState`, `EmptyState` | `admin-site/src/components/ui/` |
+
+If the public site needs something from the admin folder, move it to `packages/ui` rather than copying it.
 
 ```tsx
 const { field, handleSubmit, formError, isSubmitting } = useForm({ initialValues, onSubmit });
@@ -196,7 +234,7 @@ const { field, handleSubmit, formError, isSubmitting } = useForm({ initialValues
   @ApiEndpoint({ summary: 'Get one shop', response: ShopResponseDto, uuidParam: 'id', notFound: 'Shop' })
   ```
 
-- **API calls:** go through `admin-site/src/lib/api/client.ts`, with one `*Api.ts` file per feature in `admin-site/src/features/`. Load data with `useApiQuery`.
+- **API calls:** go through the client each site creates with `createApiClient`, in `admin-site/src/lib/api/client.ts` and `public-site/src/lib/api.ts`. It adds the access token and refreshes it when it expires. Keep one `*Api.ts` file per feature in `src/features/`, and load data with `useApiQuery`.
 - **Config-driven navigation:** to add an admin module, update `admin-site/src/config/`. The sidebar, routes, breadcrumbs and search all read from it. List its page in `BUILT_PAGES` in `admin-site/src/routes/router.tsx` once it has a real screen.
 - **Small files:** keep one component or responsibility per file, and put shared code in `packages/shared` or the folders above.
 
@@ -207,6 +245,7 @@ The project targets Node 20.19 and the latest TypeScript, which some tools don't
 | Package | What's different | Why |
 | --- | --- | --- |
 | `@nestjs/cli` | Not installed, so create Nest files by hand | Its dependencies need Node 22 |
+| `argon2` | Replaced by `@node-rs/argon2`, the same algorithm | It needs a C++ build toolchain on Windows. This one ships ready-made |
 | `file-type` | Overridden to 21.3.4 in the root `package.json` | `@nestjs/common` pins a release that needs Node 22 |
 | `minimatch` | Overridden to 11.0.5 in the root `package.json` | ESLint pulls in a release with a security advisory. Remove the override once ESLint updates |
 | `concurrently` | Version 9 | Version 10 needs Node 22 |

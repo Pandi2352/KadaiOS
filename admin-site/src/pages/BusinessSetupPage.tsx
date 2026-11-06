@@ -1,12 +1,11 @@
 import type { Shop } from '@kadai/shared';
 import { Plus, Store } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button, useToast } from '@kadai/ui';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Pagination } from '@/components/ui/Pagination';
 import { QueryState } from '@/components/ui/QueryState';
-import { useToast } from '@/context/ToastContext';
 import { CreateShopModal } from '@/features/shops/CreateShopModal';
 import { shopsApi } from '@/features/shops/shopsApi';
 import { ShopsTable } from '@/features/shops/ShopsTable';
@@ -37,7 +36,7 @@ export function BusinessSetupPage() {
     <div className="space-y-4">
       <PageHeader
         title="Business Setup"
-        description="Register shops and choose each shop's business type. Until sign-in arrives in Phase 2, everyone using this app sees every shop."
+        description="Register shops and choose each shop's business type. Until pages are protected later in Phase 2, everyone using this app sees every shop."
         actions={addButton}
       />
       <QueryState

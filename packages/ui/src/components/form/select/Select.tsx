@@ -1,6 +1,6 @@
 import { ChevronDown, Search, X } from 'lucide-react';
 import { useRef } from 'react';
-import { cn } from '@/lib/cn';
+import { cn } from '../../../cn';
 import { fieldClass } from '../fieldStyles';
 import { SelectOptionItem } from './SelectOptionItem';
 import type { SelectOption } from './selectOptions';

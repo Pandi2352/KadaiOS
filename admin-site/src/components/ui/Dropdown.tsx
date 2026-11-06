@@ -1,5 +1,5 @@
 import { type MouseEvent, type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
-import { type DismissReason, useDismiss } from '@/hooks/useDismiss';
+import { type DismissReason, useDismiss } from '@kadai/ui';
 
 interface DropdownProps {
   /** Accessible name for the trigger button. */

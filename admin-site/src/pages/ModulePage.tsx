@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { buttonClass } from '@/components/ui/buttonStyles';
+import { buttonClass } from '@kadai/ui';
 import { Notice } from '@/components/ui/Notice';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BUSINESS_TYPES } from '@/config/businessTypes';
